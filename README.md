@@ -20,6 +20,20 @@ If you want to work locally using your own IDE, you can clone this repo and push
 
 The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
 
+### Environment variables
+
+Copy `.env.example` to `.env.local` and configure the values:
+
+```
+cp .env.example .env.local
+```
+
+- `DATABASE_URL` - your PostgreSQL connection string.
+- `NEXTAUTH_SECRET` - a secret for NextAuth.
+- `RESEND_API_KEY` — create in your [Resend dashboard](https://resend.com/).
+
+### Development server
+
 Follow these steps:
 
 ```sh
@@ -30,10 +44,10 @@ git clone <YOUR_GIT_URL>
 cd <YOUR_PROJECT_NAME>
 
 # Step 3: Install the necessary dependencies.
-npm i
+pnpm install
 
 # Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+pnpm run dev
 ```
 
 **Edit a file directly in GitHub**

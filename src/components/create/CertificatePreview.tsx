@@ -2,6 +2,7 @@ import { CertificateData } from "@/pages/Create";
 import { Gift, Calendar } from "lucide-react";
 import { format } from "date-fns";
 import { ru } from "date-fns/locale";
+import { formatCurrency } from "@/lib/currency";
 
 interface CertificatePreviewProps {
   data: CertificateData;
@@ -25,6 +26,9 @@ export const CertificatePreview = ({ data }: CertificatePreviewProps) => {
       {/* Header */}
       <div className="relative z-10">
         <div className="text-center mb-6">
+          <div className="flex justify-center mb-4">
+            <img src="/logo.png" alt="Buddha Spa" className="h-16 w-auto drop-shadow-sm" />
+          </div>
           <Gift className="w-12 h-12 mx-auto mb-4 opacity-70" />
           <h3 className="text-2xl font-bold opacity-90">SPA Сертификат</h3>
         </div>
@@ -44,7 +48,7 @@ export const CertificatePreview = ({ data }: CertificatePreviewProps) => {
         <div className="text-center py-6">
           <div className="inline-block px-8 py-4 rounded-2xl bg-white/20 backdrop-blur-sm">
             <p className="text-4xl font-bold">
-              {data.amount.toLocaleString("ru-RU")} ₽
+              {formatCurrency(data.amount)}
             </p>
           </div>
         </div>

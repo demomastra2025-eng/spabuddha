@@ -31,7 +31,7 @@ export const StepIndicator = ({ currentStep, totalSteps }: StepIndicatorProps) =
                     isCompleted
                       ? "bg-primary text-primary-foreground"
                       : isActive
-                      ? "bg-accent text-accent-foreground shadow-glow"
+                      ? "bg-secondary text-secondary-foreground shadow-glow"
                       : "bg-muted text-muted-foreground"
                   }`}
                 >

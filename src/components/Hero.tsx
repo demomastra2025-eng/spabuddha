@@ -10,18 +10,11 @@ export const Hero = () => {
       {/* Decorative Elements */}
       <div className="absolute inset-0 opacity-10">
         <div className="absolute top-20 left-10 w-64 h-64 rounded-full bg-primary/30 blur-3xl animate-float" />
-        <div className="absolute bottom-20 right-10 w-96 h-96 rounded-full bg-accent/20 blur-3xl animate-float" style={{ animationDelay: "1s" }} />
+        <div className="absolute bottom-20 right-10 w-96 h-96 rounded-full bg-secondary/20 blur-3xl animate-float" style={{ animationDelay: "1s" }} />
       </div>
 
-      <div className="container relative z-10 px-4 py-20">
+      <div className="container relative z-10 px-4 py-5">
         <div className="max-w-4xl mx-auto text-center space-y-8 animate-fade-in-up">
-          {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/80 shadow-spa backdrop-blur-sm">
-            <Sparkles className="w-4 h-4 text-accent" />
-            <span className="text-sm font-medium text-foreground">
-              Премиальные подарочные сертификаты
-            </span>
-          </div>
 
           {/* Main Heading */}
           <h1 className="text-5xl md:text-7xl font-serif font-bold text-foreground leading-tight">
@@ -38,19 +31,19 @@ export const Hero = () => {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
             <Button
               size="lg"
-              className="group relative overflow-hidden bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-6 text-lg rounded-2xl shadow-spa hover:shadow-glow transition-all duration-300 hover:scale-105"
+              className="group relative overflow-hidden bg-primary hover:bg-primary/90 text-primary-foreground px-10 py-7 text-xl rounded-2xl shadow-spa hover:shadow-glow transition-all duration-300 hover:scale-105"
               onClick={() => navigate("/create")}
             >
-              <Gift className="w-5 h-5 mr-2 group-hover:rotate-12 transition-transform" />
+              <Gift className="w-10 h-10 mr-3 group-hover:rotate-12 transition-transform" />
               Создать сертификат
             </Button>
             <Button
               size="lg"
               variant="outline"
-              className="px-8 py-6 text-lg rounded-2xl border-2 border-primary/20 hover:border-primary hover:bg-primary/5 transition-all duration-300"
+              className="px-10 py-7 text-xl  rounded-2xl text-primary border-2 border-primary/30 hover:text-primary hover:border-primary hover:bg-primary/10 transition-all duration-300"
               onClick={() => document.getElementById('templates')?.scrollIntoView({ behavior: 'smooth' })}
             >
-              <Heart className="w-5 h-5 mr-2" />
+              <Heart className="w-10 h-10 mr-3" />
               Посмотреть шаблоны
             </Button>
           </div>

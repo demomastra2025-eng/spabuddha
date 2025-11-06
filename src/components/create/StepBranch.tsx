@@ -4,7 +4,10 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { CertificateData } from "@/pages/Create";
+import { formatCurrency } from "@/lib/currency";
 import { MapPin, Gift, Sparkles } from "lucide-react";
+import { branches } from "@/data/branches";
+import { toast } from "sonner";
 
 interface StepBranchProps {
   data: CertificateData;
@@ -12,19 +15,12 @@ interface StepBranchProps {
   onNext: () => void;
 }
 
-const branches = [
-  { id: "moscow-center", name: "Москва, Центр", address: "ул. Тверская, д. 10" },
-  { id: "moscow-west", name: "Москва, Запад", address: "ул. Арбат, д. 25" },
-  { id: "spb-center", name: "Санкт-Петербург", address: "Невский пр., д. 50" },
-  { id: "all", name: "Все филиалы", address: "Действует везде" },
-];
-
-const presetAmounts = [3000, 5000, 7000, 10000];
+const presetAmounts = [30000, 50000, 70000, 100000];
 
 export const StepBranch = ({ data, updateData, onNext }: StepBranchProps) => {
   const handleNext = () => {
     if (!data.branch) {
-      alert("Пожалуйста, выберите филиал");
+      toast.error("Пожалуйста, выберите филиал");
       return;
     }
     onNext();
@@ -56,7 +52,7 @@ export const StepBranch = ({ data, updateData, onNext }: StepBranchProps) => {
               {branches.map((branch) => (
                 <SelectItem key={branch.id} value={branch.id} className="py-3">
                   <div>
-                    <div className="font-medium">{branch.name}</div>
+                    <div className="font-medium">{branch.label}</div>
                     <div className="text-sm text-muted-foreground">{branch.address}</div>
                   </div>
                 </SelectItem>
@@ -117,7 +113,7 @@ export const StepBranch = ({ data, updateData, onNext }: StepBranchProps) => {
                 className="h-14 text-base"
                 onClick={() => updateData({ amount })}
               >
-                {amount.toLocaleString("ru-RU")} ₽
+                {formatCurrency(amount)}
               </Button>
             ))}
           </div>
@@ -128,15 +124,15 @@ export const StepBranch = ({ data, updateData, onNext }: StepBranchProps) => {
               value={data.amount}
               onChange={(e) => updateData({ amount: parseInt(e.target.value) || 0 })}
               className="h-14 text-base pr-12"
-              min={1000}
-              max={50000}
+              min={10000}
+              max={500000}
             />
             <span className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground">
-              ₽
+              ₸
             </span>
           </div>
           <p className="text-sm text-muted-foreground">
-            Минимальная сумма: 1 000 ₽, максимальная: 50 000 ₽
+            Минимальная сумма: 10 000 ₸, максимальная: 500 000 ₸
           </p>
         </div>
 

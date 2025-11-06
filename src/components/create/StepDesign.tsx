@@ -12,22 +12,22 @@ interface StepDesignProps {
 }
 
 const templates = [
-  { id: 1, name: "Натуральный спа", color: "#EADFD5" },
-  { id: 2, name: "Золотой люкс", color: "#C8A86B" },
-  { id: 3, name: "Сканди-минимал", color: "#E5E5E5" },
-  { id: 4, name: "Пастельный релакс", color: "#F4E8EC" },
-  { id: 5, name: "Океанский бриз", color: "#80DEEA" },
-  { id: 6, name: "Тёплый камень", color: "#C8A88F" },
-  { id: 7, name: "Моно нойр", color: "#666666" },
-  { id: 8, name: "Сезонный букет", color: "#FFE082" },
+  { id: 1, name: "Тёплый шафран", color: "#FEFAE0" },
+  { id: 2, name: "Золотой янтарь", color: "#BC6C25" },
+  { id: 3, name: "Лесной мох", color: "#606C38" },
+  { id: 4, name: "Глубокий лес", color: "#283618" },
+  { id: 5, name: "Нежная свежесть", color: "#EBF7DC" },
+  { id: 6, name: "Светлый крем", color: "#FDF6D8" },
+  { id: 7, name: "Контрастный графит", color: "#1F2A13" },
+  { id: 8, name: "Песочный сатин", color: "#D9B28C" },
 ];
 
 const colorPalettes = [
-  { name: "Кремовый", colors: ["#FBF7F3", "#EADFD5", "#A7B5A3"] },
-  { name: "Золотой", colors: ["#FBF7F3", "#C8A86B", "#8B7355"] },
-  { name: "Пастель", colors: ["#F4E8EC", "#E6D5E8", "#D8C5E0"] },
-  { name: "Океан", colors: ["#E0F2F7", "#80DEEA", "#4DD0E1"] },
-  { name: "Монохром", colors: ["#FFFFFF", "#9E9E9E", "#424242"] },
+  { name: "Базовый Buddha Spa", colors: ["#FEFAE0", "#BC6C25", "#283618"] },
+  { name: "Лесное утро", colors: ["#EBF7DC", "#606C38", "#283618"] },
+  { name: "Тёплый песок", colors: ["#FEFAE0", "#D9B28C", "#BC6C25"] },
+  { name: "Сумеречный лес", colors: ["#283618", "#606C38", "#BC6C25"] },
+  { name: "Светлый крем", colors: ["#FFFFFF", "#FEFAE0", "#EBF7DC"] },
 ];
 
 export const StepDesign = ({ data, updateData, onNext, onPrev }: StepDesignProps) => {

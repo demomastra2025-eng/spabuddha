@@ -1,0 +1,12 @@
+@font-face {
+    font-family: 'Serico';
+    src: url('Serico-Regular.eot');
+    src: local('Serico Regular'), local('Serico-Regular'),
+        url('Serico-Regular.eot?#iefix') format('embedded-opentype'),
+        url('Serico-Regular.woff2') format('woff2'),
+        url('Serico-Regular.woff') format('woff'),
+        url('Serico-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+

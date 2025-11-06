@@ -9,6 +9,7 @@ import { CalendarIcon, User, Heart, Phone, Mail } from "lucide-react";
 import { format } from "date-fns";
 import { ru } from "date-fns/locale";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 
 interface StepDetailsProps {
   data: CertificateData;
@@ -20,7 +21,7 @@ interface StepDetailsProps {
 export const StepDetails = ({ data, updateData, onNext, onPrev }: StepDetailsProps) => {
   const handleNext = () => {
     if (!data.recipientName || !data.email) {
-      alert("Пожалуйста, заполните обязательные поля");
+      toast.error("Пожалуйста, заполните обязательные поля");
       return;
     }
     onNext();

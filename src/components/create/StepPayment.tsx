@@ -2,9 +2,12 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { CertificateData } from "@/pages/Create";
 import { CertificatePreview } from "./CertificatePreview";
+import { branches } from "@/data/branches";
 import { useState } from "react";
 import { Check, Shield } from "lucide-react";
 import { toast } from "sonner";
+import { formatCurrency } from "@/lib/currency";
+import { sendCertificateEmail } from "@/lib/email";
 
 interface StepPaymentProps {
   data: CertificateData;
@@ -14,7 +17,8 @@ interface StepPaymentProps {
 export const StepPayment = ({ data, onPrev }: StepPaymentProps) => {
   const [agreed, setAgreed] = useState(false);
   const [processing, setProcessing] = useState(false);
-
+  const branchLabel = branches.find((branch) => branch.id === data.branch)?.label ?? "—";
+  const branchAddress = branches.find((branch) => branch.id === data.branch)?.address ?? "—";
   const handlePayment = async () => {
     if (!agreed) {
       toast.error("Необходимо согласиться с условиями");
@@ -22,13 +26,28 @@ export const StepPayment = ({ data, onPrev }: StepPaymentProps) => {
     }
 
     setProcessing(true);
-    
-    // Simulate payment processing
-    setTimeout(() => {
+
+    try {
+      if (data.deliveryMethod === "email" && data.deliveryContact) {
+        await sendCertificateEmail({
+          recipientEmail: data.deliveryContact,
+          recipientName: data.recipientName,
+          senderName: data.senderName,
+          message: data.message,
+          amount: data.amount,
+          branchLabel,
+          deliveryMethod: data.deliveryMethod,
+        });
+      }
+
       toast.success("Оплата прошла успешно! Сертификат отправлен.");
-      setProcessing(false);
       // Here you would redirect to a success page or download the certificate
-    }, 2000);
+    } catch (error) {
+      console.error(error);
+      toast.error("Не удалось отправить сертификат. Попробуйте ещё раз.");
+    } finally {
+      setProcessing(false);
+    }
   };
 
   return (
@@ -45,7 +64,7 @@ export const StepPayment = ({ data, onPrev }: StepPaymentProps) => {
             <div className="space-y-4 mb-8">
               <div className="flex justify-between py-3 border-b border-border">
                 <span className="text-muted-foreground">Номинал:</span>
-                <span className="font-semibold">{data.amount.toLocaleString("ru-RU")} ₽</span>
+                <span className="font-semibold">{formatCurrency(data.amount)}</span>
               </div>
               <div className="flex justify-between py-3 border-b border-border">
                 <span className="text-muted-foreground">Получатель:</span>
@@ -53,7 +72,7 @@ export const StepPayment = ({ data, onPrev }: StepPaymentProps) => {
               </div>
               <div className="flex justify-between py-3 border-b border-border">
                 <span className="text-muted-foreground">Филиал:</span>
-                <span className="font-semibold">{data.branch || "—"}</span>
+                <span className="font-semibold">{branchLabel} - {branchAddress}</span>
               </div>
               <div className="flex justify-between py-3 border-b border-border">
                 <span className="text-muted-foreground">Доставка:</span>
@@ -75,7 +94,7 @@ export const StepPayment = ({ data, onPrev }: StepPaymentProps) => {
             <div className="flex justify-between items-center py-6 border-t-2 border-primary/20">
               <span className="text-xl font-semibold">Итого к оплате:</span>
               <span className="text-3xl font-bold text-primary">
-                {data.amount.toLocaleString("ru-RU")} ₽
+                {formatCurrency(data.amount)}
               </span>
             </div>
 

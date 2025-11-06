@@ -35,7 +35,7 @@ const Create = () => {
   const [certificateData, setCertificateData] = useState<CertificateData>({
     branch: "",
     type: "gift",
-    amount: 5000,
+    amount: 50000,
     senderName: "",
     recipientName: "",
     message: "",
@@ -43,7 +43,7 @@ const Create = () => {
     phone: "",
     email: "",
     templateId: 1,
-    backgroundColor: "#EADFD5",
+    backgroundColor: "#EBF7DC",
     fontFamily: "Playfair Display",
     deliveryMethod: "email",
     deliveryContact: "",

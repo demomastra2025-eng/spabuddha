@@ -4,7 +4,6 @@ import { HowItWorks } from "@/components/HowItWorks";
 import { TemplateGallery } from "@/components/TemplateGallery";
 import { Testimonials } from "@/components/Testimonials";
 import { FAQ } from "@/components/FAQ";
-import { Footer } from "@/components/Footer";
 
 const Index = () => {
   return (
@@ -15,7 +14,6 @@ const Index = () => {
       <TemplateGallery />
       <Testimonials />
       <FAQ />
-      <Footer />
     </div>
   );
 };
