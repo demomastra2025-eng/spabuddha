@@ -2,12 +2,11 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { CertificateData } from "@/pages/Create";
 import { CertificatePreview } from "./CertificatePreview";
-import { branches } from "@/data/branches";
 import { useState } from "react";
 import { Check, Shield } from "lucide-react";
 import { toast } from "sonner";
 import { formatCurrency } from "@/lib/currency";
-import { sendCertificateEmail } from "@/lib/email";
+import { useCompanies } from "@/hooks/useCompanies";
 
 interface StepPaymentProps {
   data: CertificateData;
@@ -17,8 +16,10 @@ interface StepPaymentProps {
 export const StepPayment = ({ data, onPrev }: StepPaymentProps) => {
   const [agreed, setAgreed] = useState(false);
   const [processing, setProcessing] = useState(false);
-  const branchLabel = branches.find((branch) => branch.id === data.branch)?.label ?? "—";
-  const branchAddress = branches.find((branch) => branch.id === data.branch)?.address ?? "—";
+  const { companies } = useCompanies();
+  const selectedBranch = companies.find((branch) => branch.id === data.branch);
+  const branchLabel = selectedBranch?.label ?? "—";
+  const branchAddress = selectedBranch?.address ?? "—";
   const handlePayment = async () => {
     if (!agreed) {
       toast.error("Необходимо согласиться с условиями");
@@ -28,23 +29,42 @@ export const StepPayment = ({ data, onPrev }: StepPaymentProps) => {
     setProcessing(true);
 
     try {
-      if (data.deliveryMethod === "email" && data.deliveryContact) {
-        await sendCertificateEmail({
-          recipientEmail: data.deliveryContact,
-          recipientName: data.recipientName,
-          senderName: data.senderName,
-          message: data.message,
+      const response = await fetch("/api/orders", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          companyId: data.branch,
           amount: data.amount,
-          branchLabel,
-          deliveryMethod: data.deliveryMethod,
-        });
+          type: data.type,
+          templateId: data.templateId,
+          senderName: data.senderName,
+          recipientName: data.recipientName,
+          message: data.message,
+          validUntil: data.validUntil ? data.validUntil.toISOString() : null,
+          delivery: {
+            method: data.deliveryMethod,
+            contact: data.deliveryContact,
+          },
+          client: {
+          email: data.email || undefined,
+          phone: data.phone || undefined,
+          name: data.recipientName,
+          },
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => null);
+        throw new Error(errorData?.message ?? "Не удалось создать заказ");
       }
 
-      toast.success("Оплата прошла успешно! Сертификат отправлен.");
+      toast.success("Заказ создан! Отправим сертификат сразу после оплаты.");
       // Here you would redirect to a success page or download the certificate
     } catch (error) {
       console.error(error);
-      toast.error("Не удалось отправить сертификат. Попробуйте ещё раз.");
+      toast.error(error instanceof Error ? error.message : "Не удалось отправить сертификат. Попробуйте ещё раз.");
     } finally {
       setProcessing(false);
     }
