@@ -1,0 +1,123 @@
+import path from "node:path";
+import { z } from "zod";
+import { query } from "../db/pool";
+import { env } from "../config/env";
+import { generateCertificatePdf } from "../utils/certificateRenderer";
+import { sendCertificateEmail } from "./mailService";
+import { sendWhatsAppFile, sendWhatsAppMessage } from "./whatsappService";
+
+const fulfillmentPayloadSchema = z.object({
+  orderId: z.string(),
+  orderNumber: z.string(),
+  deliveryMethod: z.enum(["email", "whatsapp", "download"]),
+  deliveryContact: z.string().nullable(),
+  totalAmount: z.number(),
+  certificate: z.object({
+    id: z.string(),
+    code: z.string(),
+    name: z.string(),
+    senderName: z.string().nullable(),
+    recipientName: z.string().nullable(),
+    recipientEmail: z.string().nullable(),
+    message: z.string().nullable(),
+    startDate: z.date().nullable(),
+    finishDate: z.date().nullable(),
+  }),
+  company: z.object({
+    label: z.string().nullable(),
+    address: z.string().nullable(),
+  }),
+  client: z.object({
+    name: z.string().nullable(),
+    email: z.string().nullable(),
+    phone: z.string().nullable(),
+  }),
+});
+
+export type FulfillmentPayload = z.infer<typeof fulfillmentPayloadSchema>;
+
+const currencyFormatter = new Intl.NumberFormat("ru-RU", {
+  style: "currency",
+  currency: "KZT",
+  maximumFractionDigits: 0,
+});
+
+export async function runOrderFulfillment(payload: FulfillmentPayload) {
+  const data = fulfillmentPayloadSchema.parse(payload);
+
+  const pdf = await generateCertificatePdf({
+    code: data.certificate.code,
+    certificateName: data.certificate.name,
+    amount: data.totalAmount,
+    recipientName: data.certificate.recipientName ?? data.client.name ?? "Получатель",
+    senderName: data.certificate.senderName ?? "Buddha Spa",
+    companyLabel: data.company.label ?? "Buddha Spa",
+    companyAddress: data.company.address ?? "",
+    message: data.certificate.message ?? "",
+    validUntil: data.certificate.finishDate ?? undefined,
+    issuedAt: data.certificate.startDate ?? new Date(),
+  });
+
+  await query(
+    `UPDATE certificates SET file_url = $2, updated_at = NOW() WHERE id = $1`,
+    [data.certificate.id, pdf.relativePath],
+  );
+
+  await query(
+    `UPDATE orders SET status = 'fulfilled', fulfilled_at = NOW(), updated_at = NOW() WHERE id = $1`,
+    [data.orderId],
+  );
+
+  const summaryText = `Вам подарен сертификат ${data.certificate.code} на сумму ${currencyFormatter.format(
+    data.totalAmount,
+  )} от ${data.certificate.senderName ?? "Buddha Spa"}.`;
+
+  const whatsappChatId = data.deliveryMethod === "whatsapp" ? data.deliveryContact : data.client.phone;
+  const whatsappMessage = `${summaryText} Срок действия до ${
+    data.certificate.finishDate ? data.certificate.finishDate.toLocaleDateString("ru-RU") : "не ограничен"
+  }.`;
+
+  if (whatsappChatId) {
+    await sendWhatsAppMessage({
+      chatId: whatsappChatId,
+      text: whatsappMessage,
+    });
+
+    await sendWhatsAppFile({
+      chatId: whatsappChatId,
+      fileName: pdf.fileName,
+      buffer: pdf.buffer,
+      caption: summaryText,
+      mimeType: "application/pdf",
+    });
+  }
+
+  const emailRecipient =
+    data.deliveryMethod === "email"
+      ? data.deliveryContact
+      : data.certificate.recipientEmail ?? data.client.email ?? undefined;
+
+  if (emailRecipient) {
+    await sendCertificateEmail({
+      to: emailRecipient,
+      subject: `Ваш сертификат Buddha Spa №${data.certificate.code}`,
+      text: `${summaryText}\n\nСкачать сертификат: ${env.APP_BASE_URL ? `${env.APP_BASE_URL.replace(/\/$/, "")}/api/certificates/${data.certificate.id}/download` : "доступно после оплаты"}.`,
+      attachments: [
+        {
+          filename: pdf.fileName,
+          content: pdf.buffer,
+        },
+      ],
+    });
+  }
+
+  const downloadUrl = env.APP_BASE_URL
+    ? `${env.APP_BASE_URL.replace(/\/$/, "")}/api/certificates/${data.certificate.id}/download`
+    : null;
+
+  return {
+    filePath: path.isAbsolute(pdf.relativePath) ? pdf.relativePath : path.join(process.cwd(), pdf.relativePath),
+    relativePath: pdf.relativePath,
+    downloadUrl,
+  };
+}

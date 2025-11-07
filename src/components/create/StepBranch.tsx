@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { CertificateData } from "@/pages/Create";
 import { formatCurrency } from "@/lib/currency";
 import { MapPin, Gift, Sparkles } from "lucide-react";
-import { branches } from "@/data/branches";
+import { useCompanies } from "@/hooks/useCompanies";
 import { toast } from "sonner";
 
 interface StepBranchProps {
@@ -18,6 +18,9 @@ interface StepBranchProps {
 const presetAmounts = [30000, 50000, 70000, 100000];
 
 export const StepBranch = ({ data, updateData, onNext }: StepBranchProps) => {
+  const { companies, loading, error } = useCompanies();
+  const selectedCompany = companies.find((company) => company.id === data.branch);
+
   const handleNext = () => {
     if (!data.branch) {
       toast.error("Пожалуйста, выберите филиал");
@@ -44,12 +47,29 @@ export const StepBranch = ({ data, updateData, onNext }: StepBranchProps) => {
             <MapPin className="w-5 h-5 text-primary" />
             Филиал салона
           </Label>
-          <Select value={data.branch} onValueChange={(value) => updateData({ branch: value })}>
-            <SelectTrigger className="h-14 text-base">
-              <SelectValue placeholder="Выберите филиал" />
+          <Select
+            value={data.branch}
+            onValueChange={(value) => updateData({ branch: value })}
+            disabled={loading || companies.length === 0}
+          >
+            <SelectTrigger className="min-h-[3.5rem] items-start py-3 text-base text-left">
+              <SelectValue placeholder={loading ? "Загружаем филиалы..." : "Выберите филиал"} asChild>
+                {selectedCompany ? (
+                  <div className="flex flex-col overflow-hidden text-left">
+                    <span className="font-medium leading-snug text-foreground">{selectedCompany.label}</span>
+                    <span className="text-sm text-muted-foreground leading-snug">
+                      {selectedCompany.address}
+                    </span>
+                  </div>
+                ) : (
+                  <span className="text-muted-foreground">
+                    {loading ? "Загружаем филиалы..." : "Выберите филиал"}
+                  </span>
+                )}
+              </SelectValue>
             </SelectTrigger>
             <SelectContent>
-              {branches.map((branch) => (
+              {companies.map((branch) => (
                 <SelectItem key={branch.id} value={branch.id} className="py-3">
                   <div>
                     <div className="font-medium">{branch.label}</div>
@@ -59,6 +79,7 @@ export const StepBranch = ({ data, updateData, onNext }: StepBranchProps) => {
               ))}
             </SelectContent>
           </Select>
+          {error && <p className="text-sm text-amber-600">{error}</p>}
         </div>
 
         {/* Certificate Type */}

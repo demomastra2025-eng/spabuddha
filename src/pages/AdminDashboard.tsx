@@ -36,12 +36,17 @@ const mockSchedule = [
 ];
 
 export const AdminDashboard = () => {
-  const { user, signOut } = useAuth();
+  const { session, logout } = useAuth();
 
-  const managerName = useMemo(() => user?.email?.split("@")[0] ?? "менеджер", [user]);
+  const managerName = useMemo(() => {
+    if (session?.user?.name) {
+      return session.user.name;
+    }
+    return session?.user?.email?.split("@")[0] ?? "менеджер";
+  }, [session]);
 
   const handleSignOut = async () => {
-    await signOut();
+    await logout();
     toast.success("Вы вышли из аккаунта");
   };
 
