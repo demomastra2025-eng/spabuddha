@@ -30,7 +30,7 @@ export const CertificatePreview = forwardRef<HTMLDivElement, CertificatePreviewP
   return (
     <div
       ref={ref}
-      className="w-full aspect-[86/60] rounded-[28px] shadow-2xl p-5 flex flex-col relative overflow-hidden transition-all duration-500"
+      className="w-full aspect-[7/5] sm:aspect-[86/60] rounded-[28px] shadow-2xl p-4 sm:p-6 flex flex-col relative overflow-hidden transition-all duration-500 mx-auto"
       style={{
         fontFamily,
         color: textColor,
@@ -56,7 +56,7 @@ export const CertificatePreview = forwardRef<HTMLDivElement, CertificatePreviewP
       <div className="relative z-10 flex-1 flex flex-col gap-4 py-2">
         {/* Title */}
         <div className="text-center space-y-1">
-          <p className="text-2xl text-semibold uppercase tracking-[0.65em] opacity-80">Сертификат</p>
+          <p className="text-[14px] uppercase tracking-[0.65em] opacity-80">Сертификат</p>
         </div>
 
         {/* Amount & Services */}
@@ -65,7 +65,7 @@ export const CertificatePreview = forwardRef<HTMLDivElement, CertificatePreviewP
             <div className="flex-1 text-center md:text-left space-y-2">
               <p className="text-xs uppercase tracking-[0.35em] opacity-70">Для</p>
               <p className="text-4xl font-black tracking-wide">
-                {data.recipientName?.trim() || "Гостя"}
+                {data.recipientName?.trim() || "Получатель"}
               </p>
             </div>
             <div className="flex-1 text-center md:text-right space-y-2">

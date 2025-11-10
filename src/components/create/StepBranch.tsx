@@ -185,7 +185,7 @@ export const StepBranch = ({ data, updateData, onNext }: StepBranchProps) => {
                 <TbMassage className="w-8 h-8 mb-3 text-primary" />
                 <span className="text-base font-semibold">Процедурный</span>
                 <span className="text-sm text-muted-foreground text-center mt-2">
-                  На услугу
+                  На любые услугу
                 </span>
               </Label>
             </div>
@@ -290,28 +290,37 @@ export const StepBranch = ({ data, updateData, onNext }: StepBranchProps) => {
                         tabIndex={0}
                         onClick={() => handleToggleService(service)}
                         onKeyDown={handleCardKeyDown}
-                        className={`flex items-center gap-4 rounded-2xl border-2 px-4 py-3 text-left transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
+                        className={`rounded-2xl border-2 px-4 py-4 text-left transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
                           isSelected ? "border-primary bg-primary/5 shadow-inner" : "border-muted hover:border-primary/40"
                         }`}
                         title={service.description ?? service.name}
                       >
-                        <Checkbox
-                          checked={isSelected}
-                          onCheckedChange={() => handleToggleService(service)}
-                          onClick={(event) => event.stopPropagation()}
-                          className="mt-1"
-                          aria-label={`Выбрать услугу ${service.name}`}
-                        />
-                        <div className="flex-1 flex flex-col gap-1 text-sm sm:flex-row sm:items-center sm:gap-4">
-                          <div className="flex items-center gap-2 min-w-0">
-                            <p className="font-semibold text-foreground truncate">{service.name}</p>
-                            {service.discountPercent ? (
-                              <Badge variant="secondary" className="text-xs whitespace-nowrap">
-                                -{service.discountPercent}%
-                              </Badge>
-                            ) : null}
+                        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:gap-4">
+                          <div className="flex items-start gap-3">
+                            <Checkbox
+                              checked={isSelected}
+                              onCheckedChange={() => handleToggleService(service)}
+                              onClick={(event) => event.stopPropagation()}
+                              className="mt-1 flex-shrink-0"
+                              aria-label={`Выбрать услугу ${service.name}`}
+                            />
+                            <div className="space-y-2">
+                              <div className="flex flex-col gap-1 min-w-0 text-sm md:flex-row md:items-center md:gap-3">
+                                <p className="font-semibold text-foreground line-clamp-2">{service.name}</p>
+                                {service.discountPercent ? (
+                                  <Badge variant="secondary" className="text-xs w-max">
+                                    -{service.discountPercent}%
+                                  </Badge>
+                                ) : null}
+                              </div>
+                              {service.description && (
+                                <p className="text-xs text-muted-foreground line-clamp-2">
+                                  {service.description}
+                                </p>
+                              )}
+                            </div>
                           </div>
-                          <div className="flex flex-wrap items-center gap-3 sm:justify-end sm:flex-1">
+                          <div className="flex flex-wrap items-center gap-3 text-sm sm:ml-auto sm:justify-end">
                             {service.durationMinutes ? (
                               <span className="text-muted-foreground whitespace-nowrap">
                                 {service.durationMinutes} мин.

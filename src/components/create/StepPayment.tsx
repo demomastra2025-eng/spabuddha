@@ -231,8 +231,8 @@ export const StepPayment = ({ data, onPrev }: StepPaymentProps) => {
                 <span className="font-semibold">{formatCurrency(orderTotal)}</span>
               </div>
               <div className="flex justify-between py-3 border-b border-border">
-                <span className="text-muted-foreground">Филиал:</span>
-                <span className="font-semibold">{branchLabel} - {branchAddress}</span>
+                <span className="text-muted-foreground">Филиал: </span>
+                <span className="font-semibold"> {branchLabel} - {branchAddress}</span>
               </div>
             </div>
 
@@ -354,11 +354,13 @@ export const StepPayment = ({ data, onPrev }: StepPaymentProps) => {
 
         {/* Certificate Preview */}
         <div className="lg:sticky lg:top-8 h-fit">
-          <div className="bg-card rounded-2xl shadow-spa p-8">
+          <div className="bg-card rounded-2xl shadow-spa p-4 sm:p-8">
             <h3 className="text-xl font-semibold text-foreground mb-6">
               Финальный предпросмотр
             </h3>
-            <CertificatePreview ref={previewRef} data={data} />
+            <div className="w-full max-w-[560px] mx-auto">
+              <CertificatePreview ref={previewRef} data={data} />
+            </div>
             <Button
               variant="outline"
               className="w-full mt-6"

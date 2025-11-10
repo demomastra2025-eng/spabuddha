@@ -6,7 +6,7 @@ interface StepIndicatorProps {
 }
 
 const steps = [
-  "Тип и филиал",
+  "Филиал",
   "Данные",
   "Дизайн",
   "Доставка",
