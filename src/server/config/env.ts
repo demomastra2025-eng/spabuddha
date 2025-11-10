@@ -19,15 +19,17 @@ const envSchema = z.object({
   WAZZUP_API_URL: z.string().default("https://api.wazzup24.com/v3"),
   WAZZUP_API_TOKEN: z.string().optional(),
   WAZZUP_CHANNEL_ID: z.string().optional(),
-  SMTP_HOST: z.string().optional(),
-  SMTP_PORT: z.coerce.number().default(587),
-  SMTP_SECURE: z
+  RESEND_API_KEY: z.string().optional(),
+  RESEND_FROM: z.string().email().optional(),
+  ONEVISION_API_URL: z.string().url().default("https://api.onevisionpay.com/"),
+  ONEVISION_PAYMENT_LIFETIME: z
     .string()
     .optional()
-    .transform((value) => (value ? value === "true" : undefined)),
-  SMTP_USER: z.string().optional(),
-  SMTP_PASSWORD: z.string().optional(),
-  SMTP_FROM: z.string().optional(),
+    .transform((value) => (value ? Number(value) : undefined))
+    .refine(
+      (value) => (value === undefined || (Number.isFinite(value) && value > 0)),
+      "ONEVISION_PAYMENT_LIFETIME must be a positive number",
+    ),
 });
 
 const parsed = envSchema.safeParse(process.env);
@@ -41,5 +43,6 @@ export const env = {
   ...parsed.data,
   isProduction: parsed.data.NODE_ENV === "production",
   hashRounds: parsed.data.BCRYPT_ROUNDS ?? 10,
-  SMTP_SECURE: parsed.data.SMTP_SECURE ?? false,
+  ONEVISION_API_URL: parsed.data.ONEVISION_API_URL.replace(/\/+$/, ""),
+  ONEVISION_PAYMENT_LIFETIME: parsed.data.ONEVISION_PAYMENT_LIFETIME ?? 900,
 };

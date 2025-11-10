@@ -9,6 +9,7 @@ interface UserRow {
   role: string;
   display_name: string | null;
   is_active: boolean;
+  company_id: string | null;
 }
 
 export interface AuthenticatedUser {
@@ -16,11 +17,12 @@ export interface AuthenticatedUser {
   email: string;
   role: string;
   name: string | null;
+  companyId: string | null;
 }
 
 export async function findUserByEmail(email: string): Promise<UserRow | null> {
   const result = await query<UserRow>(
-    `SELECT id, email, password_hash, role, display_name, is_active FROM users WHERE email = $1 LIMIT 1`,
+    `SELECT id, email, password_hash, role, display_name, is_active, company_id FROM users WHERE email = $1 LIMIT 1`,
     [email],
   );
   return result.rows[0] ?? null;
@@ -46,5 +48,6 @@ export async function authenticate(email: string, password: string): Promise<Aut
     email: user.email,
     role: user.role,
     name: user.display_name,
+    companyId: user.company_id,
   };
 }

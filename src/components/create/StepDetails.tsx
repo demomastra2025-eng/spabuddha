@@ -2,13 +2,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { CertificateData } from "@/pages/Create";
+import { CertificateData, DEFAULT_VALIDITY_MONTHS } from "@/types/certificates";
 import { CalendarIcon, User, Heart, Phone, Mail } from "lucide-react";
-import { format } from "date-fns";
+import { addMonths, format } from "date-fns";
 import { ru } from "date-fns/locale";
-import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
 interface StepDetailsProps {
@@ -18,12 +15,28 @@ interface StepDetailsProps {
   onPrev: () => void;
 }
 
+const getRecommendedValidityMonths = (date: Date) => {
+  const month = date.getMonth(); // 0-based
+  const day = date.getDate();
+  const isInternationalWomensDay = month === 2 && day === 8;
+  const daysUntilNewYear = month === 11 ? 31 - day : Number.POSITIVE_INFINITY;
+  const isPreNewYear = month === 11 && daysUntilNewYear < 7;
+  return isInternationalWomensDay || isPreNewYear ? 9 : DEFAULT_VALIDITY_MONTHS;
+};
+
 export const StepDetails = ({ data, updateData, onNext, onPrev }: StepDetailsProps) => {
+  const purchaseDate = data.purchaseDate ?? new Date();
+  const recommendedMonths = getRecommendedValidityMonths(purchaseDate);
+  const recommendedUntil = addMonths(purchaseDate, recommendedMonths);
+  const adminUntil = data.validUntil ?? recommendedUntil;
+  const isExtended = recommendedMonths > DEFAULT_VALIDITY_MONTHS;
+
   const handleNext = () => {
-    if (!data.recipientName || !data.email) {
-      toast.error("Пожалуйста, заполните обязательные поля");
+    if (!data.recipientName || !data.phone) {
+      toast.error("Укажите получателя и телефон для связи");
       return;
     }
+    updateData({ validUntil: adminUntil });
     onNext();
   };
 
@@ -44,7 +57,7 @@ export const StepDetails = ({ data, updateData, onNext, onPrev }: StepDetailsPro
           <div className="space-y-2">
             <Label htmlFor="senderName" className="flex items-center gap-2">
               <User className="w-4 h-4 text-primary" />
-              От кого
+              Ваше имя
             </Label>
             <Input
               id="senderName"
@@ -94,33 +107,23 @@ export const StepDetails = ({ data, updateData, onNext, onPrev }: StepDetailsPro
             <CalendarIcon className="w-4 h-4 text-primary" />
             Срок действия
           </Label>
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                variant="outline"
-                className={cn(
-                  "w-full h-12 justify-start text-left font-normal",
-                  !data.validUntil && "text-muted-foreground"
-                )}
-              >
-                <CalendarIcon className="mr-2 h-4 w-4" />
-                {data.validUntil ? (
-                  format(data.validUntil, "d MMMM yyyy", { locale: ru })
-                ) : (
-                  <span>Выберите дату (по умолчанию 6 месяцев)</span>
-                )}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="start">
-              <Calendar
-                mode="single"
-                selected={data.validUntil}
-                onSelect={(date) => updateData({ validUntil: date })}
-                initialFocus
-                disabled={(date) => date < new Date()}
-              />
-            </PopoverContent>
-          </Popover>
+          <div className="rounded-xl border border-muted bg-muted/20 px-4 py-3 space-y-2">
+            {(() => {
+              return (
+                <>
+                  <p className="font-semibold text-foreground">
+                    С {format(purchaseDate, "d MMMM yyyy", { locale: ru })} по{" "}
+                    {format(adminUntil, "d MMMM yyyy", { locale: ru })} ·{" "}
+                    {isExtended ? "6 месяцев (праздничное продление)" : `${DEFAULT_VALIDITY_MONTHS} месяцев`}
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    Дату при необходимости продлевает администратор или менеджер филиала.
+                    {isExtended && " Для покупок 8 марта и за 7 дней до Нового года действуют расширенные сроки."}
+                  </p>
+                </>
+              );
+            })()}
+          </div>
         </div>
 
         {/* Contact Information */}
@@ -128,7 +131,7 @@ export const StepDetails = ({ data, updateData, onNext, onPrev }: StepDetailsPro
           <div className="space-y-2">
             <Label htmlFor="phone" className="flex items-center gap-2">
               <Phone className="w-4 h-4 text-primary" />
-              Телефон
+              Ваш телефон <span className="text-destructive">*</span>
             </Label>
             <Input
               id="phone"
@@ -137,13 +140,15 @@ export const StepDetails = ({ data, updateData, onNext, onPrev }: StepDetailsPro
               value={data.phone}
               onChange={(e) => updateData({ phone: e.target.value })}
               className="h-12"
+              required
             />
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="email" className="flex items-center gap-2">
               <Mail className="w-4 h-4 text-primary" />
-              Email <span className="text-destructive">*</span>
+              Ваш Email{" "}
+              <span className="text-xs text-muted-foreground">(по желанию)</span>
             </Label>
             <Input
               id="email"
@@ -152,7 +157,6 @@ export const StepDetails = ({ data, updateData, onNext, onPrev }: StepDetailsPro
               value={data.email}
               onChange={(e) => updateData({ email: e.target.value })}
               className="h-12"
-              required
             />
           </div>
         </div>

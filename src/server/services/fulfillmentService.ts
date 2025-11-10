@@ -32,6 +32,13 @@ const fulfillmentPayloadSchema = z.object({
     email: z.string().nullable(),
     phone: z.string().nullable(),
   }),
+  template: z
+    .object({
+      backgroundUrl: z.string().nullable().optional(),
+      fontFamily: z.string().nullable().optional(),
+      textColor: z.string().nullable().optional(),
+    })
+    .optional(),
 });
 
 export type FulfillmentPayload = z.infer<typeof fulfillmentPayloadSchema>;
@@ -56,6 +63,9 @@ export async function runOrderFulfillment(payload: FulfillmentPayload) {
     message: data.certificate.message ?? "",
     validUntil: data.certificate.finishDate ?? undefined,
     issuedAt: data.certificate.startDate ?? new Date(),
+    backgroundImageUrl: data.template?.backgroundUrl ?? undefined,
+    textColor: data.template?.textColor ?? undefined,
+    fontFamily: data.template?.fontFamily ?? undefined,
   });
 
   await query(
@@ -72,12 +82,12 @@ export async function runOrderFulfillment(payload: FulfillmentPayload) {
     data.totalAmount,
   )} от ${data.certificate.senderName ?? "Buddha Spa"}.`;
 
-  const whatsappChatId = data.deliveryMethod === "whatsapp" ? data.deliveryContact : data.client.phone;
+  const whatsappChatId = data.deliveryMethod === "whatsapp" ? data.deliveryContact ?? data.client.phone : null;
   const whatsappMessage = `${summaryText} Срок действия до ${
     data.certificate.finishDate ? data.certificate.finishDate.toLocaleDateString("ru-RU") : "не ограничен"
   }.`;
 
-  if (whatsappChatId) {
+  if (data.deliveryMethod === "whatsapp" && whatsappChatId) {
     await sendWhatsAppMessage({
       chatId: whatsappChatId,
       text: whatsappMessage,

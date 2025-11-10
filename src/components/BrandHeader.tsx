@@ -12,7 +12,7 @@ const BrandHeader = () => {
       </div>
       <nav className="flex items-center text-sm gap-4">
         <Link to="/" className="hover:underline">Главная</Link>
-        <Link to="/create" className="hover:underline">Создать</Link>
+        <Link to="/create" className="hover:underline">Создать сертификат</Link>
       </nav>
     </header>
   );

@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { pool, query, type PoolClientLike } from "../db/pool";
+import { AppError } from "../errors/AppError";
 
 const clientRow = z.object({
   id: z.string(),
@@ -67,7 +68,7 @@ export async function listClients() {
 
 export async function findOrCreateClient(input: ClientInput, client?: PoolClientLike) {
   if (!input.email && !input.phone) {
-    throw new Error("Client email or phone is required");
+    throw new AppError(400, "Укажите email или телефон получателя");
   }
 
   const executor = client ?? pool;

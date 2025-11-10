@@ -142,3 +142,47 @@ CREATE INDEX IF NOT EXISTS idx_certificates_code ON certificates(code);
 CREATE INDEX IF NOT EXISTS idx_orders_order_number ON orders(order_number);
 CREATE INDEX IF NOT EXISTS idx_payments_order_id ON payments(order_id);
 CREATE INDEX IF NOT EXISTS idx_certificate_events_certificate_id ON certificate_events(certificate_id);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_template_name_unique ON template(name);
+
+ALTER TABLE company
+    ADD COLUMN IF NOT EXISTS slug TEXT UNIQUE;
+
+ALTER TABLE users
+    ADD COLUMN IF NOT EXISTS company_id UUID REFERENCES company(id);
+
+CREATE INDEX IF NOT EXISTS idx_users_company_id ON users(company_id);
+
+CREATE TABLE IF NOT EXISTS certificate_nominal_options (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    amount NUMERIC(12,2) NOT NULL,
+    currency TEXT NOT NULL DEFAULT 'KZT',
+    description TEXT,
+    is_featured BOOLEAN NOT NULL DEFAULT FALSE,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE UNIQUE INDEX IF NOT EXISTS idx_certificate_nominal_unique ON certificate_nominal_options(amount, currency);
+
+CREATE TABLE IF NOT EXISTS spa_procedures (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name TEXT NOT NULL,
+    description TEXT,
+    category TEXT,
+    duration_minutes INTEGER,
+    price NUMERIC(12,2) NOT NULL,
+    discount_percent NUMERIC(5,2) NOT NULL DEFAULT 0,
+    currency TEXT NOT NULL DEFAULT 'KZT',
+    company_id UUID REFERENCES company(id),
+    is_active BOOLEAN NOT NULL DEFAULT TRUE,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+ALTER TABLE spa_procedures
+    ADD COLUMN IF NOT EXISTS discount_percent NUMERIC(5,2) NOT NULL DEFAULT 0;
+
+CREATE INDEX IF NOT EXISTS idx_spa_procedures_company_id ON spa_procedures(company_id);
+
+ALTER TABLE spa_procedures
+    ADD COLUMN IF NOT EXISTS discount_percent NUMERIC(5,2) NOT NULL DEFAULT 0;

@@ -6,6 +6,7 @@ interface TokenPayload {
   email: string;
   role: string;
   name?: string | null;
+  companyId?: string | null;
 }
 
 export function signAccessToken(payload: TokenPayload) {

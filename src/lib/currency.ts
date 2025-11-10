@@ -1,7 +1,5 @@
-const formatter = new Intl.NumberFormat("kk-KZ", {
-  style: "currency",
-  currency: "KZT",
+const formatter = new Intl.NumberFormat("ru-RU", {
   maximumFractionDigits: 0,
 });
 
-export const formatCurrency = (value: number) => formatter.format(value);
+export const formatCurrency = (value: number) => `${formatter.format(value)} ₸`;

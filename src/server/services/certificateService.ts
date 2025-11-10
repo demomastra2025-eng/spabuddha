@@ -94,8 +94,13 @@ function mapCertificate(row: CertificateRow): CertificateView {
   };
 }
 
-export async function listCertificates() {
-  const result = await query<CertificateRow>("SELECT * FROM certificates ORDER BY created_at DESC");
+export async function listCertificates(filter?: { companyId?: string }) {
+  const whereClause = filter?.companyId ? "WHERE company_id = $1" : "";
+  const params = filter?.companyId ? [filter.companyId] : [];
+  const result = await query<CertificateRow>(
+    `SELECT * FROM certificates ${whereClause} ORDER BY created_at DESC`,
+    params,
+  );
   return result.rows.map(mapCertificate);
 }
 

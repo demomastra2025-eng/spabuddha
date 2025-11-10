@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { query } from "../db/pool";
+import { AppError } from "../errors/AppError";
 
 const companyRow = z.object({
   id: z.string(),
@@ -20,6 +21,7 @@ const companyRow = z.object({
   status: z.string(),
   manager_name: z.string().nullable(),
   timezone: z.string().nullable(),
+  slug: z.string().nullable(),
 });
 
 export type Company = z.infer<typeof companyRow>;
@@ -43,6 +45,7 @@ export interface CompanyView {
   status: string;
   managerName: string | null;
   timezone: string | null;
+  slug: string | null;
 }
 
 export const upsertCompanySchema = z.object({
@@ -83,6 +86,7 @@ function mapCompany(row: Company): CompanyView {
     status: row.status,
     managerName: row.manager_name,
     timezone: row.timezone,
+    slug: row.slug,
   };
 }
 
@@ -172,4 +176,25 @@ export async function updateCompany(id: string, input: z.infer<typeof upsertComp
 
 export async function deleteCompany(id: string) {
   await query("DELETE FROM company WHERE id = $1", [id]);
+}
+
+const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+export async function resolveCompanyId(identifier: string): Promise<string> {
+  if (!identifier) {
+    throw new AppError(400, "Не указан филиал");
+  }
+
+  if (uuidRegex.test(identifier)) {
+    return identifier;
+  }
+
+  const result = await query<{ id: string }>("SELECT id FROM company WHERE slug = $1 LIMIT 1", [identifier]);
+  const row = result.rows[0];
+
+  if (!row) {
+    throw new AppError(400, "Филиал не найден");
+  }
+
+  return row.id;
 }

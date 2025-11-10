@@ -13,6 +13,9 @@ type CertificatePdfOptions = {
   message: string;
   validUntil?: Date;
   issuedAt: Date;
+  backgroundImageUrl?: string;
+  textColor?: string;
+  fontFamily?: string;
 };
 
 const currencyFormatter = new Intl.NumberFormat("ru-RU", {
@@ -22,7 +25,9 @@ const currencyFormatter = new Intl.NumberFormat("ru-RU", {
 });
 
 export async function generateCertificatePdf(options: CertificatePdfOptions) {
-  const doc = new PDFDocument({ size: "A4", margin: 50 });
+  const CARD_WIDTH = 350;
+  const CARD_HEIGHT = 220;
+  const doc = new PDFDocument({ size: [CARD_WIDTH, CARD_HEIGHT], margin: 20 });
   const chunks: Buffer[] = [];
 
   const resultPromise = new Promise<Buffer>((resolve, reject) => {
@@ -31,45 +36,60 @@ export async function generateCertificatePdf(options: CertificatePdfOptions) {
     doc.on("error", reject);
   });
 
-  doc.fillColor("#2d2a26");
-  doc.fontSize(28).text("Buddha Spa", { align: "center" });
-  doc.moveDown();
+  const textColor = options.textColor ?? "#ffffff";
+  const fontFamily = options.fontFamily ?? "Helvetica-Bold";
 
-  doc.fontSize(22).text(options.certificateName, { align: "center" });
-  doc.moveDown(1.5);
+  if (options.backgroundImageUrl) {
+    try {
+      const response = await fetch(options.backgroundImageUrl);
+      if (response.ok) {
+        const buffer = Buffer.from(await response.arrayBuffer());
+        doc.image(buffer, 0, 0, { width: CARD_WIDTH, height: CARD_HEIGHT });
+      } else {
+        doc.rect(0, 0, CARD_WIDTH, CARD_HEIGHT).fill("#1f1f1f");
+      }
+    } catch {
+      doc.rect(0, 0, CARD_WIDTH, CARD_HEIGHT).fill("#1f1f1f");
+    }
+  } else {
+    doc.rect(0, 0, CARD_WIDTH, CARD_HEIGHT).fill("#1f1f1f");
+  }
 
-  doc.fontSize(16).text(`Код сертификата: ${options.code}`, { align: "center" });
-  doc.moveDown();
-
-  doc.fontSize(14).text(`Получатель: ${options.recipientName}`, { align: "left" });
+  doc.fillColor(textColor);
+  doc.font(fontFamily).fontSize(12).text("Buddha Spa", { align: "left" });
   doc.moveDown(0.5);
-  doc.text(`От: ${options.senderName}`);
-  doc.moveDown(0.5);
+  doc.font(fontFamily).fontSize(14).text(options.certificateName, { align: "left" });
+  doc.moveDown(0.8);
+
+  doc.fontSize(10).text(`Код: ${options.code}`);
   doc.text(`Номинал: ${currencyFormatter.format(options.amount)}`);
-  doc.moveDown(0.5);
-  doc.text(`Дата выпуска: ${options.issuedAt.toLocaleDateString("ru-RU")}`);
+  doc.text(`Получатель: ${options.recipientName}`);
+  doc.text(`От: ${options.senderName}`);
+  doc.text(`Выпущен: ${options.issuedAt.toLocaleDateString("ru-RU")}`);
 
   if (options.validUntil) {
-    doc.moveDown(0.5);
     doc.text(`Действителен до: ${options.validUntil.toLocaleDateString("ru-RU")}`);
   }
 
   if (options.message) {
-    doc.moveDown();
-    doc.fontSize(12).text(`Поздравление: ${options.message}`, { align: "left" });
+    doc.moveDown(0.5);
+    doc.fontSize(9).text(`Сообщение: ${options.message}`, { align: "left" });
   }
 
-  doc.moveDown();
-  doc.fontSize(12).text(`Филиал: ${options.companyLabel}`, { align: "left" });
+  doc.moveDown(0.6);
+  doc.fontSize(9).text(`Филиал: ${options.companyLabel}`, { align: "left" });
   if (options.companyAddress) {
-    doc.moveDown(0.3);
     doc.text(`Адрес: ${options.companyAddress}`);
   }
 
-  doc.moveDown(2);
-  doc.fontSize(10).fillColor("#6b6b6b").text("Предъявите этот сертификат при посещении Buddha Spa. Сертификат не подлежит возврату и обмену на денежные средства.", {
-    align: "center",
-  });
+  doc.moveDown(0.8);
+  doc
+    .fontSize(7)
+    .fillColor(textColor)
+    .text(
+      "Предъявите этот сертификат при посещении Buddha Spa. Сертификат не подлежит возврату и обмену на денежные средства.",
+      { align: "left" },
+    );
 
   doc.end();
 

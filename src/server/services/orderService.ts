@@ -3,15 +3,26 @@ import { withTransaction } from "../db/pool";
 import { clientInputSchema, findOrCreateClient } from "./clientService";
 import { createCertificate } from "./certificateService";
 import { generateOrderNumber } from "../utils/order";
+import { AppError } from "../errors/AppError";
+import { resolveCompanyId } from "./companyService";
 
 const deliverySchema = z.object({
   method: z.enum(["email", "whatsapp", "download"]),
   contact: z.string().nullable().optional(),
 });
 
+const serviceSelectionSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  price: z.number().positive(),
+  discountPercent: z.number().min(0).max(100).default(0),
+  branchId: z.string().optional(),
+  currency: z.string().default("KZT"),
+});
+
 export const createOrderSchema = z.object({
   companyId: z.string().min(1),
-  amount: z.number().positive(),
+  amount: z.number().positive().optional(),
   type: z.enum(["gift", "procedure"]),
   templateId: z.string().nullable().optional(),
   senderName: z.string().optional(),
@@ -22,6 +33,30 @@ export const createOrderSchema = z.object({
   client: clientInputSchema.extend({
     name: z.string().optional(),
   }),
+  services: z.array(serviceSelectionSchema).optional(),
+}).superRefine((data, ctx) => {
+  const hasServices = Boolean(data.services?.length);
+  if (data.type === "procedure" && !hasServices) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: "Для процедурного сертификата выберите хотя бы одну услугу",
+      path: ["services"],
+    });
+  }
+  if (!hasServices && (!data.amount || data.amount <= 0)) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: "Укажите номинал сертификата",
+      path: ["amount"],
+    });
+  }
+  if (!data.client.email && !data.client.phone) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: "Укажите email или телефон получателя",
+      path: ["client"],
+    });
+  }
 });
 
 export type CreateOrderInput = z.infer<typeof createOrderSchema>;
@@ -42,6 +77,8 @@ interface OrderRow {
   delivery_contact: string | null;
   notes: string | null;
   fulfilled_at: Date | null;
+  recipient_name: string | null;
+  sender_name: string | null;
 }
 
 function mapOrder(row: OrderRow) {
@@ -61,12 +98,37 @@ function mapOrder(row: OrderRow) {
     deliveryContact: row.delivery_contact,
     notes: row.notes,
     fulfilledAt: row.fulfilled_at,
+    recipientName: row.recipient_name,
+    senderName: row.sender_name,
   };
 }
 
-export async function createOrder(input: CreateOrderInput) {
+function applyDiscount(price: number, discountPercent?: number) {
+  if (!discountPercent) {
+    return price;
+  }
+  return Math.round(price * (1 - discountPercent / 100));
+}
+
+export type OrderView = ReturnType<typeof mapOrder>;
+
+export async function createOrder(input: CreateOrderInput, options?: { provider?: string }) {
   return withTransaction(async (client) => {
+    const normalizedCompanyId = await resolveCompanyId(input.companyId);
     const contactName = input.client.name ?? input.recipientName;
+    const hasServices = Boolean(input.services?.length);
+    const normalizedAmount = hasServices
+      ? input.services!.reduce(
+          (sum, service) => sum + applyDiscount(service.price, service.discountPercent),
+          0,
+        )
+      : input.amount ?? null;
+
+    if (!normalizedAmount || normalizedAmount <= 0) {
+      throw new AppError(400, "Некорректный номинал сертификата");
+    }
+
+    const serviceDetails = hasServices ? JSON.stringify(input.services) : undefined;
 
     const clientRecord = await findOrCreateClient(
       {
@@ -80,9 +142,9 @@ export async function createOrder(input: CreateOrderInput) {
     const certificate = await createCertificate(
       {
         name: `${input.type === "gift" ? "Подарочный" : "Процедурный"} сертификат`,
-        companyId: input.companyId,
+        companyId: normalizedCompanyId,
         type: input.type,
-        price: input.amount,
+        price: normalizedAmount,
         templateId: input.templateId ?? undefined,
         senderName: input.senderName,
         recipientName: input.recipientName,
@@ -91,6 +153,7 @@ export async function createOrder(input: CreateOrderInput) {
         startDate: new Date().toISOString(),
         finishDate: input.validUntil ?? undefined,
         currency: "KZT",
+        service: serviceDetails,
       },
       client,
     );
@@ -107,8 +170,8 @@ export async function createOrder(input: CreateOrderInput) {
         orderNumber,
         clientRecord.id,
         certificate.id,
-        input.companyId,
-        input.amount,
+        normalizedCompanyId,
+        normalizedAmount,
         input.delivery.method,
         input.delivery.contact ?? null,
       ],
@@ -126,26 +189,51 @@ export async function createOrder(input: CreateOrderInput) {
       [orderResult.rows[0].id, clientRecord.id],
     );
 
-    await client.query(
+    const metadata = {
+      deliveryMethod: input.delivery.method,
+      deliveryContact: input.delivery.contact ?? null,
+    };
+
+    const paymentResult = await client.query<{ id: string }>(
       `INSERT INTO payments (order_id, amount, currency, status, provider, metadata)
-       VALUES ($1,$2,'KZT','pending','manual', jsonb_build_object('deliveryMethod', $3))`,
-      [orderResult.rows[0].id, input.amount, input.delivery.method],
+       VALUES ($1,$2,'KZT','pending',$3,$4::jsonb)
+       RETURNING id`,
+      [orderResult.rows[0].id, normalizedAmount, options?.provider ?? "manual", JSON.stringify(metadata)],
     );
+
+    const paymentId = paymentResult.rows[0]?.id ?? null;
+
+    if (!paymentId) {
+      throw new AppError(500, "Не удалось создать платёж для заказа");
+    }
 
     return {
       order: mapOrder(orderResult.rows[0]),
       certificate,
+      paymentId,
     };
   });
 }
 
-export async function listOrders() {
-  const result = await withTransaction(async (client) => {
+export async function listOrders(filter?: { companyId?: string }) {
+  return withTransaction(async (client) => {
+    const params: unknown[] = [];
+    let whereClause = "";
+
+    if (filter?.companyId) {
+      params.push(filter.companyId);
+      whereClause = `WHERE o.company_id = $${params.length}`;
+    }
+
     const orders = await client.query<OrderRow>(
-      `SELECT * FROM orders ORDER BY created_at DESC LIMIT 100`,
+      `SELECT o.*, c.recipient_name, c.sender_name
+       FROM orders o
+       INNER JOIN certificates c ON c.id = o.certificate_id
+       ${whereClause}
+       ORDER BY o.created_at DESC
+       LIMIT 100`,
+      params,
     );
     return orders.rows.map(mapOrder);
   });
-
-  return result;
 }

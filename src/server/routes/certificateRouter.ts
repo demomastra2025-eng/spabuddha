@@ -2,7 +2,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { Router } from "express";
 import { asyncHandler } from "../middleware/asyncHandler";
-import { requireAdmin } from "../middleware/authMiddleware";
+import { requireAdmin, requireManagerOrAdmin } from "../middleware/authMiddleware";
 import { query } from "../db/pool";
 import { certificateInputSchema, createCertificate, getCertificateById, listCertificates } from "../services/certificateService";
 
@@ -10,9 +10,11 @@ export const certificateRouter = Router();
 
 certificateRouter.get(
   "/",
-  requireAdmin,
-  asyncHandler(async (_req, res) => {
-    const certificates = await listCertificates();
+  requireManagerOrAdmin,
+  asyncHandler(async (req, res) => {
+    const filter =
+      req.user?.role === "manager" && req.user.companyId ? { companyId: req.user.companyId } : undefined;
+    const certificates = await listCertificates(filter);
     res.json(certificates);
   }),
 );

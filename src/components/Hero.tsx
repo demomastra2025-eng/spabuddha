@@ -35,7 +35,7 @@ export const Hero = () => {
               onClick={() => navigate("/create")}
             >
               <Gift className="w-10 h-10 mr-3 group-hover:rotate-12 transition-transform" />
-              Создать сертификат
+              Купить сертификат
             </Button>
             <Button
               size="lg"

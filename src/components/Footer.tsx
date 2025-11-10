@@ -10,11 +10,12 @@ export const Footer = () => {
         <div className="grid md:grid-cols-4 gap-8 mb-12">
           {/* Brand */}
           <div className="space-y-4">
-            <h3 className="text-2xl font-serif font-bold">Buddha Spa Certificates</h3>
+            <img src="/logo.png" alt="Buddha Spa" className="h-12 w-auto" />
             <p className="text-background/70 leading-relaxed">
               Премиальные подарочные сертификаты сети Buddha Spa.
             </p>
-            <li className="flex items-start gap-2">
+            <ul className="space-y-2 text-background/70">
+              <li className="flex items-start gap-2">
                 <Clock3 className="w-5 h-5 mt-0.5 flex-shrink-0" />
                 <span>Ежедневно с 11:00 до 23:00</span>
               </li>
@@ -22,6 +23,7 @@ export const Footer = () => {
                 <Mail className="w-5 h-5 mt-0.5 flex-shrink-0" />
                 <span>info@buddhaspa.kz</span>
               </li>
+            </ul>
           </div>
 
           {/* Quick Links */}

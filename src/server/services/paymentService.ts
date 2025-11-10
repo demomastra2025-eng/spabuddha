@@ -1,6 +1,8 @@
 import { z } from "zod";
 import { query, withTransaction } from "../db/pool";
 import { runOrderFulfillment, type FulfillmentPayload } from "./fulfillmentService";
+import { env } from "../config/env";
+import { AppError } from "../errors/AppError";
 
 export const paymentRowSchema = z.object({
   id: z.string(),
@@ -38,8 +40,22 @@ export function mapPayment(row: PaymentRow) {
   };
 }
 
-export async function listPayments() {
-  const result = await query<PaymentRow>("SELECT * FROM payments ORDER BY created_at DESC");
+export async function listPayments(filter?: { companyId?: string }) {
+  const params: unknown[] = [];
+  let whereClause = "";
+
+  if (filter?.companyId) {
+    params.push(filter.companyId);
+    whereClause = `WHERE o.company_id = $${params.length}`;
+  }
+
+  const result = await query<PaymentRow>(
+    `SELECT p.* FROM payments p
+     JOIN orders o ON o.id = p.order_id
+     ${whereClause}
+     ORDER BY p.created_at DESC`,
+    params,
+  );
   return result.rows.map(mapPayment);
 }
 
@@ -49,6 +65,7 @@ const fulfillmentRowSchema = z.object({
   delivery_method: z.enum(["email", "whatsapp", "download"]),
   delivery_contact: z.string().nullable(),
   total_amount: z.coerce.number(),
+  company_id: z.string(),
   certificate_id: z.string(),
   certificate_code: z.string(),
   certificate_name: z.string(),
@@ -64,6 +81,10 @@ const fulfillmentRowSchema = z.object({
   client_last_name: z.string().nullable(),
   client_email: z.string().nullable(),
   client_phone: z.string().nullable(),
+  certificate_file_url: z.string().nullable(),
+  template_id: z.string().nullable(),
+  template_background_url: z.string().nullable(),
+  template_layout_config: z.any().nullable(),
 });
 
 export type PaymentConfirmationResult = {
@@ -72,34 +93,30 @@ export type PaymentConfirmationResult = {
   filePath: string;
 };
 
-export async function markPaymentAsPaid(id: string, transactionId: string): Promise<PaymentConfirmationResult | null> {
-  const transactionResult = await withTransaction(async (client) => {
-    const paymentResult = await client.query<PaymentRow>(
-      `UPDATE payments SET status = 'paid', transaction_id = $2, paid_at = NOW(), updated_at = NOW()
-       WHERE id = $1
-       RETURNING *`,
-      [id, transactionId],
+export async function markPaymentAsPaid(
+  id: string,
+  transactionId: string,
+  options?: { companyId?: string },
+): Promise<PaymentConfirmationResult | null> {
+  const context = await withTransaction(async (client) => {
+    const paymentSelection = await client.query<PaymentRow>(
+      `SELECT * FROM payments WHERE id = $1 FOR UPDATE`,
+      [id],
     );
 
-    const paymentRow = paymentResult.rows[0];
+    const paymentRow = paymentSelection.rows[0];
     if (!paymentRow) {
       return null;
     }
-
-    const payment = mapPayment(paymentRowSchema.parse(paymentRow));
-
-    await client.query(
-      `UPDATE orders SET payment_status = 'paid', status = 'paid', updated_at = NOW() WHERE id = $1`,
-      [payment.orderId],
-    );
 
     const fulfillmentResult = await client.query(
       `SELECT
          o.id AS order_id,
          o.order_number,
-         o.delivery_method,
+       o.delivery_method,
          o.delivery_contact,
          o.total_amount,
+         o.company_id,
          c.id AS certificate_id,
          c.code AS certificate_code,
          c.name_cert AS certificate_name,
@@ -109,6 +126,10 @@ export async function markPaymentAsPaid(id: string, transactionId: string): Prom
          c.message,
          c.start_date,
          c.finish_date,
+         c.file_url AS certificate_file_url,
+         c.template_id,
+         t.background_url AS template_background_url,
+         t.layout_config AS template_layout_config,
          comp.label AS company_label,
          comp.address AS company_address,
          cli.first_name AS client_first_name,
@@ -117,10 +138,11 @@ export async function markPaymentAsPaid(id: string, transactionId: string): Prom
          cli.phone AS client_phone
        FROM orders o
        JOIN certificates c ON c.id = o.certificate_id
+       LEFT JOIN template t ON t.id = c.template_id
        LEFT JOIN company comp ON comp.id = o.company_id
        LEFT JOIN client cli ON cli.id = o.client_id
        WHERE o.id = $1`,
-      [payment.orderId],
+      [paymentRow.order_id],
     );
 
     const fulfillmentRow = fulfillmentResult.rows[0];
@@ -129,23 +151,45 @@ export async function markPaymentAsPaid(id: string, transactionId: string): Prom
       throw new Error("Не удалось найти данные заказа для завершения платежа");
     }
 
-    const fulfillment = fulfillmentRowSchema.parse(fulfillmentRow);
-
     return {
-      payment,
-      fulfillment,
+      paymentRow,
+      fulfillmentRow,
     };
   });
 
-  if (!transactionResult) {
+  if (!context) {
     return null;
   }
 
-  const { fulfillment } = transactionResult;
+  const payment = mapPayment(paymentRowSchema.parse(context.paymentRow));
+  const fulfillment = fulfillmentRowSchema.parse(context.fulfillmentRow);
+
+  if (options?.companyId && fulfillment.company_id !== options.companyId) {
+    throw new AppError(403, "Недостаточно прав для подтверждения платежа этого филиала");
+  }
+
+  if (payment.status === "paid") {
+    return {
+      payment,
+      downloadUrl: buildDownloadUrl(fulfillment.certificate_id),
+      filePath: fulfillment.certificate_file_url ?? "",
+    };
+  }
 
   const clientName = [fulfillment.client_first_name, fulfillment.client_last_name]
     .filter((value) => Boolean(value))
     .join(" ") || null;
+
+  const layoutConfig =
+    fulfillment.template_layout_config && typeof fulfillment.template_layout_config === "object"
+      ? (fulfillment.template_layout_config as Record<string, unknown>)
+      : {};
+
+  const templateSettings = {
+    backgroundUrl: fulfillment.template_background_url ?? undefined,
+    fontFamily: typeof layoutConfig.fontFamily === "string" ? layoutConfig.fontFamily : undefined,
+    textColor: typeof layoutConfig.textColor === "string" ? layoutConfig.textColor : undefined,
+  };
 
   const fulfillmentPayload: FulfillmentPayload = {
     orderId: fulfillment.order_id,
@@ -173,13 +217,33 @@ export async function markPaymentAsPaid(id: string, transactionId: string): Prom
       email: fulfillment.client_email,
       phone: fulfillment.client_phone,
     },
+    template: templateSettings,
   };
 
   const fulfillmentResult = await runOrderFulfillment(fulfillmentPayload);
 
+  await query(
+    `UPDATE payments SET status = 'paid', transaction_id = $2, paid_at = NOW(), updated_at = NOW()
+     WHERE id = $1`,
+    [id, transactionId],
+  );
+
+  await query(
+    `UPDATE orders SET payment_status = 'paid', updated_at = NOW() WHERE id = $1`,
+    [payment.orderId],
+  );
+
+  const latestPaymentResult = await query<PaymentRow>(`SELECT * FROM payments WHERE id = $1`, [id]);
+  const updatedPaymentRow = latestPaymentResult.rows[0];
+  const updatedPayment = updatedPaymentRow ? mapPayment(paymentRowSchema.parse(updatedPaymentRow)) : payment;
+
   return {
-    payment: transactionResult.payment,
+    payment: updatedPayment,
     downloadUrl: fulfillmentResult.downloadUrl,
     filePath: fulfillmentResult.relativePath,
   };
+}
+
+function buildDownloadUrl(certificateId: string) {
+  return env.APP_BASE_URL ? `${env.APP_BASE_URL.replace(/\/$/, "")}/api/certificates/${certificateId}/download` : null;
 }

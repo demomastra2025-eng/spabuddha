@@ -6,6 +6,7 @@ interface AuthUser {
   email: string;
   role: string;
   name?: string | null;
+  companyId?: string | null;
 }
 
 interface AuthSession {

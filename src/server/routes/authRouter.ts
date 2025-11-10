@@ -17,7 +17,13 @@ authRouter.post(
   asyncHandler(async (req, res) => {
     const payload = loginSchema.parse(req.body);
     const user = await authenticate(payload.email, payload.password);
-    const token = signAccessToken({ sub: user.id, email: user.email, role: user.role, name: user.name });
+    const token = signAccessToken({
+      sub: user.id,
+      email: user.email,
+      role: user.role,
+      name: user.name,
+      companyId: user.companyId ?? undefined,
+    });
     res.json({ token, user });
   }),
 );
@@ -32,6 +38,7 @@ authRouter.get(
         email: req.user!.email,
         role: req.user!.role,
         name: req.user!.name ?? null,
+        companyId: req.user!.companyId ?? null,
       },
     });
   }),

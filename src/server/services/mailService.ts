@@ -1,5 +1,5 @@
 import type { Buffer } from "node:buffer";
-import nodemailer, { type Transporter } from "nodemailer";
+import { Resend } from "resend";
 import { env } from "../config/env";
 
 type Attachment = {
@@ -14,51 +14,37 @@ type SendCertificateEmailInput = {
   attachments?: Attachment[];
 };
 
-let transporter: Transporter | null = null;
+let resendClient: Resend | null = null;
 
-function ensureTransporter() {
-  if (transporter) {
-    return transporter;
+function ensureResendClient() {
+  if (resendClient) {
+    return resendClient;
   }
-
-  if (!env.SMTP_HOST) {
+  if (!env.RESEND_API_KEY) {
     return null;
   }
-
-  transporter = nodemailer.createTransport({
-    host: env.SMTP_HOST,
-    port: env.SMTP_PORT,
-    secure: env.SMTP_SECURE,
-    auth: env.SMTP_USER
-      ? {
-          user: env.SMTP_USER,
-          pass: env.SMTP_PASSWORD,
-        }
-      : undefined,
-  });
-
-  return transporter;
+  resendClient = new Resend(env.RESEND_API_KEY);
+  return resendClient;
 }
 
 export async function sendCertificateEmail(payload: SendCertificateEmailInput) {
-  const transport = ensureTransporter();
-
-  if (!transport) {
-    console.info("[mail] SMTP credentials are not configured, skipping email send", {
+  const client = ensureResendClient();
+  if (!client || !env.RESEND_FROM) {
+    console.info("[mail] Resend is not configured, skipping email send", {
       to: payload.to,
       subject: payload.subject,
     });
     return { skipped: true } as const;
   }
 
-  await transport.sendMail({
-    from: env.SMTP_FROM ?? "no-reply@buddhaspa.kz",
+  await client.emails.send({
+    from: env.RESEND_FROM,
     to: payload.to,
     subject: payload.subject,
     text: payload.text,
     attachments: payload.attachments?.map((attachment) => ({
       filename: attachment.filename,
-      content: attachment.content,
+      content: attachment.content.toString("base64"),
     })),
   });
 

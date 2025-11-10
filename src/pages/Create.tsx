@@ -5,48 +5,34 @@ import { StepDetails } from "@/components/create/StepDetails";
 import { StepDesign } from "@/components/create/StepDesign";
 import { StepDelivery } from "@/components/create/StepDelivery";
 import { StepPayment } from "@/components/create/StepPayment";
-
-export interface CertificateData {
-  // Step 1
-  branch: string;
-  type: "gift" | "procedure";
-  amount: number;
-  
-  // Step 2
-  senderName: string;
-  recipientName: string;
-  message: string;
-  validUntil: Date | undefined;
-  phone: string;
-  email: string;
-  
-  // Step 3
-  templateId: number;
-  backgroundColor: string;
-  fontFamily: string;
-  
-  // Step 4
-  deliveryMethod: "email" | "whatsapp" | "download";
-  deliveryContact: string;
-}
+import { addMonths } from "date-fns";
+import { CertificateData, DEFAULT_VALIDITY_MONTHS } from "@/types/certificates";
 
 const Create = () => {
   const [currentStep, setCurrentStep] = useState(1);
-  const [certificateData, setCertificateData] = useState<CertificateData>({
-    branch: "",
-    type: "gift",
-    amount: 50000,
-    senderName: "",
-    recipientName: "",
-    message: "",
-    validUntil: undefined,
-    phone: "",
-    email: "",
-    templateId: 1,
-    backgroundColor: "#EBF7DC",
-    fontFamily: "Playfair Display",
-    deliveryMethod: "email",
-    deliveryContact: "",
+  const [certificateData, setCertificateData] = useState<CertificateData>(() => {
+    const purchaseDate = new Date();
+    const defaultValidityDate = addMonths(purchaseDate, DEFAULT_VALIDITY_MONTHS);
+    return {
+      branch: "",
+      type: "gift",
+      amount: 50000,
+      selectedServices: [],
+      purchaseDate,
+      senderName: "",
+      recipientName: "",
+      message: "",
+      validUntil: defaultValidityDate,
+      phone: "",
+      email: "",
+      templateId: null,
+      templateBackgroundUrl: null,
+      templateFontFamily: null,
+      templateTextColor: null,
+      templateName: null,
+      deliveryMethod: "email",
+      deliveryContact: "",
+    };
   });
 
   const updateData = (data: Partial<CertificateData>) => {

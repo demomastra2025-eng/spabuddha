@@ -31,6 +31,16 @@ cp .env.example .env.local
 - `DATABASE_URL` - your PostgreSQL connection string.
 - `NEXTAUTH_SECRET` - a secret for NextAuth.
 - `RESEND_API_KEY` — create in your [Resend dashboard](https://resend.com/).
+- `RESEND_FROM` — подтверждённый адрес отправителя в Resend.
+- `ONEVISION_API_URL` — базовый URL API OneVision (укажите тестовую или боевую среду).
+- `ONEVISION_PAYMENT_LIFETIME` — время жизни счёта в секундах.
+
+### OneVision интеграция
+
+- Для каждого филиала в админ‑панели заполните OneVision Merchant ID (MID), Service ID (SID), API Key и Secret — мы используем эти данные для `payment/create`.
+- Callback для подтверждения платежа доступен по адресу `/api/payments/onevision/callback` (используйте публичный `APP_BASE_URL`).
+- После оплаты пользователь попадает на страницу `/payment/result`, а сертификат автоматически отправляется по выбранному каналу.
+- Для синхронизации справочника филиалов и полного перечня услуг выполните `pnpm run db:sync-branches` (в dev этот шаг выполняется автоматически при старте сервера).
 
 ### Development server
 
@@ -49,6 +59,15 @@ pnpm install
 # Step 4: Start the development server with auto-reloading and an instant preview.
 pnpm run dev
 ```
+
+Для тестирования коллбеков OneVision из публичного адреса можно запустить dev-сервер сразу с туннелем:
+
+```sh
+export NGROK_AUTHTOKEN=<ваш токен из dashboard.ngrok.com>
+pnpm run dev:ngrok
+```
+
+Скрипт поднимет ngrok, пропишет полученный URL в `APP_BASE_URL` и выведет ссылку для проверки OneVision.
 
 **Edit a file directly in GitHub**
 

@@ -7,6 +7,7 @@ import Create from "./pages/Create";
 import NotFound from "./pages/NotFound";
 import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
+import PaymentResult from "./pages/PaymentResult";
 import { useAuth } from "@/contexts/AuthContext";
 import { Loader2 } from "lucide-react";
 import CertificateOffer from "./pages/CertificateOffer";
@@ -50,6 +51,7 @@ const App = () => (
           <Route path="/spa-offer" element={<Layout><SpaOffer /></Layout>} />
           <Route path="/spa-rules" element={<Layout><SpaRules /></Layout>} />
           <Route path="/privacy-policy" element={<Layout><PrivacyPolicy /></Layout>} />
+          <Route path="/payment/result" element={<Layout><PaymentResult /></Layout>} />
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route
             path="/admin"
