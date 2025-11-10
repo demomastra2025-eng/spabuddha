@@ -1,3 +1,4 @@
+import type { KeyboardEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -184,7 +185,7 @@ export const StepBranch = ({ data, updateData, onNext }: StepBranchProps) => {
                 <TbMassage className="w-8 h-8 mb-3 text-primary" />
                 <span className="text-base font-semibold">Процедурный</span>
                 <span className="text-sm text-muted-foreground text-center mt-2">
-                  На конкретную услугу
+                  На услугу
                 </span>
               </Label>
             </div>
@@ -234,7 +235,7 @@ export const StepBranch = ({ data, updateData, onNext }: StepBranchProps) => {
                   <p className="font-semibold text-foreground">Сумма по выбранным услугам</p>
                   <p className="text-sm text-muted-foreground">
                     {data.selectedServices.length
-                      ? `${data.selectedServices.length} усл. · скидки учтены`
+                      ? `${data.selectedServices.length} услуги`
                       : "Выберите услуги, чтобы рассчитать номинал"}
                   </p>
                 </div>
@@ -275,12 +276,21 @@ export const StepBranch = ({ data, updateData, onNext }: StepBranchProps) => {
                     const isSelected = selectedServiceIds.has(service.id);
                     const finalPrice = getDiscountedPrice(service.price, service.discountPercent);
 
+                    const handleCardKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+                      if (event.key === "Enter" || event.key === " ") {
+                        event.preventDefault();
+                        handleToggleService(service);
+                      }
+                    };
+
                     return (
-                      <button
+                      <div
                         key={service.id}
-                        type="button"
+                        role="button"
+                        tabIndex={0}
                         onClick={() => handleToggleService(service)}
-                        className={`flex items-center gap-4 rounded-2xl border-2 px-4 py-3 text-left transition-all ${
+                        onKeyDown={handleCardKeyDown}
+                        className={`flex items-center gap-4 rounded-2xl border-2 px-4 py-3 text-left transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
                           isSelected ? "border-primary bg-primary/5 shadow-inner" : "border-muted hover:border-primary/40"
                         }`}
                         title={service.description ?? service.name}
@@ -323,7 +333,7 @@ export const StepBranch = ({ data, updateData, onNext }: StepBranchProps) => {
                             )}
                           </div>
                         </div>
-                      </button>
+                      </div>
                     );
                   })}
 

@@ -1,4 +1,5 @@
 import { Pool } from "pg";
+import type { QueryResultRow } from "pg";
 import { env } from "../config/env";
 
 const connectionString = env.DATABASE_URL;
@@ -8,7 +9,7 @@ export const pool = new Pool({
   ssl: env.isProduction ? { rejectUnauthorized: false } : false,
 });
 
-export function query<T = unknown>(text: string, params?: unknown[]) {
+export function query<T extends QueryResultRow = QueryResultRow>(text: string, params?: unknown[]) {
   return pool.query<T>(text, params);
 }
 
@@ -28,5 +29,5 @@ export async function withTransaction<T>(callback: (client: PoolClientLike) => P
 }
 
 export interface PoolClientLike {
-  query<T = unknown>(text: string, params?: unknown[]): Promise<{ rows: T[] }>;
+  query<T extends QueryResultRow = QueryResultRow>(text: string, params?: unknown[]): Promise<{ rows: T[] }>;
 }

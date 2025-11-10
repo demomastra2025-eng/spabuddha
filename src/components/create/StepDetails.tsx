@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { CertificateData, DEFAULT_VALIDITY_MONTHS } from "@/types/certificates";
 import { CalendarIcon, User, Heart, Phone, Mail } from "lucide-react";
 import { addMonths, format } from "date-fns";
@@ -83,22 +82,6 @@ export const StepDetails = ({ data, updateData, onNext, onPrev }: StepDetailsPro
               required
             />
           </div>
-        </div>
-
-        {/* Message */}
-        <div className="space-y-2">
-          <Label htmlFor="message">Персональное поздравление</Label>
-          <Textarea
-            id="message"
-            placeholder="Напишите тёплые слова для получателя..."
-            value={data.message}
-            onChange={(e) => updateData({ message: e.target.value })}
-            className="min-h-[120px] resize-none"
-            maxLength={300}
-          />
-          <p className="text-sm text-muted-foreground text-right">
-            {data.message.length}/300
-          </p>
         </div>
 
         {/* Valid Until */}

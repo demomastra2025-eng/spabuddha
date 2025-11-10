@@ -1,10 +1,11 @@
-import { useEffect } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { CertificateData } from "@/types/certificates";
 import { CertificatePreview } from "./CertificatePreview";
 import { Image as ImageIcon, Palette } from "lucide-react";
 import { useTemplates, type TemplateOption } from "@/hooks/useTemplates";
+import { downloadElementAsPdf } from "@/lib/pdf";
 import { toast } from "sonner";
 
 interface StepDesignProps {
@@ -17,6 +18,7 @@ interface StepDesignProps {
 export const StepDesign = ({ data, updateData, onNext, onPrev }: StepDesignProps) => {
   const { templates, loading, error } = useTemplates();
   const selectedTemplate = templates.find((template) => template.id === data.templateId) ?? null;
+  const previewRef = useRef<HTMLDivElement>(null);
 
   const handleSelect = (template: TemplateOption) => {
     updateData({
@@ -42,6 +44,21 @@ export const StepDesign = ({ data, updateData, onNext, onPrev }: StepDesignProps
     }
     onNext();
   };
+
+  const handleDownloadPreview = useCallback(async () => {
+    if (!previewRef.current) {
+      return;
+    }
+    try {
+      await downloadElementAsPdf(previewRef.current, {
+        fileName: data.code?.trim() ? `certificate-${data.code.trim()}.pdf` : "certificate-preview.pdf",
+      });
+      toast.success("PDF сохранён. Проверьте папку загрузок.");
+    } catch (error) {
+      console.error(error);
+      toast.error("Не удалось сохранить PDF. Попробуйте снова.");
+    }
+  }, [data.code]);
 
   return (
     <div className="max-w-7xl mx-auto animate-fade-in">
@@ -110,7 +127,10 @@ export const StepDesign = ({ data, updateData, onNext, onPrev }: StepDesignProps
         <div className="lg:sticky lg:top-8 h-fit">
           <div className="bg-card rounded-2xl shadow-spa p-8">
             <h3 className="text-xl font-semibold text-foreground mb-6">Предпросмотр карты</h3>
-            <CertificatePreview data={data} />
+            <CertificatePreview ref={previewRef} data={data} />
+            <Button variant="outline" className="w-full mt-6" onClick={handleDownloadPreview}>
+              Скачать PDF
+            </Button>
           </div>
         </div>
       </div>

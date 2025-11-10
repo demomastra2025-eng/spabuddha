@@ -179,7 +179,7 @@ export async function createOrder(input: CreateOrderInput, options?: { provider?
 
     await client.query(
       `INSERT INTO certificate_events (certificate_id, event_type, metadata)
-       VALUES ($1,'created', jsonb_build_object('orderId', $2, 'deliveryMethod', $3))`,
+       VALUES ($1,'created', jsonb_build_object('orderId', $2::text, 'deliveryMethod', $3::text))`,
       [certificate.id, orderResult.rows[0].id, input.delivery.method],
     );
 

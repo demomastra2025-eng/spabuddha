@@ -20,6 +20,7 @@ export interface CertificateData {
   amount: number;
   selectedServices: SelectedService[];
   purchaseDate: Date;
+  code?: string | null;
 
   // Step 2
   senderName: string;

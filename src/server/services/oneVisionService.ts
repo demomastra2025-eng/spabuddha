@@ -84,7 +84,7 @@ async function requestOneVision<T extends Record<string, unknown>>(path: string,
     }),
   });
 
-  const body = await response.json().catch(() => ({}));
+  const body = (await response.json().catch(() => ({}))) as { message?: string } & Record<string, unknown>;
   if (!response.ok) {
     const message = typeof body?.message === "string" ? body.message : "Ошибка интеграции OneVision";
     throw new AppError(response.status, message);

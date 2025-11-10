@@ -3,11 +3,12 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { CertificateData } from "@/types/certificates";
 import { CertificatePreview } from "./CertificatePreview";
-import { useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { Check, Shield } from "lucide-react";
 import { toast } from "sonner";
 import { formatCurrency } from "@/lib/currency";
 import { calculateServicesTotal, getDiscountedPrice } from "@/lib/services";
+import { downloadElementAsPdf } from "@/lib/pdf";
 import { useCompanies } from "@/hooks/useCompanies";
 
 interface StepPaymentProps {
@@ -19,6 +20,7 @@ export const StepPayment = ({ data, onPrev }: StepPaymentProps) => {
   const [agreed, setAgreed] = useState(false);
   const [processing, setProcessing] = useState(false);
   const [paymentError, setPaymentError] = useState<string | null>(null);
+  const previewRef = useRef<HTMLDivElement>(null);
 
   const { companies } = useCompanies();
   const selectedBranch = companies.find((branch) => branch.id === data.branch);
@@ -27,6 +29,21 @@ export const StepPayment = ({ data, onPrev }: StepPaymentProps) => {
   const hasServices = data.selectedServices.length > 0;
   const orderTotal =
     data.type === "procedure" && hasServices ? calculateServicesTotal(data.selectedServices) : data.amount;
+
+  const handleDownloadPreview = useCallback(async () => {
+    if (!previewRef.current) {
+      return;
+    }
+    try {
+      await downloadElementAsPdf(previewRef.current, {
+        fileName: data.code?.trim() ? `certificate-${data.code.trim()}.pdf` : "certificate-preview.pdf",
+      });
+      toast.success("PDF сохранён. Проверьте папку загрузок.");
+    } catch (error) {
+      console.error(error);
+      toast.error("Не удалось сохранить PDF. Попробуйте снова.");
+    }
+  }, [data.code]);
 
   const buildOrderPayload = () => {
     const deliveryContact = data.deliveryContact?.trim() ?? "";
@@ -135,7 +152,7 @@ export const StepPayment = ({ data, onPrev }: StepPaymentProps) => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto animate-fade-in">
+    <div className="max-w-8xl mx-auto animate-fade-in">
       <div className="grid lg:grid-cols-2 gap-8">
         {/* Order Summary */}
         <div className="space-y-6">
@@ -177,10 +194,6 @@ export const StepPayment = ({ data, onPrev }: StepPaymentProps) => {
                   <div className="flex justify-between gap-2">
                     <span className="text-muted-foreground">Имя:</span>
                     <span className="font-semibold">{data.recipientName || "—"}</span>
-                  </div>
-                  <div className="flex justify-between gap-2">
-                    <span className="text-muted-foreground">Поздравление:</span>
-                    <span className="font-semibold text-right line-clamp-2 max-w-[70%]">{data.message || "—"}</span>
                   </div>
                   {data.deliveryMethod !== "download" && (
                     <div className="flex justify-between gap-2">
@@ -345,7 +358,14 @@ export const StepPayment = ({ data, onPrev }: StepPaymentProps) => {
             <h3 className="text-xl font-semibold text-foreground mb-6">
               Финальный предпросмотр
             </h3>
-            <CertificatePreview data={data} />
+            <CertificatePreview ref={previewRef} data={data} />
+            <Button
+              variant="outline"
+              className="w-full mt-6"
+              onClick={handleDownloadPreview}
+            >
+              Скачать PDF
+            </Button>
           </div>
         </div>
       </div>
