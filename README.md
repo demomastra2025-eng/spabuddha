@@ -1,106 +1,56 @@
-# Welcome to your Lovable project
+## Buddha Spa Certificates
 
-## Project info
+Фронтенд/бэкенд приложение для продажи подарочных сертификатов Buddha Spa:
 
-**URL**: https://lovable.dev/projects/1060673a-c8ff-42f3-a4d8-2846d4e52471
+- шаговый конструктор сертификата (филиал, данные получателя, дизайн, доставка, оплата);
+- предпросмотр с генерацией PDF;
+- интеграции OneVision (оплата), Resend/SMTP (email), Wazzup (WhatsApp);
+- админ‑панель для управления филиалами, услугами и шаблонами.
 
-## How can I edit this code?
+### Быстрый старт
 
-There are several ways of editing your application.
-
-**Use Lovable**
-
-Simply visit the [Lovable Project](https://lovable.dev/projects/1060673a-c8ff-42f3-a4d8-2846d4e52471) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-### Environment variables
-
-Copy `.env.example` to `.env.local` and configure the values:
-
-```
-cp .env.example .env.local
-```
-
-- `DATABASE_URL` - your PostgreSQL connection string.
-- `NEXTAUTH_SECRET` - a secret for NextAuth.
-- `RESEND_API_KEY` — create in your [Resend dashboard](https://resend.com/).
-- `RESEND_FROM` — подтверждённый адрес отправителя в Resend.
-- `ONEVISION_API_URL` — базовый URL API OneVision (укажите тестовую или боевую среду).
-- `ONEVISION_PAYMENT_LIFETIME` — время жизни счёта в секундах.
-
-### OneVision интеграция
-
-- Для каждого филиала в админ‑панели заполните OneVision Merchant ID (MID), Service ID (SID), API Key и Secret — мы используем эти данные для `payment/create`.
-- Callback для подтверждения платежа доступен по адресу `/api/payments/onevision/callback` (используйте публичный `APP_BASE_URL`).
-- После оплаты пользователь попадает на страницу `/payment/result`, а сертификат автоматически отправляется по выбранному каналу.
-- Для синхронизации справочника филиалов и полного перечня услуг выполните `pnpm run db:sync-branches` (в dev этот шаг выполняется автоматически при старте сервера).
-
-### Development server
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
+```bash
 pnpm install
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-pnpm run dev
+cp .env.example .env  # заполните переменные окружения
+pnpm dev              # запускает API (Express) и Vite
 ```
 
-Для тестирования коллбеков OneVision из публичного адреса можно запустить dev-сервер сразу с туннелем:
+Приложение доступно на http://localhost:5173, API — на http://localhost:3000.
 
-```sh
-export NGROK_AUTHTOKEN=<ваш токен из dashboard.ngrok.com>
-pnpm run dev:ngrok
-```
+### Основные переменные окружения
 
-Скрипт поднимет ngrok, пропишет полученный URL в `APP_BASE_URL` и выведет ссылку для проверки OneVision.
+| Переменная | Назначение |
+|-----------|-----------|
+| `DATABASE_URL` | строка подключения к PostgreSQL |
+| `APP_BASE_URL` | публичный адрес фронтенда (нужен для callback’ов) |
+| `WAZZUP_*` | параметры WhatsApp-интеграции |
+| `RESEND_*` или SMTP‑параметры | отправка e-mail |
+| `ONEVISION_*` | настройки платёжного провайдера |
 
-**Edit a file directly in GitHub**
+Полный список см. в `src/server/config/env.ts`.
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+### Основные команды
 
-**Use GitHub Codespaces**
+| Команда | Описание |
+|---------|----------|
+| `pnpm dev` | локальный запуск API + клиент |
+| `pnpm dev:ngrok` | dev-сервер + туннель Ngrok для тестов callback’ов |
+| `pnpm build` | сборка клиента |
+| `pnpm lint` | ESLint для всего репо |
+| `pnpm db:schema` | применение `schema.sql` |
+| `pnpm db:sync-branches` | синхронизация справочника филиалов |
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+### Структура
 
-## What technologies are used for this project?
+- `server.ts`, `src/server` — Express API.
+- `src/components`, `src/pages` — React/Vite интерфейс.
+- `src/components/create/*` — шаги мастера оформления сертификата.
+- `src/pages/AdminDashboard.tsx` — административный интерфейс.
 
-This project is built with:
+### Тестовые интеграции
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+Для отправки тестовых сертификатов без оплаты доступны эндпоинты `/api/preview/email` и `/api/preview/whatsapp`, вызываемые кнопками в предпросмотре. Убедитесь, что заданы `RESEND_*`/SMTP и `WAZZUP_*`.
 
-## How can I deploy this project?
+### Лицензия
 
-Simply open [Lovable](https://lovable.dev/projects/1060673a-c8ff-42f3-a4d8-2846d4e52471) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+Проект предназначен для внутреннего использования Buddha Spa. Распространение и форки по согласованию.
