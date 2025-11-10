@@ -27,10 +27,14 @@ export const CertificatePreview = forwardRef<HTMLDivElement, CertificatePreviewP
   const hasServices = data.selectedServices.length > 0;
   const certificateNumber = data.code?.trim() ? data.code.trim() : "XXXX-XXXX";
 
+  const cardBaseClasses =
+    "w-full max-w-[640px] rounded-[28px] shadow-2xl p-4 sm:p-6 flex flex-col relative overflow-hidden transition-all duration-500 mx-auto";
+  const heightClasses = hasServices ? "min-h-[360px] sm:min-h-[420px]" : "min-h-[360px] sm:min-h-[360px]";
+
   return (
     <div
       ref={ref}
-      className="w-full aspect-[7/5] sm:aspect-[86/60] rounded-[28px] shadow-2xl p-4 sm:p-6 flex flex-col relative overflow-hidden transition-all duration-500 mx-auto"
+      className={`${cardBaseClasses} ${heightClasses}`}
       style={{
         fontFamily,
         color: textColor,

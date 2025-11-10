@@ -126,22 +126,6 @@ export const StepDetails = ({ data, updateData, onNext, onPrev }: StepDetailsPro
               required
             />
           </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="email" className="flex items-center gap-2">
-              <Mail className="w-4 h-4 text-primary" />
-              Ваш Email{" "}
-              <span className="text-xs text-muted-foreground">(по желанию)</span>
-            </Label>
-            <Input
-              id="email"
-              type="email"
-              placeholder="your@email.com"
-              value={data.email}
-              onChange={(e) => updateData({ email: e.target.value })}
-              className="h-12"
-            />
-          </div>
         </div>
 
         {/* Navigation */}

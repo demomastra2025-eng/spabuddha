@@ -9,6 +9,7 @@ import { paymentRouter } from "./routes/paymentRouter";
 import { healthRouter } from "./routes/healthRouter";
 import { errorHandler } from "./middleware/errorHandler";
 import { spaProcedureRouter } from "./routes/spaProcedureRouter";
+import { previewRouter } from "./routes/previewRouter";
 
 export function createApp() {
   const app = express();
@@ -25,6 +26,7 @@ export function createApp() {
   app.use("/api/clients", clientRouter);
   app.use("/api/payments", paymentRouter);
   app.use("/api/spa-procedures", spaProcedureRouter);
+  app.use("/api/preview", previewRouter);
 
   app.use(errorHandler);
 

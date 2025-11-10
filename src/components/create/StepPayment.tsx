@@ -9,6 +9,8 @@ import { toast } from "sonner";
 import { formatCurrency } from "@/lib/currency";
 import { calculateServicesTotal, getDiscountedPrice } from "@/lib/services";
 import { downloadElementAsPdf } from "@/lib/pdf";
+import { sendCertificateEmail } from "@/lib/email";
+import { sendCertificateWhatsApp } from "@/lib/whatsapp";
 import { useCompanies } from "@/hooks/useCompanies";
 
 interface StepPaymentProps {
@@ -44,6 +46,48 @@ export const StepPayment = ({ data, onPrev }: StepPaymentProps) => {
       toast.error("Не удалось сохранить PDF. Попробуйте снова.");
     }
   }, [data.code]);
+
+  const handleSendEmailTest = useCallback(async () => {
+    const recipientEmail = data.deliveryContact || data.email;
+    if (!recipientEmail) {
+      toast.error("Укажите email для доставки сертификата.");
+      return;
+    }
+    try {
+      await sendCertificateEmail({
+        recipientEmail,
+        recipientName: data.recipientName || "Получатель",
+        senderName: data.senderName || "Buddha Spa",
+        message: data.message || "",
+        amount: orderTotal,
+      });
+      toast.success(`Тестовое письмо отправлено на ${recipientEmail}`);
+    } catch (error) {
+      console.error(error);
+      toast.error("Не удалось отправить email. Попробуйте снова.");
+    }
+  }, [data.deliveryContact, data.email, data.message, data.recipientName, data.senderName, orderTotal]);
+
+  const handleSendWhatsAppTest = useCallback(async () => {
+    const phone = data.deliveryContact || data.phone;
+    if (!phone) {
+      toast.error("Укажите номер WhatsApp для доставки сертификата.");
+      return;
+    }
+    try {
+      await sendCertificateWhatsApp({
+        phone,
+        recipientName: data.recipientName || "Получатель",
+        senderName: data.senderName || "Buddha Spa",
+        amount: orderTotal,
+        message: data.message || "",
+      });
+      toast.success(`Сообщение отправлено в WhatsApp (${phone})`);
+    } catch (error) {
+      console.error(error);
+      toast.error("Не удалось отправить сообщение в WhatsApp. Попробуйте снова.");
+    }
+  }, [data.deliveryContact, data.message, data.phone, data.recipientName, data.senderName, orderTotal]);
 
   const buildOrderPayload = () => {
     const deliveryContact = data.deliveryContact?.trim() ?? "";
@@ -173,10 +217,6 @@ export const StepPayment = ({ data, onPrev }: StepPaymentProps) => {
                   <div className="flex justify-between gap-2">
                     <span className="text-muted-foreground">Телефон:</span>
                     <span className="font-semibold truncate">{data.phone || "—"}</span>
-                  </div>
-                  <div className="flex justify-between gap-2">
-                    <span className="text-muted-foreground">Email:</span>
-                    <span className="font-semibold truncate">{data.email || "—"}</span>
                   </div>
                   {data.deliveryMethod === "download" && (
                     <div className="flex justify-between gap-2">
@@ -361,13 +401,21 @@ export const StepPayment = ({ data, onPrev }: StepPaymentProps) => {
             <div className="w-full max-w-[560px] mx-auto">
               <CertificatePreview ref={previewRef} data={data} />
             </div>
-            <Button
-              variant="outline"
-              className="w-full mt-6"
-              onClick={handleDownloadPreview}
-            >
-              Скачать PDF
-            </Button>
+            <div className="grid gap-3 mt-6 sm:grid-cols-2">
+              <Button variant="outline" onClick={handleDownloadPreview}>
+                Скачать PDF
+              </Button>
+              {data.deliveryMethod === "email" && (
+                <Button variant="secondary" onClick={handleSendEmailTest}>
+                  Отправить на email (тест)
+                </Button>
+              )}
+              {data.deliveryMethod === "whatsapp" && (
+                <Button variant="secondary" onClick={handleSendWhatsAppTest}>
+                  Отправить в WhatsApp (тест)
+                </Button>
+              )}
+            </div>
           </div>
         </div>
       </div>

@@ -1,20 +1,19 @@
-
-export interface CertificateEmailPayload {
-  recipientEmail: string;
+export interface WhatsAppPayload {
+  phone: string;
   recipientName: string;
   senderName: string;
   amount: number;
   message?: string;
 }
 
-export const sendCertificateEmail = async (payload: CertificateEmailPayload) => {
-  const response = await fetch("/api/preview/email", {
+export const sendCertificateWhatsApp = async (payload: WhatsAppPayload) => {
+  const response = await fetch("/api/preview/whatsapp", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      recipientEmail: payload.recipientEmail,
+      phone: payload.phone,
       recipientName: payload.recipientName,
       senderName: payload.senderName,
       amount: payload.amount,
@@ -23,7 +22,7 @@ export const sendCertificateEmail = async (payload: CertificateEmailPayload) => 
   });
 
   if (!response.ok) {
-    const errorText = await response.text().catch(() => "Не удалось отправить email");
+    const errorText = await response.text().catch(() => "Не удалось отправить сообщение в WhatsApp");
     throw new Error(errorText);
   }
 
