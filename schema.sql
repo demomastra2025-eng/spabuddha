@@ -182,6 +182,49 @@ CREATE TABLE IF NOT EXISTS spa_procedures (
 ALTER TABLE spa_procedures
     ADD COLUMN IF NOT EXISTS discount_percent NUMERIC(5,2) NOT NULL DEFAULT 0;
 
+CREATE TABLE IF NOT EXISTS utm_tags (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name TEXT NOT NULL,
+    utm_source TEXT,
+    utm_medium TEXT,
+    utm_campaign TEXT,
+    utm_term TEXT,
+    utm_content TEXT,
+    target_url TEXT,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE UNIQUE INDEX IF NOT EXISTS idx_utm_tags_unique_params ON utm_tags(
+    COALESCE(utm_source, ''),
+    COALESCE(utm_medium, ''),
+    COALESCE(utm_campaign, ''),
+    COALESCE(utm_term, ''),
+    COALESCE(utm_content, '')
+);
+
+CREATE TABLE IF NOT EXISTS utm_visits (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    utm_tag_id UUID REFERENCES utm_tags(id) ON DELETE SET NULL,
+    visitor_id TEXT NOT NULL,
+    utm_source TEXT,
+    utm_medium TEXT,
+    utm_campaign TEXT,
+    utm_term TEXT,
+    utm_content TEXT,
+    landing_path TEXT,
+    user_agent TEXT,
+    referer TEXT,
+    first_visit_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_utm_visits_tag ON utm_visits(utm_tag_id);
+CREATE INDEX IF NOT EXISTS idx_utm_visits_visitor ON utm_visits(visitor_id);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_utm_visits_unique ON utm_visits(
+    visitor_id,
+    COALESCE(utm_tag_id, '00000000-0000-0000-0000-000000000000'::uuid)
+);
+
 CREATE INDEX IF NOT EXISTS idx_spa_procedures_company_id ON spa_procedures(company_id);
 
 ALTER TABLE spa_procedures

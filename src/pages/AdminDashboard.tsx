@@ -18,6 +18,7 @@ import { useTemplates } from "@/hooks/useTemplates";
 import { useSpaProcedures, type SpaProcedureOption } from "@/hooks/useSpaProcedures";
 import { formatCurrency } from "@/lib/currency";
 import { calculateServicesTotal, getDiscountedPrice } from "@/lib/services";
+import { UtmManagement } from "@/components/admin/UtmManagement";
 
 type DashboardOrder = {
   id: string;
@@ -104,7 +105,7 @@ const branchFormDefaults = {
   status: "active" as "active" | "inactive",
 };
 
-type AdminTab = "dashboard" | "certificate" | "templates" | "services" | "branches";
+type AdminTab = "dashboard" | "certificate" | "templates" | "services" | "branches" | "utm";
 
 export const AdminDashboard = () => {
   const { session, logout } = useAuth();
@@ -897,6 +898,7 @@ export const AdminDashboard = () => {
           <TabsTrigger value="templates">Шаблоны</TabsTrigger>
           <TabsTrigger value="services">Услуги</TabsTrigger>
           <TabsTrigger value="branches">Филиалы</TabsTrigger>
+          <TabsTrigger value="utm">UTM-метки</TabsTrigger>
         </TabsList>
 
           <TabsContent value="dashboard" className="space-y-8">
@@ -968,7 +970,10 @@ export const AdminDashboard = () => {
                 </CardContent>
               </Card>
             </section>
-          </TabsContent>
+        </TabsContent>
+        <TabsContent value="utm" className="space-y-8">
+          <UtmManagement token={session?.token} canManage={isGlobalManager} />
+        </TabsContent>
 
           <TabsContent value="certificate" className="space-y-8">
             <section className="grid gap-6 lg:grid-cols-3">
