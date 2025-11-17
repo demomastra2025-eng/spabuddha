@@ -25,6 +25,19 @@ const certificateRow = z.object({
   file_url: z.string().nullable(),
 });
 
+const certificateListRow = certificateRow.extend({
+  order_number: z.string().nullable(),
+  payment_status: z.string().nullable(),
+  delivery_contact: z.string().nullable(),
+  client_phone: z.string().nullable(),
+  client_email: z.string().nullable(),
+  utm_tag_id: z.string().nullable(),
+  utm_tag_name: z.string().nullable(),
+  utm_tag_source: z.string().nullable(),
+  utm_tag_campaign: z.string().nullable(),
+  utm_tag_medium: z.string().nullable(),
+});
+
 export type CertificateRow = z.infer<typeof certificateRow>;
 
 export interface CertificateView {
@@ -48,6 +61,20 @@ export interface CertificateView {
   updatedAt: Date;
   createdBy: string | null;
   fileUrl: string | null;
+}
+
+export interface CertificateListItem extends CertificateView {
+  orderNumber: string | null;
+  paymentStatus: string | null;
+  buyerPhone: string | null;
+  buyerEmail: string | null;
+  utmTag: {
+    id: string;
+    name: string | null;
+    utmSource: string | null;
+    utmCampaign: string | null;
+    utmMedium: string | null;
+  } | null;
 }
 
 export const certificateInputSchema = z.object({
@@ -94,14 +121,57 @@ function mapCertificate(row: CertificateRow): CertificateView {
   };
 }
 
-export async function listCertificates(filter?: { companyId?: string }) {
-  const whereClause = filter?.companyId ? "WHERE company_id = $1" : "";
-  const params = filter?.companyId ? [filter.companyId] : [];
-  const result = await query<CertificateRow>(
-    `SELECT * FROM certificates ${whereClause} ORDER BY created_at DESC`,
+export async function listCertificates(filter?: { companyId?: string }): Promise<CertificateListItem[]> {
+  const params: unknown[] = [];
+  let whereClause = "";
+  if (filter?.companyId) {
+    params.push(filter.companyId);
+    whereClause = `WHERE c.company_id = $${params.length}`;
+  }
+
+  const result = await query<z.infer<typeof certificateListRow>>(
+    `SELECT
+        c.*,
+        o.order_number,
+        o.payment_status,
+        o.delivery_contact,
+        cli.phone AS client_phone,
+        cli.email AS client_email,
+        o.utm_tag_id,
+        t.name AS utm_tag_name,
+        t.utm_source AS utm_tag_source,
+        t.utm_campaign AS utm_tag_campaign,
+        t.utm_medium AS utm_tag_medium
+      FROM certificates c
+      LEFT JOIN orders o ON o.certificate_id = c.id
+      LEFT JOIN client cli ON cli.id = o.client_id
+      LEFT JOIN utm_tags t ON t.id = o.utm_tag_id
+      ${whereClause}
+      ORDER BY c.created_at DESC
+      LIMIT 200`,
     params,
   );
-  return result.rows.map(mapCertificate);
+
+  return result.rows.map((row) => {
+    const certificate = mapCertificate(certificateRow.parse(row));
+    const buyerPhone = row.client_phone ?? row.delivery_contact ?? null;
+    return {
+      ...certificate,
+      orderNumber: row.order_number ?? null,
+      paymentStatus: row.payment_status ?? null,
+      buyerPhone,
+      buyerEmail: row.client_email ?? null,
+      utmTag: row.utm_tag_id
+        ? {
+            id: row.utm_tag_id,
+            name: row.utm_tag_name ?? null,
+            utmSource: row.utm_tag_source ?? null,
+            utmCampaign: row.utm_tag_campaign ?? null,
+            utmMedium: row.utm_tag_medium ?? null,
+          }
+        : null,
+    };
+  });
 }
 
 export async function createCertificate(input: CertificateInput, client?: PoolClientLike) {

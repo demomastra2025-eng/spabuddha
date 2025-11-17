@@ -58,7 +58,7 @@ function getFileNameFromDisposition(disposition?: string | null) {
     }
   }
 
-  const asciiMatch = disposition.match(/filename="?([^\";]+)"?/i);
+  const asciiMatch = disposition.match(/filename="?([^";]+)"?/i);
   return asciiMatch?.[1] ?? null;
 }
 

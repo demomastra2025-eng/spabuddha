@@ -234,6 +234,13 @@ CREATE INDEX IF NOT EXISTS idx_utm_visits_tag ON utm_visits(utm_tag_id);
 CREATE INDEX IF NOT EXISTS idx_utm_visits_visitor ON utm_visits(visitor_id);
 DROP INDEX IF EXISTS idx_utm_visits_unique;
 
+ALTER TABLE orders
+    ADD COLUMN IF NOT EXISTS utm_tag_id UUID REFERENCES utm_tags(id),
+    ADD COLUMN IF NOT EXISTS utm_visitor_id TEXT;
+
+CREATE INDEX IF NOT EXISTS idx_orders_utm_tag ON orders(utm_tag_id);
+CREATE INDEX IF NOT EXISTS idx_orders_utm_visitor ON orders(utm_visitor_id);
+
 CREATE INDEX IF NOT EXISTS idx_spa_procedures_company_id ON spa_procedures(company_id);
 
 ALTER TABLE spa_procedures

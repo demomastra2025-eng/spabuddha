@@ -8,6 +8,7 @@ import { Check, Shield } from "lucide-react";
 import { toast } from "sonner";
 import { formatCurrency } from "@/lib/currency";
 import { calculateServicesTotal, getDiscountedPrice } from "@/lib/services";
+import { getStoredUtmVisitorId } from "@/lib/utmTracking";
 import { useCompanies } from "@/hooks/useCompanies";
 
 interface StepPaymentProps {
@@ -40,6 +41,8 @@ export const StepPayment = ({ data, onPrev }: StepPaymentProps) => {
         ? deliveryContact || data.phone?.trim() || ""
         : data.phone?.trim() || "";
 
+    const utmVisitorId = getStoredUtmVisitorId();
+
     return {
       companyId: data.branch,
       amount: orderTotal,
@@ -70,6 +73,7 @@ export const StepPayment = ({ data, onPrev }: StepPaymentProps) => {
               currency: service.currency ?? "KZT",
             }))
           : undefined,
+      utmVisitorId: utmVisitorId ?? undefined,
     };
   };
 

@@ -34,6 +34,7 @@ export const createOrderSchema = z.object({
     name: z.string().optional(),
   }),
   services: z.array(serviceSelectionSchema).optional(),
+  utmVisitorId: z.string().trim().optional(),
 }).superRefine((data, ctx) => {
   const hasServices = Boolean(data.services?.length);
   if (data.type === "procedure" && !hasServices) {
@@ -79,6 +80,8 @@ interface OrderRow {
   fulfilled_at: Date | null;
   recipient_name: string | null;
   sender_name: string | null;
+  utm_tag_id: string | null;
+  utm_visitor_id: string | null;
 }
 
 function mapOrder(row: OrderRow) {
@@ -100,6 +103,8 @@ function mapOrder(row: OrderRow) {
     fulfilledAt: row.fulfilled_at,
     recipientName: row.recipient_name,
     senderName: row.sender_name,
+    utmTagId: row.utm_tag_id,
+    utmVisitorId: row.utm_visitor_id,
   };
 }
 
@@ -129,6 +134,19 @@ export async function createOrder(input: CreateOrderInput, options?: { provider?
     }
 
     const serviceDetails = hasServices ? JSON.stringify(input.services) : undefined;
+
+    let utmTagId: string | null = null;
+    if (input.utmVisitorId) {
+      const utmLookup = await client.query<{ utm_tag_id: string | null }>(
+        `SELECT utm_tag_id
+           FROM utm_visits
+           WHERE visitor_id = $1
+           ORDER BY first_visit_at DESC
+           LIMIT 1`,
+        [input.utmVisitorId],
+      );
+      utmTagId = utmLookup.rows[0]?.utm_tag_id ?? null;
+    }
 
     const clientRecord = await findOrCreateClient(
       {
@@ -163,8 +181,8 @@ export async function createOrder(input: CreateOrderInput, options?: { provider?
     const orderResult = await client.query<OrderRow>(
       `INSERT INTO orders
         (order_number, client_id, certificate_id, company_id, status, total_amount, currency, payment_status,
-         delivery_method, delivery_contact)
-       VALUES ($1,$2,$3,$4,'created',$5,'KZT','pending',$6,$7)
+         delivery_method, delivery_contact, utm_tag_id, utm_visitor_id)
+       VALUES ($1,$2,$3,$4,'created',$5,'KZT','pending',$6,$7,$8,$9)
        RETURNING *`,
       [
         orderNumber,
@@ -174,6 +192,8 @@ export async function createOrder(input: CreateOrderInput, options?: { provider?
         normalizedAmount,
         input.delivery.method,
         input.delivery.contact ?? null,
+        utmTagId,
+        input.utmVisitorId ?? null,
       ],
     );
 

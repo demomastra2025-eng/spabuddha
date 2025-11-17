@@ -34,9 +34,15 @@ export interface TemplateView {
 export const templateInputSchema = z.object({
   name: z.string().min(1),
   description: z.string().optional(),
-  backgroundUrl: z.string().url().optional(),
+  backgroundUrl: z
+    .string()
+    .min(1)
+    .optional(),
   layoutConfig: z.any().optional(),
-  previewUrl: z.string().url().optional(),
+  previewUrl: z
+    .string()
+    .min(1)
+    .optional(),
   isActive: z.boolean().default(true),
   createdBy: z.string().optional(),
   locale: z.string().optional(),

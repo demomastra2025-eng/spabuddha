@@ -27,7 +27,7 @@ const currencyFormatter = new Intl.NumberFormat("ru-RU", {
 export async function generateCertificatePdf(options: CertificatePdfOptions) {
   const CARD_WIDTH = 350;
   const CARD_HEIGHT = 220;
-  const doc = new PDFDocument({ size: [CARD_WIDTH, CARD_HEIGHT], margin: 20 });
+  const doc = new PDFDocument({ size: [CARD_WIDTH, CARD_HEIGHT], margin: 0 });
   const chunks: Buffer[] = [];
 
   const resultPromise = new Promise<Buffer>((resolve, reject) => {
@@ -38,6 +38,11 @@ export async function generateCertificatePdf(options: CertificatePdfOptions) {
 
   const textColor = options.textColor ?? "#ffffff";
   const fontFamily = options.fontFamily ?? "Helvetica-Bold";
+  const padding = 20;
+  const contentWidth = CARD_WIDTH - padding * 2;
+  const headerRightWidth = 130;
+  const disclaimerHeight = 36;
+  const amountBlockHeight = 60;
 
   if (options.backgroundImageUrl) {
     try {
@@ -56,40 +61,80 @@ export async function generateCertificatePdf(options: CertificatePdfOptions) {
   }
 
   doc.fillColor(textColor);
-  doc.font(fontFamily).fontSize(12).text("Buddha Spa", { align: "left" });
-  doc.moveDown(0.5);
-  doc.font(fontFamily).fontSize(14).text(options.certificateName, { align: "left" });
-  doc.moveDown(0.8);
+  doc.font(fontFamily);
 
-  doc.fontSize(10).text(`Код: ${options.code}`);
-  doc.text(`Номинал: ${currencyFormatter.format(options.amount)}`);
-  doc.text(`Получатель: ${options.recipientName}`);
-  doc.text(`От: ${options.senderName}`);
-  doc.text(`Выпущен: ${options.issuedAt.toLocaleDateString("ru-RU")}`);
+  const branchLine =
+    [options.companyLabel, options.companyAddress].filter((item) => item && item.trim().length).join(" — ") ||
+    "Buddha Spa";
+  doc
+    .fontSize(9)
+    .text(branchLine, padding, padding, {
+      width: contentWidth - headerRightWidth - 10,
+      align: "left",
+    });
+
+  doc
+    .fontSize(10)
+    .text(`№ ${options.code}`, padding + contentWidth - headerRightWidth, padding, {
+      width: headerRightWidth,
+      align: "right",
+      characterSpacing: 1.2,
+    });
 
   if (options.validUntil) {
-    doc.text(`Действителен до: ${options.validUntil.toLocaleDateString("ru-RU")}`);
+    doc
+      .fontSize(9)
+      .text(`ДЕЙСТВУЕТ ДО ${options.validUntil.toLocaleDateString("ru-RU")}`, padding + contentWidth - headerRightWidth, padding + 14, {
+        width: headerRightWidth,
+        align: "right",
+        characterSpacing: 1,
+      });
   }
 
-  if (options.message) {
-    doc.moveDown(0.5);
-    doc.fontSize(9).text(`Сообщение: ${options.message}`, { align: "left" });
-  }
+  const recipientBlockY = padding + 50;
+  doc
+    .fontSize(9)
+    .text("ДЛЯ", padding, recipientBlockY, {
+      width: contentWidth,
+      align: "left",
+      characterSpacing: 1.5,
+    });
 
-  doc.moveDown(0.6);
-  doc.fontSize(9).text(`Филиал: ${options.companyLabel}`, { align: "left" });
-  if (options.companyAddress) {
-    doc.text(`Адрес: ${options.companyAddress}`);
-  }
+  doc
+    .fontSize(22)
+    .text(options.recipientName, padding, recipientBlockY + 12, {
+      width: contentWidth,
+      align: "left",
+    });
 
-  doc.moveDown(0.8);
+  const amountBlockY = CARD_HEIGHT - padding - disclaimerHeight - amountBlockHeight - 10;
+  doc
+    .fontSize(9)
+    .text("НОМИНАЛ", padding, amountBlockY, {
+      width: contentWidth,
+      align: "center",
+      characterSpacing: 1.8,
+    });
+  doc
+    .fontSize(28)
+    .text(currencyFormatter.format(options.amount), padding, amountBlockY + 14, {
+      width: contentWidth,
+      align: "center",
+    });
+
+  const disclaimerY = CARD_HEIGHT - padding - disclaimerHeight;
   doc
     .fontSize(7)
-    .fillColor(textColor)
-    .text(
-      "Предъявите этот сертификат при посещении Buddha Spa. Сертификат не подлежит возврату и обмену на денежные средства.",
-      { align: "left" },
-    );
+    .text("Предъявите эту подарочную карту при посещении Buddha Spa.", padding, disclaimerY, {
+      width: contentWidth,
+      align: "left",
+    });
+  doc
+    .fontSize(7)
+    .text("Подарочная карта не подлежит возврату и обмену на денежные средства.", padding, disclaimerY + 12, {
+      width: contentWidth,
+      align: "left",
+    });
 
   doc.end();
 

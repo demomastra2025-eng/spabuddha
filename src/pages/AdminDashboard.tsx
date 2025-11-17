@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -40,6 +41,17 @@ type DashboardCertificate = {
   senderName: string | null;
   createdAt: string;
   price: number;
+  orderNumber: string | null;
+  paymentStatus: string | null;
+  buyerPhone: string | null;
+  buyerEmail: string | null;
+  utmTag: {
+    id: string;
+    name: string | null;
+    utmSource: string | null;
+    utmCampaign: string | null;
+    utmMedium: string | null;
+  } | null;
 };
 
 type CertificateServiceSelection = {
@@ -128,6 +140,8 @@ export const AdminDashboard = () => {
   const [certificates, setCertificates] = useState<DashboardCertificate[]>([]);
   const [certificatesLoading, setCertificatesLoading] = useState(false);
   const [certificatesError, setCertificatesError] = useState<string | null>(null);
+  const [certificateSearch, setCertificateSearch] = useState("");
+  const [showAllCertificates, setShowAllCertificates] = useState(false);
   const [activeTab, setActiveTab] = useState<AdminTab>("dashboard");
   const [editingServiceId, setEditingServiceId] = useState<string | null>(null);
   const [selectedServiceCompanyId, setSelectedServiceCompanyId] = useState("");
@@ -178,11 +192,33 @@ export const AdminDashboard = () => {
   );
 
   const filteredCertificates = useMemo(() => {
-    if (!certificateForm.companyId || certificateForm.companyId === "all") {
-      return certificates;
+    const scoped =
+      !certificateForm.companyId || certificateForm.companyId === "all"
+        ? certificates
+        : certificates.filter((cert) => cert.companyId === certificateForm.companyId);
+
+    const byStatus = showAllCertificates ? scoped : scoped.filter((cert) => cert.status === "active");
+
+    const search = certificateSearch.trim().toLowerCase();
+    if (!search) {
+      return byStatus;
     }
-    return certificates.filter((cert) => cert.companyId === certificateForm.companyId);
-  }, [certificates, certificateForm.companyId]);
+
+    const searchDigits = search.replace(/\D+/g, "");
+    return byStatus.filter((cert) => {
+      const codeMatch = cert.code.toLowerCase().includes(search);
+      const orderMatch = cert.orderNumber?.toLowerCase().includes(search) ?? false;
+      if (!searchDigits && (codeMatch || orderMatch)) {
+        return true;
+      }
+      const phoneNormalized = cert.buyerPhone?.toLowerCase() ?? "";
+      const phoneDigits = cert.buyerPhone?.replace(/\D+/g, "") ?? "";
+      const phoneMatch = searchDigits
+        ? searchDigits.length > 0 && phoneDigits.includes(searchDigits)
+        : phoneNormalized.includes(search);
+      return codeMatch || orderMatch || phoneMatch;
+    });
+  }, [certificates, certificateForm.companyId, showAllCertificates, certificateSearch]);
 
   useEffect(() => {
     if (!certificateForm.companyId && allowedCompanies.length) {
@@ -280,6 +316,17 @@ export const AdminDashboard = () => {
         senderName?: string | null;
         createdAt: string;
         price: number;
+        orderNumber: string | null;
+        paymentStatus: string | null;
+        buyerPhone: string | null;
+        buyerEmail: string | null;
+        utmTag: {
+          id: string;
+          name: string | null;
+          utmSource: string | null;
+          utmCampaign: string | null;
+          utmMedium: string | null;
+        } | null;
       }>;
 
       const mapped: DashboardCertificate[] = payload.map((certificate) => ({
@@ -291,6 +338,11 @@ export const AdminDashboard = () => {
         senderName: certificate.senderName ?? null,
         createdAt: certificate.createdAt,
         price: certificate.price,
+        orderNumber: certificate.orderNumber ?? null,
+        paymentStatus: certificate.paymentStatus ?? null,
+        buyerPhone: certificate.buyerPhone ?? null,
+        buyerEmail: certificate.buyerEmail ?? null,
+        utmTag: certificate.utmTag ?? null,
       }));
 
       setCertificates(mapped);
@@ -1275,21 +1327,39 @@ export const AdminDashboard = () => {
               </Card>
 
               <Card className="border border-border/60 bg-card shadow-sm">
-                <CardHeader className="flex flex-row items-center justify-between gap-4">
-                  <div>
-                    <CardTitle>Сертификаты</CardTitle>
-                    <CardDescription>Активные и завершённые покупки</CardDescription>
+                <CardHeader className="space-y-4">
+                  <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+                    <div>
+                      <CardTitle>Сертификаты</CardTitle>
+                      <CardDescription>Активные и завершённые покупки</CardDescription>
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => loadCertificates()}
+                      disabled={certificatesLoading}
+                      className="inline-flex items-center gap-2"
+                    >
+                      <RefreshCw className="w-4 h-4" />
+                      {certificatesLoading ? "Обновляем..." : "Обновить"}
+                    </Button>
                   </div>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => loadCertificates()}
-                    disabled={certificatesLoading}
-                    className="inline-flex items-center gap-2"
-                  >
-                    <RefreshCw className="w-4 h-4" />
-                    {certificatesLoading ? "Обновляем..." : "Обновить"}
-                  </Button>
+                  <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                    <Input
+                      value={certificateSearch}
+                      onChange={(event) => setCertificateSearch(event.target.value)}
+                      placeholder="Поиск по сертификату или номеру покупателя"
+                      className="md:max-w-sm"
+                    />
+                    <label htmlFor="show-all-certificates" className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <Checkbox
+                        id="show-all-certificates"
+                        checked={showAllCertificates}
+                        onCheckedChange={(checked) => setShowAllCertificates(checked === true)}
+                      />
+                      <span>Показать все статусы</span>
+                    </label>
+                  </div>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   {certificatesError && <p className="text-sm text-destructive">{certificatesError}</p>}
@@ -1306,6 +1376,23 @@ export const AdminDashboard = () => {
                         const statusText = certificate.status === "active" ? "Активен" : "Закрыт";
                         const statusColor =
                           certificate.status === "active" ? "text-emerald-600" : "text-muted-foreground";
+                        const paymentLabel =
+                          certificate.paymentStatus === "paid"
+                            ? "Оплачен"
+                            : certificate.paymentStatus === "failed"
+                              ? "Ошибка оплаты"
+                              : "Ожидание оплаты";
+                        const paymentColor =
+                          certificate.paymentStatus === "paid"
+                            ? "text-emerald-600"
+                            : certificate.paymentStatus === "failed"
+                              ? "text-destructive"
+                              : "text-amber-500";
+                        const utmLabel =
+                          certificate.utmTag?.name ??
+                          certificate.utmTag?.utmCampaign ??
+                          certificate.utmTag?.utmSource ??
+                          null;
                         return (
                           <div key={certificate.id} className="border border-border/60 rounded-2xl p-4 space-y-2">
                             <div className="flex items-center justify-between text-xs text-muted-foreground">
@@ -1317,10 +1404,34 @@ export const AdminDashboard = () => {
                                 })}
                               </span>
                             </div>
+                            <div className="flex items-center justify-between text-xs text-muted-foreground">
+                              <span>Заказ: {certificate.orderNumber ?? "—"}</span>
+                              <span className={paymentColor}>{paymentLabel}</span>
+                            </div>
                             <p className="text-base font-semibold text-foreground">
                               {certificate.recipientName ?? "Получатель"}
                             </p>
                             <p className="text-sm text-muted-foreground">{branchTitle}</p>
+                            <p className="text-sm text-muted-foreground">
+                              Телефон:{" "}
+                              <span className="font-medium text-foreground">
+                                {certificate.buyerPhone ?? "—"}
+                              </span>
+                            </p>
+                            <div className="text-xs text-muted-foreground">
+                              {utmLabel ? (
+                                <div className="flex items-center gap-2">
+                                  <span className="uppercase tracking-wide text-[10px] text-muted-foreground/80">
+                                    UTM
+                                  </span>
+                                  <Badge variant="secondary" className="text-xs font-medium">
+                                    {utmLabel}
+                                  </Badge>
+                                </div>
+                              ) : (
+                                <span>UTM-метка не зафиксирована</span>
+                              )}
+                            </div>
                             <div className="flex items-center justify-between text-sm">
                               <span className="font-medium text-primary">{formatCurrency(certificate.price)}</span>
                               <span className={statusColor}>{statusText}</span>

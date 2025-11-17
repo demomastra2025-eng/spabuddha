@@ -90,3 +90,15 @@ export function initializeUtmTracking() {
       console.error("utmTracking: failed to report visit", error);
     });
 }
+
+export function getStoredUtmVisitorId(): string | null {
+  if (typeof window === "undefined") {
+    return null;
+  }
+  try {
+    return window.localStorage.getItem(VISITOR_ID_KEY);
+  } catch (error) {
+    console.error("utmTracking: failed to read visitor id", error);
+    return null;
+  }
+}
