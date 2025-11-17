@@ -1,13 +1,10 @@
-import { useCallback, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { CertificateData } from "@/types/certificates";
 import { CertificatePreview } from "./CertificatePreview";
 import { Image as ImageIcon, Palette } from "lucide-react";
 import { useTemplates, type TemplateOption } from "@/hooks/useTemplates";
-import { downloadElementAsPdf } from "@/lib/pdf";
-import { sendCertificateEmail } from "@/lib/email";
-import { sendCertificateWhatsApp } from "@/lib/whatsapp";
 import { toast } from "sonner";
 
 interface StepDesignProps {
@@ -47,62 +44,7 @@ export const StepDesign = ({ data, updateData, onNext, onPrev }: StepDesignProps
     onNext();
   };
 
-  const handleDownloadPreview = useCallback(async () => {
-    if (!previewRef.current) {
-      return;
-    }
-    try {
-      await downloadElementAsPdf(previewRef.current, {
-        fileName: data.code?.trim() ? `certificate-${data.code.trim()}.pdf` : "certificate-preview.pdf",
-      });
-      toast.success("PDF сохранён. Проверьте папку загрузок.");
-    } catch (error) {
-      console.error(error);
-      toast.error("Не удалось сохранить PDF. Попробуйте снова.");
-    }
-  }, [data.code]);
-
-  const handleSendEmailTest = useCallback(async () => {
-    const recipientEmail = data.deliveryContact || data.email;
-    if (!recipientEmail) {
-      toast.error("Укажите email для отправки сертификата.");
-      return;
-    }
-    try {
-      await sendCertificateEmail({
-        recipientEmail,
-        recipientName: data.recipientName || "Получатель",
-        senderName: data.senderName || "Buddha Spa",
-        message: data.message || "",
-        amount: data.amount,
-      });
-      toast.success(`Тестовое письмо отправлено на ${recipientEmail}`);
-    } catch (error) {
-      console.error(error);
-      toast.error("Не удалось отправить email. Попробуйте снова.");
-    }
-  }, [data.amount, data.deliveryContact, data.email, data.message, data.recipientName, data.senderName]);
-
-  const handleSendWhatsAppTest = useCallback(async () => {
-    const phone = data.deliveryContact || data.phone;
-    if (!phone) {
-      toast.error("Укажите номер WhatsApp для отправки сертификата.");
-      return;
-    }
-    try {
-      await sendCertificateWhatsApp({
-        phone,
-        recipientName: data.recipientName || "Получатель",
-        senderName: data.senderName || "Buddha Spa",
-        amount: data.amount,
-        message: data.message || "",
-      });
-      toast.success(`Сообщение для WhatsApp подготовлено (${phone})`);
-    } catch (error) {
-      console.error(error);
-      toast.error("Не удалось отправить WhatsApp сообщение. Попробуйте снова.");
-    }
-  }, [data.amount, data.deliveryContact, data.message, data.phone, data.recipientName, data.senderName]);
+  // Removed test actions for download/WhatsApp/email to keep only production flow.
 
   return (
     <div className="max-w-7xl mx-auto animate-fade-in">
@@ -174,20 +116,10 @@ export const StepDesign = ({ data, updateData, onNext, onPrev }: StepDesignProps
             <div className="w-full max-w-[560px] mx-auto">
               <CertificatePreview ref={previewRef} data={data} />
             </div>
-            <div className="grid gap-3 mt-6 sm:grid-cols-2">
-              <Button variant="outline" onClick={handleDownloadPreview}>
-                Скачать PDF
-              </Button>
-              {data.deliveryMethod === "email" && (
-                <Button variant="secondary" onClick={handleSendEmailTest}>
-                  Отправить на email (тест)
-                </Button>
-              )}
-              {data.deliveryMethod === "whatsapp" && (
-                <Button variant="secondary" onClick={handleSendWhatsAppTest}>
-                  Отправить в WhatsApp (тест)
-                </Button>
-              )}
+            <div className="mt-6">
+              <p className="text-sm text-muted-foreground">
+                Сертификат будет фактически отправлен только после успешной оплаты — ничего не отправляется из этого превью.
+              </p>
             </div>
           </div>
         </div>

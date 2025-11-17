@@ -3,14 +3,11 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { CertificateData } from "@/types/certificates";
 import { CertificatePreview } from "./CertificatePreview";
-import { useCallback, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { Check, Shield } from "lucide-react";
 import { toast } from "sonner";
 import { formatCurrency } from "@/lib/currency";
 import { calculateServicesTotal, getDiscountedPrice } from "@/lib/services";
-import { downloadElementAsPdf } from "@/lib/pdf";
-import { sendCertificateEmail } from "@/lib/email";
-import { sendCertificateWhatsApp } from "@/lib/whatsapp";
 import { useCompanies } from "@/hooks/useCompanies";
 
 interface StepPaymentProps {
@@ -31,63 +28,6 @@ export const StepPayment = ({ data, onPrev }: StepPaymentProps) => {
   const hasServices = data.selectedServices.length > 0;
   const orderTotal =
     data.type === "procedure" && hasServices ? calculateServicesTotal(data.selectedServices) : data.amount;
-
-  const handleDownloadPreview = useCallback(async () => {
-    if (!previewRef.current) {
-      return;
-    }
-    try {
-      await downloadElementAsPdf(previewRef.current, {
-        fileName: data.code?.trim() ? `certificate-${data.code.trim()}.pdf` : "certificate-preview.pdf",
-      });
-      toast.success("PDF сохранён. Проверьте папку загрузок.");
-    } catch (error) {
-      console.error(error);
-      toast.error("Не удалось сохранить PDF. Попробуйте снова.");
-    }
-  }, [data.code]);
-
-  const handleSendEmailTest = useCallback(async () => {
-    const recipientEmail = data.deliveryContact || data.email;
-    if (!recipientEmail) {
-      toast.error("Укажите email для доставки сертификата.");
-      return;
-    }
-    try {
-      await sendCertificateEmail({
-        recipientEmail,
-        recipientName: data.recipientName || "Получатель",
-        senderName: data.senderName || "Buddha Spa",
-        message: data.message || "",
-        amount: orderTotal,
-      });
-      toast.success(`Тестовое письмо отправлено на ${recipientEmail}`);
-    } catch (error) {
-      console.error(error);
-      toast.error("Не удалось отправить email. Попробуйте снова.");
-    }
-  }, [data.deliveryContact, data.email, data.message, data.recipientName, data.senderName, orderTotal]);
-
-  const handleSendWhatsAppTest = useCallback(async () => {
-    const phone = data.deliveryContact || data.phone;
-    if (!phone) {
-      toast.error("Укажите номер WhatsApp для доставки сертификата.");
-      return;
-    }
-    try {
-      await sendCertificateWhatsApp({
-        phone,
-        recipientName: data.recipientName || "Получатель",
-        senderName: data.senderName || "Buddha Spa",
-        amount: orderTotal,
-        message: data.message || "",
-      });
-      toast.success(`Сообщение отправлено в WhatsApp (${phone})`);
-    } catch (error) {
-      console.error(error);
-      toast.error("Не удалось отправить сообщение в WhatsApp. Попробуйте снова.");
-    }
-  }, [data.deliveryContact, data.message, data.phone, data.recipientName, data.senderName, orderTotal]);
 
   const buildOrderPayload = () => {
     const deliveryContact = data.deliveryContact?.trim() ?? "";
@@ -143,17 +83,17 @@ export const StepPayment = ({ data, onPrev }: StepPaymentProps) => {
       return;
     }
 
+    const payload = buildOrderPayload();
+
+    if (payload.delivery.method === "email" && !payload.delivery.contact) {
+      toast.error("Для доставки по email укажите адрес получателя на предыдущем шаге.");
+      return;
+    }
+
     setProcessing(true);
     setPaymentError(null);
 
     try {
-      const payload = buildOrderPayload();
-
-      if (!payload.client.email) {
-        toast.error("Для онлайн-оплаты укажите email адрес получателя на предыдущем шаге.");
-        return;
-      }
-
       const response = await fetch("/api/orders", {
         method: "POST",
         headers: {
@@ -177,7 +117,7 @@ export const StepPayment = ({ data, onPrev }: StepPaymentProps) => {
       } = await response.json();
 
       if (!dataResponse.paymentPageUrl) {
-        const message = "Ссылка на оплату не получена. Повторите попытку позже.";
+        const message = "Параметры оплаты не получены. Повторите попытку позже.";
         setPaymentError(message);
         toast.error(message);
         return;
@@ -326,8 +266,8 @@ export const StepPayment = ({ data, onPrev }: StepPaymentProps) => {
             )}
 
             <div className="rounded-2xl border border-primary/30 bg-primary/5 p-4 text-sm text-muted-foreground">
-              После подтверждения вы будете перенаправлены на защищённую платёжную страницу OneVision для выбранного
-              филиала. Ссылка действительна ограниченное время, поэтому держите данные карты под рукой.
+              После подтверждения вы будете перенаправлены на защищённую платёжную страницу OneVision. Ссылка
+              действительна ограниченное время, поэтому держите данные карты под рукой.
             </div>
 
             {/* Agreement */}
@@ -401,20 +341,10 @@ export const StepPayment = ({ data, onPrev }: StepPaymentProps) => {
             <div className="w-full max-w-[560px] mx-auto">
               <CertificatePreview ref={previewRef} data={data} />
             </div>
-            <div className="grid gap-3 mt-6 sm:grid-cols-2">
-              <Button variant="outline" onClick={handleDownloadPreview}>
-                Скачать PDF
-              </Button>
-              {data.deliveryMethod === "email" && (
-                <Button variant="secondary" onClick={handleSendEmailTest}>
-                  Отправить на email (тест)
-                </Button>
-              )}
-              {data.deliveryMethod === "whatsapp" && (
-                <Button variant="secondary" onClick={handleSendWhatsAppTest}>
-                  Отправить в WhatsApp (тест)
-                </Button>
-              )}
+            <div className="mt-6">
+              <p className="text-sm text-muted-foreground">
+                Демонстрация сертификата; отправка письма и WhatsApp происходит после успешной оплаты.
+              </p>
             </div>
           </div>
         </div>

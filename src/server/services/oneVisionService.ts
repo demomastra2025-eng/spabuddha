@@ -11,7 +11,8 @@ import type { PaymentRow } from "./paymentService";
 import { markPaymentAsPaid } from "./paymentService";
 
 const successStatuses = new Set(["withdraw", "clearing", "partial_clearing", "refill"]);
-const failureStatuses = new Set(["canceled", "error"]);
+const failureStatuses = new Set(["canceled", "cancel", "error", "refunded", "partial_refund"]);
+const DEFAULT_PAYER_EMAIL = "default@gmail.com";
 
 type InitiatePaymentArgs = {
   order: OrderView;
@@ -29,7 +30,9 @@ type OneVisionCallbackBody = {
 
 const callbackDataSchema = z
   .object({
-    payment_status: z.string(),
+    payment_status: z.string().optional(),
+    operation_type: z.string().optional(),
+    operation_status: z.string().optional(),
     payment_id: z.union([z.string(), z.number()]).optional(),
     order_id: z.string(),
     amount: z.number().optional(),
@@ -105,16 +108,22 @@ export async function initiateOneVisionPayment({ order, certificate, paymentId, 
     status: "success",
     orderId: order.id,
     orderNumber: order.orderNumber,
+    certificateId: certificate.id,
+    deliveryMethod: input.delivery.method,
   });
   const failureUrl = buildReturnUrl(normalizedBaseUrl, {
     status: "failed",
     orderId: order.id,
     orderNumber: order.orderNumber,
+    certificateId: certificate.id,
+    deliveryMethod: input.delivery.method,
   });
   const merchantTermUrl = buildReturnUrl(normalizedBaseUrl, {
     status: "processing",
     orderId: order.id,
     orderNumber: order.orderNumber,
+    certificateId: certificate.id,
+    deliveryMethod: input.delivery.method,
   });
 
   const company = await getCompany(order.companyId);
@@ -132,10 +141,8 @@ export async function initiateOneVisionPayment({ order, certificate, paymentId, 
     throw new AppError(400, "Для выбранного филиала не указан OneVision Service ID");
   }
 
-  const payerEmail = input.client.email?.trim() ?? certificate.recipientEmail?.trim() ?? null;
-  if (!payerEmail) {
-    throw new AppError(400, "Для оплаты необходимо указать email получателя");
-  }
+  const payerEmail =
+    input.client.email?.trim() || certificate.recipientEmail?.trim() || DEFAULT_PAYER_EMAIL;
   const payerPhone = input.client.phone?.trim() ?? null;
 
   const requestPayload = {
@@ -262,14 +269,41 @@ function normalizePaymentRowMetadata(row: PaymentRow) {
     : {};
 }
 
-function determineInternalStatus(status: string) {
-  if (successStatuses.has(status)) {
-    return "paid";
+function resolveCallbackStatus({
+  paymentStatus,
+  operationType,
+  operationStatus,
+}: {
+  paymentStatus?: string;
+  operationType?: string;
+  operationStatus?: string;
+}) {
+  const normalizedPaymentStatus = typeof paymentStatus === "string" ? paymentStatus.toLowerCase() : undefined;
+  const normalizedOperationType = typeof operationType === "string" ? operationType.toLowerCase() : undefined;
+  const normalizedOperationStatus = typeof operationStatus === "string" ? operationStatus.toLowerCase() : undefined;
+
+  const statusCandidate = normalizedPaymentStatus ?? normalizedOperationType ?? null;
+
+  const markAsPaid =
+    (statusCandidate && successStatuses.has(statusCandidate)) ||
+    (!statusCandidate && normalizedOperationStatus === "success");
+  const markAsFailed =
+    (statusCandidate && failureStatuses.has(statusCandidate)) || normalizedOperationStatus === "error";
+
+  let normalizedStatus: string;
+  if (markAsPaid) {
+    normalizedStatus = "paid";
+  } else if (markAsFailed) {
+    normalizedStatus = "failed";
+  } else {
+    normalizedStatus = statusCandidate ?? normalizedOperationStatus ?? "processing";
   }
-  if (failureStatuses.has(status)) {
-    return "failed";
-  }
-  return status;
+
+  return {
+    normalizedStatus,
+    markAsPaid,
+    markAsFailed,
+  };
 }
 
 export async function handleOneVisionCallback(body: OneVisionCallbackBody) {
@@ -316,12 +350,19 @@ export async function handleOneVisionCallback(body: OneVisionCallbackBody) {
     onevision: {
       ...existingOneVision,
       lastCallback: parsed,
-      paymentStatus: parsed.payment_status,
+      paymentStatus:
+        parsed.payment_status ?? parsed.operation_type ?? parsed.operation_status ?? existingOneVision.paymentStatus ?? null,
+      operationType: parsed.operation_type ?? existingOneVision.operationType ?? null,
+      operationStatus: parsed.operation_status ?? existingOneVision.operationStatus ?? null,
       providerPaymentId: parsed.payment_id ?? existingOneVision.providerPaymentId ?? null,
     },
   };
 
-  const normalizedStatus = determineInternalStatus(parsed.payment_status);
+  const statusResolution = resolveCallbackStatus({
+    paymentStatus: parsed.payment_status,
+    operationType: parsed.operation_type,
+    operationStatus: parsed.operation_status,
+  });
 
   await query(
     `UPDATE payments
@@ -329,13 +370,21 @@ export async function handleOneVisionCallback(body: OneVisionCallbackBody) {
            status = CASE WHEN status = 'paid' THEN status ELSE $3 END,
            updated_at = NOW()
      WHERE id = $1`,
-    [paymentRow.id, JSON.stringify(nextMetadata), normalizedStatus],
+    [paymentRow.id, JSON.stringify(nextMetadata), statusResolution.normalizedStatus],
   );
 
-  if (successStatuses.has(parsed.payment_status)) {
+  if (statusResolution.markAsPaid) {
     await markPaymentAsPaid(paymentRow.id, String(parsed.payment_id ?? parsed.order_id), {
       companyId: paymentRow.company_id,
     });
+  } else if (statusResolution.markAsFailed) {
+    await query(
+      `UPDATE orders
+         SET payment_status = 'failed',
+             updated_at = NOW()
+       WHERE id = $1`,
+      [paymentRow.order_id],
+    );
   }
 
   return { success: true };

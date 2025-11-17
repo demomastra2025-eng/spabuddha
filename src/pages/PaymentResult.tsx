@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSearchParams, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { CheckCircle2, Clock4, XCircle } from "lucide-react";
@@ -44,13 +44,90 @@ const accentByVariant = {
   processing: "bg-amber-50 border-amber-200 text-amber-900",
 };
 
+function getFileNameFromDisposition(disposition?: string | null) {
+  if (!disposition) {
+    return null;
+  }
+
+  const utfMatch = disposition.match(/filename\*=UTF-8''([^;]+)/i);
+  if (utfMatch?.[1]) {
+    try {
+      return decodeURIComponent(utfMatch[1]);
+    } catch {
+      return utfMatch[1];
+    }
+  }
+
+  const asciiMatch = disposition.match(/filename="?([^\";]+)"?/i);
+  return asciiMatch?.[1] ?? null;
+}
+
 const PaymentResult = () => {
   const [params] = useSearchParams();
   const status = (params.get("status") ?? "processing").toLowerCase();
   const orderNumber = params.get("orderNumber");
   const orderId = params.get("orderId");
+  const certificateId = params.get("certificateId");
+  const deliveryMethod = (params.get("deliveryMethod") ?? "").toLowerCase();
+
+  const [autoTriggered, setAutoTriggered] = useState(false);
+  const [downloading, setDownloading] = useState(false);
+  const [downloadError, setDownloadError] = useState<string | null>(null);
 
   const view = useMemo(() => getView(status), [status]);
+  const shouldOfferDownload = view.variant === "success" && deliveryMethod === "download" && Boolean(certificateId);
+
+  const triggerDownload = useCallback(async () => {
+    if (!certificateId) {
+      setDownloadError("Не удалось определить идентификатор сертификата.");
+      return;
+    }
+
+    try {
+      setDownloading(true);
+      setDownloadError(null);
+      const response = await fetch(`/api/certificates/${certificateId}/download`);
+      if (!response.ok) {
+        const fallbackMessage = "Не удалось скачать сертификат. Попробуйте ещё раз.";
+        let message = fallbackMessage;
+        try {
+          const body = await response.json();
+          if (body?.message) {
+            message = body.message;
+          }
+        } catch {
+          message = await response.text().catch(() => fallbackMessage);
+        }
+        throw new Error(message || fallbackMessage);
+      }
+      const blob = await response.blob();
+      const downloadUrl = URL.createObjectURL(blob);
+      const fileName =
+        getFileNameFromDisposition(response.headers.get("Content-Disposition")) ??
+        `certificate-${certificateId}.pdf`;
+
+      const link = document.createElement("a");
+      link.href = downloadUrl;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(downloadUrl);
+    } catch (error) {
+      console.error("[payment/result] certificate download failed", error);
+      const message = error instanceof Error ? error.message : "Не удалось скачать сертификат. Попробуйте ещё раз.";
+      setDownloadError(message);
+    } finally {
+      setDownloading(false);
+    }
+  }, [certificateId]);
+
+  useEffect(() => {
+    if (shouldOfferDownload && !autoTriggered) {
+      setAutoTriggered(true);
+      void triggerDownload();
+    }
+  }, [autoTriggered, shouldOfferDownload, triggerDownload]);
 
   return (
     <div className="bg-background py-16 px-4">
@@ -83,6 +160,27 @@ const PaymentResult = () => {
               Все детали платежа сохранены в системе для вашего филиала.
             </p>
           </div>
+
+          {shouldOfferDownload && (
+            <div className="mt-8 rounded-2xl border border-primary/30 bg-white/80 text-left p-6 space-y-3">
+              <div>
+                <p className="text-lg font-semibold text-foreground">Сертификат готов к скачиванию</p>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Мы уже запустили загрузку файла. Используйте кнопку ниже, если загрузка не началась автоматически.
+                </p>
+              </div>
+              <Button
+                size="lg"
+                variant="secondary"
+                className="w-full sm:w-auto"
+                disabled={downloading}
+                onClick={triggerDownload}
+              >
+                {downloading ? "Скачиваем..." : "Скачать сертификат"}
+              </Button>
+              {downloadError && <p className="text-sm text-rose-600">{downloadError}</p>}
+            </div>
+          )}
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center">
             <Button asChild size="lg" variant="default" className="px-8">

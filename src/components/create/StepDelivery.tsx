@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { CertificateData } from "@/types/certificates";
+import { CertificateData, DeliveryMethod } from "@/types/certificates";
 import { Mail, Smartphone, Download } from "lucide-react";
 import { toast } from "sonner";
 
@@ -14,6 +14,16 @@ interface StepDeliveryProps {
 }
 
 export const StepDelivery = ({ data, updateData, onNext, onPrev }: StepDeliveryProps) => {
+  const handleDeliveryMethodChange = (value: DeliveryMethod) => {
+    if (value === "email") {
+      const nextContact = data.deliveryMethod === "email" ? data.deliveryContact : "";
+      updateData({ deliveryMethod: value, deliveryContact: nextContact });
+      return;
+    }
+
+    updateData({ deliveryMethod: value });
+  };
+
   const handleNext = () => {
     if (data.deliveryMethod !== "download" && !data.deliveryContact) {
       toast.error("Пожалуйста, укажите контакт для доставки");
@@ -39,9 +49,7 @@ export const StepDelivery = ({ data, updateData, onNext, onPrev }: StepDeliveryP
           <Label className="text-lg font-semibold">Способ доставки</Label>
           <RadioGroup
             value={data.deliveryMethod}
-            onValueChange={(value: "email" | "whatsapp" | "download") =>
-              updateData({ deliveryMethod: value })
-            }
+            onValueChange={handleDeliveryMethodChange}
             className="space-y-4"
           >
             {/* Email */}

@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { CertificateData, DEFAULT_VALIDITY_MONTHS } from "@/types/certificates";
-import { CalendarIcon, User, Heart, Phone, Mail } from "lucide-react";
+import { CalendarIcon, User, Heart, Phone } from "lucide-react";
 import { addMonths, format } from "date-fns";
 import { ru } from "date-fns/locale";
 import { toast } from "sonner";
