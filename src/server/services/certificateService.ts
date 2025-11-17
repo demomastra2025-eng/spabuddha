@@ -9,7 +9,7 @@ const certificateRow = z.object({
   finish_date: z.coerce.date().nullable(),
   company_id: z.string(),
   type_cert: z.string(),
-  price_cert: z.number(),
+  price_cert: z.coerce.number(),
   service_cert: z.string().nullable(),
   template_id: z.string().nullable(),
   code: z.string(),

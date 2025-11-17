@@ -7,7 +7,7 @@ export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
     port: 8080,
-    allowedHosts: ["201f10461f6b.ngrok-free.app"],
+    allowedHosts: ["201f10461f6b.ngrok-free.app", "704f9a5752ff.ngrok-free.app"],
     proxy: {
       "/api": "http://localhost:3000",
     },
