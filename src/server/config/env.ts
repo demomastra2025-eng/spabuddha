@@ -17,8 +17,6 @@ const envSchema = z.object({
     .refine((value) => (value ? Number.isInteger(value) && value > 3 : true), "BCRYPT_ROUNDS must be an integer > 3"),
   APP_BASE_URL: z.string().url().optional(),
   WAZZUP_API_URL: z.string().default("https://api.wazzup24.com/v3"),
-  WAZZUP_API_TOKEN: z.string().optional(),
-  WAZZUP_CHANNEL_ID: z.string().optional(),
   RESEND_API_KEY: z.string().optional(),
   RESEND_FROM: z.string().email().optional(),
   ONEVISION_API_URL: z.string().url().default("https://api.onevisionpay.com/"),

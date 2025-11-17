@@ -1,6 +1,12 @@
 import type { Buffer } from "node:buffer";
 import { env } from "../config/env";
 
+export interface WhatsAppCredentials {
+  token: string;
+  channelId: string;
+  number?: string | null;
+}
+
 type WhatsAppMessagePayload = {
   chatId: string;
   text: string;
@@ -16,23 +22,25 @@ type WhatsAppFilePayload = {
 
 const BASE_URL = env.WAZZUP_API_URL.replace(/\/$/, "");
 
-function getAuthHeader() {
-  if (!env.WAZZUP_API_TOKEN) {
-    throw new Error("WAZZUP_API_TOKEN is not configured");
+function getAuthHeader(credentials?: WhatsAppCredentials) {
+  const token = credentials?.token?.trim();
+  if (!token) {
+    throw new Error("Wazzup API token is not configured");
   }
-  return `Bearer ${env.WAZZUP_API_TOKEN}`;
+  return `Bearer ${token}`;
 }
 
-async function postToWazzup(body: unknown) {
-  if (!env.WAZZUP_CHANNEL_ID) {
-    throw new Error("WAZZUP_CHANNEL_ID is not configured");
+async function postToWazzup(body: unknown, credentials?: WhatsAppCredentials) {
+  const channelId = credentials?.channelId?.trim();
+  if (!channelId) {
+    throw new Error("Wazzup channel ID is not configured");
   }
 
   const response = await fetch(`${BASE_URL}/message`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: getAuthHeader(),
+      Authorization: getAuthHeader(credentials),
     },
     body: JSON.stringify(body),
   });
@@ -45,36 +53,42 @@ async function postToWazzup(body: unknown) {
   return response.json().catch(() => ({}));
 }
 
-export async function sendWhatsAppMessage(payload: WhatsAppMessagePayload) {
-  if (!env.WAZZUP_API_TOKEN || !env.WAZZUP_CHANNEL_ID) {
-    console.info("[whatsapp] Missing API credentials, skipping message send", payload.chatId);
+export async function sendWhatsAppMessage(payload: WhatsAppMessagePayload, credentials?: WhatsAppCredentials) {
+  if (!credentials?.token || !credentials.channelId) {
+    console.info("[whatsapp] Missing credentials, skipping message", { chatId: payload.chatId });
     return { skipped: true } as const;
   }
 
-  return postToWazzup({
-    channelId: env.WAZZUP_CHANNEL_ID,
-    chatId: payload.chatId,
-    chatType: "whatsapp",
-    text: payload.text,
-  });
+  return postToWazzup(
+    {
+      channelId: credentials.channelId,
+      chatId: payload.chatId,
+      chatType: "whatsapp",
+      text: payload.text,
+    },
+    credentials,
+  );
 }
 
-export async function sendWhatsAppFile(payload: WhatsAppFilePayload) {
-  if (!env.WAZZUP_API_TOKEN || !env.WAZZUP_CHANNEL_ID) {
-    console.info("[whatsapp] Missing API credentials, skipping file send", payload.chatId);
+export async function sendWhatsAppFile(payload: WhatsAppFilePayload, credentials?: WhatsAppCredentials) {
+  if (!credentials?.token || !credentials.channelId) {
+    console.info("[whatsapp] Missing credentials, skipping file send", { chatId: payload.chatId });
     return { skipped: true } as const;
   }
 
-  return postToWazzup({
-    channelId: env.WAZZUP_CHANNEL_ID,
-    chatId: payload.chatId,
-    chatType: "whatsapp",
-    type: "file",
-    caption: payload.caption,
-    file: {
-      name: payload.fileName,
-      contentType: payload.mimeType,
-      data: payload.buffer.toString("base64"),
+  return postToWazzup(
+    {
+      channelId: credentials.channelId,
+      chatId: payload.chatId,
+      chatType: "whatsapp",
+      type: "file",
+      caption: payload.caption,
+      file: {
+        name: payload.fileName,
+        contentType: payload.mimeType,
+        data: payload.buffer.toString("base64"),
+      },
     },
-  });
+    credentials,
+  );
 }

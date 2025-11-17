@@ -103,6 +103,9 @@ const branchFormDefaults = {
   managerName: "",
   timezone: "",
   status: "active" as "active" | "inactive",
+  wazzupApiToken: "",
+  wazzupChannelId: "",
+  wazzupNumber: "",
 };
 
 type AdminTab = "dashboard" | "certificate" | "templates" | "services" | "branches" | "utm";
@@ -437,6 +440,9 @@ export const AdminDashboard = () => {
           managerName?: string | null;
           timezone?: string | null;
           status?: "active" | "inactive";
+          wazzupApiToken?: string | null;
+          wazzupChannelId?: string | null;
+          wazzupNumber?: string | null;
         };
 
         setBranchForm({
@@ -455,6 +461,9 @@ export const AdminDashboard = () => {
           managerName: data.managerName ?? "",
           timezone: data.timezone ?? "",
           status: data.status ?? "active",
+          wazzupApiToken: data.wazzupApiToken ?? "",
+          wazzupChannelId: data.wazzupChannelId ?? "",
+          wazzupNumber: data.wazzupNumber ?? "",
         });
         setBranchError(null);
       } catch (error) {
@@ -516,6 +525,9 @@ export const AdminDashboard = () => {
         status: branchForm.status,
         managerName: branchForm.managerName.trim() || undefined,
         timezone: branchForm.timezone.trim() || undefined,
+        wazzupApiToken: branchForm.wazzupApiToken.trim() || undefined,
+        wazzupChannelId: branchForm.wazzupChannelId.trim() || undefined,
+        wazzupNumber: branchForm.wazzupNumber.trim() || undefined,
       };
 
       const response = await fetch(`/api/companies/${selectedBranchId}`, {
@@ -1721,6 +1733,45 @@ export const AdminDashboard = () => {
                               value={branchForm.managerName}
                               onChange={(event) => handleBranchFieldChange("managerName")(event.target.value)}
                             />
+                          </div>
+                        </div>
+
+                        <div className="space-y-3 rounded-xl border border-border/60 p-4">
+                          <div>
+                            <Label className="text-base font-semibold">Настройки WhatsApp (Wazzup)</Label>
+                            <p className="text-xs text-muted-foreground mt-1">
+                              Значения используются для отправки сертификатов через WhatsApp. Оставьте пустыми, если для
+                              филиала интеграция не нужна.
+                            </p>
+                          </div>
+                          <div className="grid md:grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                              <Label>API Token</Label>
+                              <Input
+                                value={branchForm.wazzupApiToken}
+                                onChange={(event) => handleBranchFieldChange("wazzupApiToken")(event.target.value)}
+                                placeholder="sk_live_..."
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <Label>Channel ID</Label>
+                              <Input
+                                value={branchForm.wazzupChannelId}
+                                onChange={(event) => handleBranchFieldChange("wazzupChannelId")(event.target.value)}
+                                placeholder="uuid канала"
+                              />
+                            </div>
+                          </div>
+                          <div className="space-y-2">
+                            <Label>Номер отправителя</Label>
+                            <Input
+                              value={branchForm.wazzupNumber}
+                              onChange={(event) => handleBranchFieldChange("wazzupNumber")(event.target.value)}
+                              placeholder="+7..."
+                            />
+                            <p className="text-xs text-muted-foreground">
+                              Для справки отображается в админке и договорах. Сам канал определяется по Channel ID.
+                            </p>
                           </div>
                         </div>
 

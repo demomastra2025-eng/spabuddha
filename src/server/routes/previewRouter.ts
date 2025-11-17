@@ -2,6 +2,7 @@ import { Router } from "express";
 import { z } from "zod";
 import { asyncHandler } from "../middleware/asyncHandler";
 import { sendCertificateEmail } from "../services/mailService";
+import { getCompany } from "../services/companyService";
 import { sendWhatsAppMessage } from "../services/whatsappService";
 
 const currencyFormatter = new Intl.NumberFormat("ru-RU", {
@@ -23,6 +24,7 @@ const previewEmailSchema = baseSchema.extend({
 
 const previewWhatsAppSchema = baseSchema.extend({
   phone: z.string().min(3),
+  companyId: z.string().uuid().optional(),
 });
 
 export const previewRouter = Router();
@@ -65,12 +67,34 @@ previewRouter.post(
       amount: payload.amount,
     });
 
-    const result = await sendWhatsAppMessage({
-      chatId: payload.phone,
-      text: `${summary}\nОтправитель: ${payload.senderName}${
-        payload.message ? `\nСообщение: ${payload.message}` : ""
-      }`,
-    });
+    let credentials = null;
+    if (payload.companyId) {
+      const company = await getCompany(payload.companyId);
+      if (!company) {
+        return res.status(404).json({ message: "Филиал не найден" });
+      }
+      if (company.wazzupApiToken && company.wazzupChannelId) {
+        credentials = {
+          token: company.wazzupApiToken,
+          channelId: company.wazzupChannelId,
+          number: company.wazzupNumber,
+        };
+      }
+    }
+
+    if (!credentials) {
+      return res.status(400).json({ message: "Для отправки укажите филиал с настроенным Wazzup" });
+    }
+
+    const result = await sendWhatsAppMessage(
+      {
+        chatId: payload.phone,
+        text: `${summary}\nОтправитель: ${payload.senderName}${
+          payload.message ? `\nСообщение: ${payload.message}` : ""
+        }`,
+      },
+      credentials,
+    );
 
     console.info("[preview/whatsapp] result", result);
 

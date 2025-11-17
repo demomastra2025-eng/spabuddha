@@ -4,7 +4,7 @@ import { query } from "../db/pool";
 import { env } from "../config/env";
 import { generateCertificatePdf } from "../utils/certificateRenderer";
 import { sendCertificateEmail } from "./mailService";
-import { sendWhatsAppFile, sendWhatsAppMessage } from "./whatsappService";
+import { sendWhatsAppFile, sendWhatsAppMessage, type WhatsAppCredentials } from "./whatsappService";
 
 const fulfillmentPayloadSchema = z.object({
   orderId: z.string(),
@@ -26,6 +26,9 @@ const fulfillmentPayloadSchema = z.object({
   company: z.object({
     label: z.string().nullable(),
     address: z.string().nullable(),
+    wazzupApiToken: z.string().nullable().optional(),
+    wazzupChannelId: z.string().nullable().optional(),
+    wazzupNumber: z.string().nullable().optional(),
   }),
   client: z.object({
     name: z.string().nullable(),
@@ -86,20 +89,40 @@ export async function runOrderFulfillment(payload: FulfillmentPayload) {
   const whatsappMessage = `${summaryText} Срок действия до ${
     data.certificate.finishDate ? data.certificate.finishDate.toLocaleDateString("ru-RU") : "не ограничен"
   }.`;
+  const whatsappCredentials: WhatsAppCredentials | null =
+    data.company.wazzupApiToken && data.company.wazzupChannelId
+      ? {
+          token: data.company.wazzupApiToken,
+          channelId: data.company.wazzupChannelId,
+          number: data.company.wazzupNumber,
+        }
+      : null;
 
   if (data.deliveryMethod === "whatsapp" && whatsappChatId) {
-    await sendWhatsAppMessage({
-      chatId: whatsappChatId,
-      text: whatsappMessage,
-    });
+    if (!whatsappCredentials) {
+      console.info("[fulfillment] WhatsApp credentials missing for company, skipping send", {
+        company: data.company.label,
+      });
+    } else {
+      await sendWhatsAppMessage(
+        {
+          chatId: whatsappChatId,
+          text: whatsappMessage,
+        },
+        whatsappCredentials,
+      );
 
-    await sendWhatsAppFile({
-      chatId: whatsappChatId,
-      fileName: pdf.fileName,
-      buffer: pdf.buffer,
-      caption: summaryText,
-      mimeType: "application/pdf",
-    });
+      await sendWhatsAppFile(
+        {
+          chatId: whatsappChatId,
+          fileName: pdf.fileName,
+          buffer: pdf.buffer,
+          caption: summaryText,
+          mimeType: "application/pdf",
+        },
+        whatsappCredentials,
+      );
+    }
   }
 
   const emailRecipient =

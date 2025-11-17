@@ -4,6 +4,7 @@ export interface WhatsAppPayload {
   senderName: string;
   amount: number;
   message?: string;
+  companyId?: string;
 }
 
 export const sendCertificateWhatsApp = async (payload: WhatsAppPayload) => {
@@ -18,6 +19,7 @@ export const sendCertificateWhatsApp = async (payload: WhatsAppPayload) => {
       senderName: payload.senderName,
       amount: payload.amount,
       message: payload.message,
+      companyId: payload.companyId,
     }),
   });
 

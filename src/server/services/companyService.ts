@@ -22,6 +22,9 @@ const companyRow = z.object({
   manager_name: z.string().nullable(),
   timezone: z.string().nullable(),
   slug: z.string().nullable(),
+  wazzup_api_token: z.string().nullable(),
+  wazzup_channel_id: z.string().nullable(),
+  wazzup_number: z.string().nullable(),
 });
 
 export type Company = z.infer<typeof companyRow>;
@@ -46,6 +49,9 @@ export interface CompanyView {
   managerName: string | null;
   timezone: string | null;
   slug: string | null;
+  wazzupApiToken: string | null;
+  wazzupChannelId: string | null;
+  wazzupNumber: string | null;
 }
 
 export const upsertCompanySchema = z.object({
@@ -64,6 +70,9 @@ export const upsertCompanySchema = z.object({
   status: z.enum(["active", "inactive"]).default("active"),
   managerName: z.string().optional(),
   timezone: z.string().optional(),
+  wazzupApiToken: z.string().optional(),
+  wazzupChannelId: z.string().optional(),
+  wazzupNumber: z.string().optional(),
 });
 
 function mapCompany(row: Company): CompanyView {
@@ -87,6 +96,9 @@ function mapCompany(row: Company): CompanyView {
     managerName: row.manager_name,
     timezone: row.timezone,
     slug: row.slug,
+    wazzupApiToken: row.wazzup_api_token,
+    wazzupChannelId: row.wazzup_channel_id,
+    wazzupNumber: row.wazzup_number,
   };
 }
 
@@ -106,8 +118,8 @@ export async function createCompany(input: z.infer<typeof upsertCompanySchema>) 
     `INSERT INTO company
       (label, address, phone, name_company, bin_company, bik_company, official_address,
        company_one_vision_id, pass_one_vision, key_one_vision, company_name_one_vision_id,
-       email, status, manager_name, timezone)
-     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15)
+       email, status, manager_name, timezone, wazzup_api_token, wazzup_channel_id, wazzup_number)
+     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18)
      RETURNING *`,
     [
       input.label,
@@ -125,6 +137,9 @@ export async function createCompany(input: z.infer<typeof upsertCompanySchema>) 
       input.status,
       input.managerName ?? null,
       input.timezone ?? null,
+      input.wazzupApiToken?.trim() ? input.wazzupApiToken.trim() : null,
+      input.wazzupChannelId?.trim() ? input.wazzupChannelId.trim() : null,
+      input.wazzupNumber?.trim() ? input.wazzupNumber.trim() : null,
     ],
   );
   return mapCompany(result.rows[0]);
@@ -148,8 +163,11 @@ export async function updateCompany(id: string, input: z.infer<typeof upsertComp
       status = $13,
       manager_name = $14,
       timezone = $15,
+      wazzup_api_token = $16,
+      wazzup_channel_id = $17,
+      wazzup_number = $18,
       updated_at = NOW()
-     WHERE id = $16
+     WHERE id = $19
      RETURNING *`,
     [
       input.label,
@@ -167,6 +185,9 @@ export async function updateCompany(id: string, input: z.infer<typeof upsertComp
       input.status,
       input.managerName ?? null,
       input.timezone ?? null,
+      input.wazzupApiToken?.trim() ? input.wazzupApiToken.trim() : null,
+      input.wazzupChannelId?.trim() ? input.wazzupChannelId.trim() : null,
+      input.wazzupNumber?.trim() ? input.wazzupNumber.trim() : null,
       id,
     ],
   );

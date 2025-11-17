@@ -85,6 +85,9 @@ const fulfillmentRowSchema = z.object({
   template_id: z.string().nullable(),
   template_background_url: z.string().nullable(),
   template_layout_config: z.any().nullable(),
+  company_wazzup_api_token: z.string().nullable(),
+  company_wazzup_channel_id: z.string().nullable(),
+  company_wazzup_number: z.string().nullable(),
 });
 
 export type PaymentConfirmationResult = {
@@ -132,6 +135,9 @@ export async function markPaymentAsPaid(
          t.layout_config AS template_layout_config,
          comp.label AS company_label,
          comp.address AS company_address,
+         comp.wazzup_api_token AS company_wazzup_api_token,
+         comp.wazzup_channel_id AS company_wazzup_channel_id,
+         comp.wazzup_number AS company_wazzup_number,
          cli.first_name AS client_first_name,
          cli.last_name AS client_last_name,
          cli.email AS client_email,
@@ -211,6 +217,9 @@ export async function markPaymentAsPaid(
     company: {
       label: fulfillment.company_label,
       address: fulfillment.company_address,
+      wazzupApiToken: fulfillment.company_wazzup_api_token,
+      wazzupChannelId: fulfillment.company_wazzup_channel_id,
+      wazzupNumber: fulfillment.company_wazzup_number,
     },
     client: {
       name: clientName,

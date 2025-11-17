@@ -29,6 +29,9 @@ CREATE TABLE IF NOT EXISTS company (
     status TEXT NOT NULL DEFAULT 'active',
     manager_name TEXT,
     timezone TEXT,
+    wazzup_api_token TEXT,
+    wazzup_channel_id TEXT,
+    wazzup_number TEXT,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
@@ -146,6 +149,15 @@ CREATE UNIQUE INDEX IF NOT EXISTS idx_template_name_unique ON template(name);
 
 ALTER TABLE company
     ADD COLUMN IF NOT EXISTS slug TEXT UNIQUE;
+
+ALTER TABLE company
+    ADD COLUMN IF NOT EXISTS wazzup_api_token TEXT;
+
+ALTER TABLE company
+    ADD COLUMN IF NOT EXISTS wazzup_channel_id TEXT;
+
+ALTER TABLE company
+    ADD COLUMN IF NOT EXISTS wazzup_number TEXT;
 
 ALTER TABLE users
     ADD COLUMN IF NOT EXISTS company_id UUID REFERENCES company(id);
