@@ -70,6 +70,9 @@ export async function runOrderFulfillment(payload: FulfillmentPayload) {
     textColor: data.template?.textColor ?? undefined,
     fontFamily: data.template?.fontFamily ?? undefined,
   });
+  const downloadUrl = env.APP_BASE_URL
+    ? `${env.APP_BASE_URL.replace(/\/$/, "")}/api/certificates/${data.certificate.id}/download`
+    : null;
 
   await query(
     `UPDATE certificates SET file_url = $2, updated_at = NOW() WHERE id = $1`,
@@ -117,6 +120,7 @@ export async function runOrderFulfillment(payload: FulfillmentPayload) {
           chatId: whatsappChatId,
           fileName: pdf.fileName,
           buffer: pdf.buffer,
+          contentUri: downloadUrl ?? undefined,
           caption: summaryText,
           mimeType: "application/pdf",
         },
@@ -131,10 +135,11 @@ export async function runOrderFulfillment(payload: FulfillmentPayload) {
       : data.certificate.recipientEmail ?? data.client.email ?? undefined;
 
   if (emailRecipient) {
+    const downloadText = downloadUrl ?? "доступно после оплаты";
     await sendCertificateEmail({
       to: emailRecipient,
       subject: `Ваш сертификат Buddha Spa №${data.certificate.code}`,
-      text: `${summaryText}\n\nСкачать сертификат: ${env.APP_BASE_URL ? `${env.APP_BASE_URL.replace(/\/$/, "")}/api/certificates/${data.certificate.id}/download` : "доступно после оплаты"}.`,
+      text: `${summaryText}\n\nСкачать сертификат: ${downloadText}.`,
       attachments: [
         {
           filename: pdf.fileName,
@@ -143,10 +148,6 @@ export async function runOrderFulfillment(payload: FulfillmentPayload) {
       ],
     });
   }
-
-  const downloadUrl = env.APP_BASE_URL
-    ? `${env.APP_BASE_URL.replace(/\/$/, "")}/api/certificates/${data.certificate.id}/download`
-    : null;
 
   return {
     filePath: path.isAbsolute(pdf.relativePath) ? pdf.relativePath : path.join(process.cwd(), pdf.relativePath),

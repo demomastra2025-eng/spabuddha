@@ -15,9 +15,10 @@ type WhatsAppMessagePayload = {
 type WhatsAppFilePayload = {
   chatId: string;
   fileName: string;
-  buffer: Buffer;
+  buffer?: Buffer;
   mimeType: string;
   caption?: string;
+  contentUri?: string | null;
 };
 
 const BASE_URL = env.WAZZUP_API_URL.replace(/\/$/, "");
@@ -38,6 +39,65 @@ async function postToWazzup(body: unknown, credentials?: WhatsAppCredentials) {
 
   const response = await fetch(`${BASE_URL}/message`, {
     method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: getAuthHeader(credentials),
+    },
+    body: JSON.stringify(body),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`Wazzup API error: ${response.status} ${errorText}`);
+  }
+
+  return response.json().catch(() => ({}));
+}
+
+function extractMessageId(payload: unknown): string | null {
+  if (!payload || typeof payload !== "object") {
+    return null;
+  }
+
+  if ("messageId" in payload && typeof (payload as Record<string, unknown>).messageId === "string") {
+    return (payload as Record<string, string>).messageId;
+  }
+
+  if ("id" in payload && typeof (payload as Record<string, unknown>).id === "string") {
+    return (payload as Record<string, string>).id;
+  }
+
+  if (Array.isArray(payload)) {
+    for (const item of payload) {
+      const result = extractMessageId(item);
+      if (result) {
+        return result;
+      }
+    }
+  }
+
+  if ("message" in payload) {
+    const result = extractMessageId((payload as Record<string, unknown>).message);
+    if (result) {
+      return result;
+    }
+  }
+
+  if ("messages" in payload && Array.isArray((payload as Record<string, unknown>).messages)) {
+    for (const item of (payload as Record<string, unknown>).messages as unknown[]) {
+      const result = extractMessageId(item);
+      if (result) {
+        return result;
+      }
+    }
+  }
+
+  return null;
+}
+
+async function patchWazzupMessage(messageId: string, body: unknown, credentials?: WhatsAppCredentials) {
+  const response = await fetch(`${BASE_URL}/message/${messageId}`, {
+    method: "PATCH",
     headers: {
       "Content-Type": "application/json",
       Authorization: getAuthHeader(credentials),
@@ -76,7 +136,13 @@ export async function sendWhatsAppFile(payload: WhatsAppFilePayload, credentials
     return { skipped: true } as const;
   }
 
-  return postToWazzup(
+  const shouldUseContentUri = Boolean(payload.contentUri);
+
+  if (!shouldUseContentUri && !payload.buffer) {
+    throw new Error("WhatsApp file payload requires buffer when contentUri is not provided");
+  }
+
+  const response = await postToWazzup(
     {
       channelId: credentials.channelId,
       chatId: payload.chatId,
@@ -86,9 +152,20 @@ export async function sendWhatsAppFile(payload: WhatsAppFilePayload, credentials
       file: {
         name: payload.fileName,
         contentType: payload.mimeType,
-        data: payload.buffer.toString("base64"),
+        ...(shouldUseContentUri ? {} : { data: payload.buffer?.toString("base64") }),
       },
     },
     credentials,
   );
+
+  if (shouldUseContentUri && payload.contentUri) {
+    const messageId = extractMessageId(response);
+    if (messageId) {
+      await patchWazzupMessage(messageId, { contentUri: payload.contentUri }, credentials);
+    } else {
+      console.warn("[whatsapp] Unable to determine message ID for file upload", { chatId: payload.chatId });
+    }
+  }
+
+  return response;
 }
