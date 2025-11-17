@@ -4,6 +4,7 @@ import { asyncHandler } from "../middleware/asyncHandler";
 import { requireAdmin } from "../middleware/authMiddleware";
 import {
   createUtmTag,
+  deleteUtmTag,
   getUtmTag,
   listUtmTags,
   recordUtmVisit,
@@ -51,5 +52,14 @@ utmRouter.get(
     const { id } = z.object({ id: z.string().uuid("Некорректный идентификатор") }).parse(req.params);
     const tag = await getUtmTag(id);
     res.json(tag);
+  }),
+);
+
+utmRouter.delete(
+  "/tags/:id",
+  asyncHandler(async (req, res) => {
+    const { id } = z.object({ id: z.string().uuid("Некорректный идентификатор") }).parse(req.params);
+    await deleteUtmTag(id);
+    res.status(204).send();
   }),
 );

@@ -295,18 +295,6 @@ export async function recordUtmVisit(input: z.infer<typeof recordUtmVisitSchema>
 
   const tagId = tagResult.rows[0]?.id ?? null;
 
-  const existing = await query<{ id: string }>(
-    `SELECT id FROM utm_visits
-      WHERE visitor_id = $1
-        AND ((utm_tag_id IS NULL AND $2::uuid IS NULL) OR utm_tag_id = $2::uuid)
-      LIMIT 1`,
-    [input.visitorId, tagId],
-  );
-
-  if (existing.rows.length > 0) {
-    return { created: false, utmTagId: tagId, matchedTag: Boolean(tagId) };
-  }
-
   await query(
     `INSERT INTO utm_visits
       (utm_tag_id, visitor_id, utm_source, utm_medium, utm_campaign, utm_term, utm_content, landing_path, user_agent, referer, first_visit_at)
@@ -327,4 +315,17 @@ export async function recordUtmVisit(input: z.infer<typeof recordUtmVisitSchema>
   );
 
   return { created: true, utmTagId: tagId, matchedTag: Boolean(tagId) };
+}
+
+export async function deleteUtmTag(id: string): Promise<void> {
+  const result = await query<{ id: string }>(
+    `DELETE FROM utm_tags
+      WHERE id = $1
+      RETURNING id`,
+    [id],
+  );
+
+  if (result.rowCount === 0) {
+    throw new AppError(404, "UTM-метка не найдена");
+  }
 }

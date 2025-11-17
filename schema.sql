@@ -220,10 +220,7 @@ CREATE TABLE IF NOT EXISTS utm_visits (
 
 CREATE INDEX IF NOT EXISTS idx_utm_visits_tag ON utm_visits(utm_tag_id);
 CREATE INDEX IF NOT EXISTS idx_utm_visits_visitor ON utm_visits(visitor_id);
-CREATE UNIQUE INDEX IF NOT EXISTS idx_utm_visits_unique ON utm_visits(
-    visitor_id,
-    COALESCE(utm_tag_id, '00000000-0000-0000-0000-000000000000'::uuid)
-);
+DROP INDEX IF EXISTS idx_utm_visits_unique;
 
 CREATE INDEX IF NOT EXISTS idx_spa_procedures_company_id ON spa_procedures(company_id);
 

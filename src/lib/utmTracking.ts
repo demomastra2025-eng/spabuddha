@@ -1,10 +1,4 @@
 const VISITOR_ID_KEY = "spa_utm_visitor_id";
-const LAST_VISIT_KEY = "spa_utm_last_visit";
-
-interface StoredVisitInfo {
-  signature: string;
-  reportedAt: number;
-}
 
 interface UtmPayload {
   visitorId: string;
@@ -31,43 +25,6 @@ function ensureVisitorId(): string {
   } catch (error) {
     console.error("utmTracking: failed to access localStorage", error);
     return `${Date.now()}-${Math.random().toString(16).slice(2)}`;
-  }
-}
-
-function buildSignature(payload: UtmPayload): string {
-  return [
-    payload.visitorId,
-    payload.utmSource ?? "",
-    payload.utmMedium ?? "",
-    payload.utmCampaign ?? "",
-    payload.utmTerm ?? "",
-    payload.utmContent ?? "",
-  ].join("|");
-}
-
-function shouldReport(signature: string): boolean {
-  try {
-    const storedRaw = window.localStorage.getItem(LAST_VISIT_KEY);
-    if (!storedRaw) {
-      return true;
-    }
-    const stored = JSON.parse(storedRaw) as StoredVisitInfo | null;
-    if (!stored || typeof stored.signature !== "string") {
-      return true;
-    }
-    return stored.signature !== signature;
-  } catch (error) {
-    console.error("utmTracking: failed to read localStorage", error);
-    return true;
-  }
-}
-
-function markReported(signature: string) {
-  try {
-    const info: StoredVisitInfo = { signature, reportedAt: Date.now() };
-    window.localStorage.setItem(LAST_VISIT_KEY, JSON.stringify(info));
-  } catch (error) {
-    console.error("utmTracking: failed to persist visit info", error);
   }
 }
 
@@ -111,11 +68,6 @@ export function initializeUtmTracking() {
     visitedAt: new Date().toISOString(),
   };
 
-  const signature = buildSignature(payload);
-  if (!shouldReport(signature)) {
-    return;
-  }
-
   void fetch("/api/utm/visit", {
     method: "POST",
     headers: {
@@ -133,11 +85,7 @@ export function initializeUtmTracking() {
       referer: document.referrer || undefined,
     }),
   })
-    .then((response) => {
-      if (response.ok) {
-        markReported(signature);
-      }
-    })
+    .then(() => undefined)
     .catch((error) => {
       console.error("utmTracking: failed to report visit", error);
     });

@@ -1,5 +1,5 @@
 import { ChangeEvent, FormEventHandler, useCallback, useEffect, useMemo, useState } from "react";
-import { Clipboard, ExternalLink, RefreshCw, TrendingUp } from "lucide-react";
+import { Clipboard, ExternalLink, RefreshCw, Trash2, TrendingUp } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -82,6 +82,7 @@ export function UtmManagement({ token, canManage }: UtmManagementProps) {
   const [selectedTagId, setSelectedTagId] = useState<string | null>(null);
   const [selectedTag, setSelectedTag] = useState<UtmTagDetail | null>(null);
   const [detailLoading, setDetailLoading] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const resetForm = () => setForm(defaultFormState);
 
@@ -283,6 +284,45 @@ export function UtmManagement({ token, canManage }: UtmManagementProps) {
     }
   };
 
+  const handleDeleteTag = async (tagId: string) => {
+    if (!canManage) {
+      toast.error("Раздел доступен только администраторам");
+      return;
+    }
+    if (!token) {
+      toast.error("Сессия истекла. Перезайдите.");
+      return;
+    }
+    if (!window.confirm("Удалить UTM-метку и связанные переходы?")) {
+      return;
+    }
+
+    setDeletingId(tagId);
+    try {
+      const response = await fetch(`/api/utm/tags/${tagId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        const payload = await response.json().catch(() => null);
+        throw new Error(payload?.message ?? "Не удалось удалить метку");
+      }
+
+      toast.success("Метка удалена");
+      setSelectedTagId((current) => (current === tagId ? null : current));
+      setSelectedTag((current) => (current && current.id === tagId ? null : current));
+      await loadTags();
+    } catch (err) {
+      console.error(err);
+      toast.error(err instanceof Error ? err.message : "Не удалось удалить метку");
+    } finally {
+      setDeletingId(null);
+    }
+  };
+
   if (!canManage) {
     return (
       <Card className="border border-border/60 bg-card shadow-sm">
@@ -366,21 +406,38 @@ export function UtmManagement({ token, canManage }: UtmManagementProps) {
                     </TableCell>
                     <TableCell className="text-right">{tag.totalVisits}</TableCell>
                     <TableCell className="text-right">
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => loadTagDetail(tag.id)}
-                        disabled={detailLoading && selectedTagId === tag.id}
-                        className="inline-flex items-center gap-2"
-                      >
-                        {detailLoading && selectedTagId === tag.id ? (
-                          <RefreshCw className="w-4 h-4 animate-spin" />
-                        ) : (
-                          <ExternalLink className="w-4 h-4" />
-                        )}
-                        Подробнее
-                      </Button>
+                      <div className="flex items-center justify-end gap-2">
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => loadTagDetail(tag.id)}
+                          disabled={detailLoading && selectedTagId === tag.id}
+                          className="inline-flex items-center gap-2"
+                        >
+                          {detailLoading && selectedTagId === tag.id ? (
+                            <RefreshCw className="w-4 h-4 animate-spin" />
+                          ) : (
+                            <ExternalLink className="w-4 h-4" />
+                          )}
+                          Подробнее
+                        </Button>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleDeleteTag(tag.id)}
+                          disabled={deletingId === tag.id}
+                          className="inline-flex items-center gap-2 text-destructive hover:text-destructive"
+                        >
+                          {deletingId === tag.id ? (
+                            <RefreshCw className="w-4 h-4 animate-spin" />
+                          ) : (
+                            <Trash2 className="w-4 h-4" />
+                          )}
+                          Удалить
+                        </Button>
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))}
