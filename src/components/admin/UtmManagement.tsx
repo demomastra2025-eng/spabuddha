@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import QRCode from "react-qr-code";
 
 interface UtmTagSummary {
   id: string;
@@ -66,6 +67,11 @@ const formFields: Array<{
   { key: "utmTerm", label: "UTM Term", placeholder: "spa+kz" },
   { key: "utmContent", label: "UTM Content", placeholder: "banner_a" },
 ];
+
+const normalizedAppBaseUrl = (() => {
+  const raw = import.meta.env.VITE_APP_BASE_URL?.trim();
+  return raw ? raw.replace(/\/+$/, "") : null;
+})();
 
 export function UtmManagement({ token, canManage }: UtmManagementProps) {
   const [form, setForm] = useState<FormState>(defaultFormState);
@@ -218,16 +224,33 @@ export function UtmManagement({ token, canManage }: UtmManagementProps) {
     }
   };
 
-  const trackingUrl = useMemo(() => {
+  const trackingBaseUrl = useMemo(() => {
     if (!selectedTag) {
       return null;
     }
-    const base = selectedTag.targetUrl?.trim() || (typeof window !== "undefined" ? window.location.origin : "");
-    if (!base) {
+
+    const targetUrl = selectedTag.targetUrl?.trim();
+    if (targetUrl) {
+      return targetUrl;
+    }
+
+    if (normalizedAppBaseUrl) {
+      return normalizedAppBaseUrl;
+    }
+
+    if (typeof window !== "undefined") {
+      return window.location.origin;
+    }
+
+    return null;
+  }, [selectedTag]);
+
+  const trackingUrl = useMemo(() => {
+    if (!selectedTag || !trackingBaseUrl) {
       return null;
     }
     try {
-      const url = new URL(base, typeof window !== "undefined" ? window.location.origin : undefined);
+      const url = new URL(trackingBaseUrl, typeof window !== "undefined" ? window.location.origin : undefined);
       const params = new URLSearchParams(url.search);
       if (selectedTag.utmSource) params.set("utm_source", selectedTag.utmSource);
       if (selectedTag.utmMedium) params.set("utm_medium", selectedTag.utmMedium);
@@ -240,7 +263,7 @@ export function UtmManagement({ token, canManage }: UtmManagementProps) {
       console.error("Failed to build tracking url", error);
       return null;
     }
-  }, [selectedTag]);
+  }, [selectedTag, trackingBaseUrl]);
 
   const copyTrackingUrl = async () => {
     if (!trackingUrl) {
@@ -389,8 +412,13 @@ export function UtmManagement({ token, canManage }: UtmManagementProps) {
           </CardHeader>
           <CardContent className="space-y-4">
             {trackingUrl && (
-              <div className="rounded-md bg-muted/60 px-4 py-3 text-sm text-foreground break-all">
-                {trackingUrl}
+              <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_auto]">
+                <div className="rounded-md bg-muted/60 px-4 py-3 text-sm text-foreground break-all">
+                  {trackingUrl}
+                </div>
+                <div className="flex items-center justify-center rounded-2xl border border-border/60 bg-muted/80 p-4">
+                  <QRCode value={trackingUrl} level="M" size={168} />
+                </div>
               </div>
             )}
             <div className="space-y-3">
