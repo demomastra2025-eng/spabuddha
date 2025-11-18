@@ -40,6 +40,9 @@ const callbackDataSchema = z
   })
   .passthrough();
 
+type OneVisionStatusPayload = z.infer<typeof callbackDataSchema>;
+type OneVisionStatusSource = "callback" | "status_poll";
+
 function ensureBaseUrl(baseUrl: string) {
   if (!baseUrl) {
     throw new AppError(500, "Не задан базовый URL приложения (APP_BASE_URL)");
@@ -306,6 +309,92 @@ function resolveCallbackStatus({
   };
 }
 
+function buildNextOneVisionMetadata({
+  metadata,
+  parsed,
+  source,
+}: {
+  metadata: Record<string, unknown>;
+  parsed: OneVisionStatusPayload;
+  source: OneVisionStatusSource;
+}) {
+  const existingOneVision =
+    (metadata.onevision as Record<string, unknown> | undefined) ?? {};
+  const nowIso = new Date().toISOString();
+  const attempts = Number(existingOneVision.statusPollAttempts ?? 0);
+
+  const nextOneVisionMetadata: Record<string, unknown> = {
+    ...existingOneVision,
+    paymentStatus:
+      parsed.payment_status ??
+      parsed.operation_type ??
+      parsed.operation_status ??
+      existingOneVision.paymentStatus ??
+      null,
+    operationType: parsed.operation_type ?? existingOneVision.operationType ?? null,
+    operationStatus: parsed.operation_status ?? existingOneVision.operationStatus ?? null,
+    providerPaymentId: parsed.payment_id ?? existingOneVision.providerPaymentId ?? null,
+  };
+
+  if (source === "callback") {
+    nextOneVisionMetadata.lastCallback = parsed;
+    nextOneVisionMetadata.lastCallbackAt = nowIso;
+  } else {
+    nextOneVisionMetadata.lastStatusPoll = {
+      payload: parsed,
+      polledAt: nowIso,
+    };
+    nextOneVisionMetadata.statusPollAttempts = Number.isNaN(attempts) ? 1 : attempts + 1;
+  }
+
+  return {
+    ...metadata,
+    onevision: nextOneVisionMetadata,
+  };
+}
+
+async function persistOneVisionStatus({
+  paymentRow,
+  parsed,
+  source,
+}: {
+  paymentRow: PaymentRow & { company_id: string };
+  parsed: OneVisionStatusPayload;
+  source: OneVisionStatusSource;
+}) {
+  const metadata = normalizePaymentRowMetadata(paymentRow);
+  const nextMetadata = buildNextOneVisionMetadata({ metadata, parsed, source });
+
+  const statusResolution = resolveCallbackStatus({
+    paymentStatus: parsed.payment_status,
+    operationType: parsed.operation_type,
+    operationStatus: parsed.operation_status,
+  });
+
+  await query(
+    `UPDATE payments
+       SET metadata = $2,
+           status = CASE WHEN status = 'paid' THEN status ELSE $3 END,
+           updated_at = NOW()
+     WHERE id = $1`,
+    [paymentRow.id, JSON.stringify(nextMetadata), statusResolution.normalizedStatus],
+  );
+
+  if (statusResolution.markAsPaid) {
+    await markPaymentAsPaid(paymentRow.id, String(parsed.payment_id ?? parsed.order_id), {
+      companyId: paymentRow.company_id,
+    });
+  } else if (statusResolution.markAsFailed) {
+    await query(
+      `UPDATE orders
+         SET payment_status = 'failed',
+             updated_at = NOW()
+       WHERE id = $1`,
+      [paymentRow.order_id],
+    );
+  }
+}
+
 export async function handleOneVisionCallback(body: OneVisionCallbackBody) {
   if (!body?.data || !body?.sign) {
     throw new AppError(400, "Некорректный callback OneVision");
@@ -342,50 +431,130 @@ export async function handleOneVisionCallback(body: OneVisionCallbackBody) {
     throw new AppError(400, "Неверная подпись callback OneVision");
   }
 
-  const metadata = normalizePaymentRowMetadata(paymentRow);
-  const existingOneVision = (metadata.onevision as Record<string, unknown> | undefined) ?? {};
-
-  const nextMetadata = {
-    ...metadata,
-    onevision: {
-      ...existingOneVision,
-      lastCallback: parsed,
-      paymentStatus:
-        parsed.payment_status ?? parsed.operation_type ?? parsed.operation_status ?? existingOneVision.paymentStatus ?? null,
-      operationType: parsed.operation_type ?? existingOneVision.operationType ?? null,
-      operationStatus: parsed.operation_status ?? existingOneVision.operationStatus ?? null,
-      providerPaymentId: parsed.payment_id ?? existingOneVision.providerPaymentId ?? null,
-    },
-  };
-
-  const statusResolution = resolveCallbackStatus({
-    paymentStatus: parsed.payment_status,
-    operationType: parsed.operation_type,
-    operationStatus: parsed.operation_status,
-  });
-
-  await query(
-    `UPDATE payments
-       SET metadata = $2,
-           status = CASE WHEN status = 'paid' THEN status ELSE $3 END,
-           updated_at = NOW()
-     WHERE id = $1`,
-    [paymentRow.id, JSON.stringify(nextMetadata), statusResolution.normalizedStatus],
-  );
-
-  if (statusResolution.markAsPaid) {
-    await markPaymentAsPaid(paymentRow.id, String(parsed.payment_id ?? parsed.order_id), {
-      companyId: paymentRow.company_id,
-    });
-  } else if (statusResolution.markAsFailed) {
-    await query(
-      `UPDATE orders
-         SET payment_status = 'failed',
-             updated_at = NOW()
-       WHERE id = $1`,
-      [paymentRow.order_id],
-    );
-  }
+  await persistOneVisionStatus({ paymentRow, parsed, source: "callback" });
 
   return { success: true };
+}
+
+const STATUS_POLL_INTERVAL_MS = 2 * 60 * 1000;
+const STATUS_POLL_BATCH_LIMIT = 25;
+const STATUS_POLL_MIN_AGE_MINUTES = 2;
+const STATUS_POLL_MAX_AGE_SECONDS = 62 * 60;
+
+let statusPollTimer: NodeJS.Timeout | null = null;
+let statusPollInProgress = false;
+
+function shouldSkipPolling(paymentRow: PaymentRow) {
+  if (!paymentRow.metadata || typeof paymentRow.metadata !== "object") {
+    return false;
+  }
+  const metadata = paymentRow.metadata as Record<string, unknown>;
+  const onevision = metadata.onevision as Record<string, unknown> | undefined;
+  if (!onevision) {
+    return false;
+  }
+
+  const lastPoll = onevision.lastStatusPoll as { polledAt?: string } | undefined;
+  if (!lastPoll?.polledAt) {
+    return false;
+  }
+
+  const lastPollTime = Date.parse(lastPoll.polledAt);
+  if (Number.isNaN(lastPollTime)) {
+    return false;
+  }
+
+  const elapsed = Date.now() - lastPollTime;
+  return elapsed < STATUS_POLL_INTERVAL_MS;
+}
+
+async function loadPaymentsForStatusPolling(limit: number) {
+  const result = await query<
+    PaymentRow & { company_id: string }
+  >(
+    `SELECT p.*, o.company_id
+       FROM payments p
+       JOIN orders o ON o.id = p.order_id
+      WHERE p.provider = 'onevision'
+        AND p.status NOT IN ('paid','failed')
+        AND p.updated_at <= NOW() - INTERVAL '${STATUS_POLL_MIN_AGE_MINUTES} minutes'
+        AND p.created_at >= NOW() - INTERVAL '${STATUS_POLL_MAX_AGE_SECONDS} seconds'
+      ORDER BY p.updated_at ASC
+      LIMIT $1`,
+    [limit],
+  );
+
+  return result.rows.filter((row) => !shouldSkipPolling(row));
+}
+
+async function pollPaymentStatus(paymentRow: PaymentRow & { company_id: string }) {
+  try {
+    const company = await getCompany(paymentRow.company_id);
+    if (!company?.keyOneVision || !company?.passOneVision) {
+      console.warn(
+        `[onevision-status] Пропуск платежа ${paymentRow.id}: не заполнены ключ или секрет OneVision для филиала ${paymentRow.company_id}`,
+      );
+      return;
+    }
+
+    const metadata = normalizePaymentRowMetadata(paymentRow);
+    const existingOneVision = (metadata.onevision as Record<string, unknown> | undefined) ?? {};
+    const providerPaymentId = existingOneVision.providerPaymentId
+      ? String(existingOneVision.providerPaymentId)
+      : null;
+
+    const payload =
+      providerPaymentId && providerPaymentId.length > 0
+        ? { payment_id: providerPaymentId }
+        : { order_id: paymentRow.order_id };
+
+    const response = await requestOneVision<Record<string, unknown>>("payment/status", {
+      apiKey: company.keyOneVision,
+      secret: company.passOneVision,
+      payload,
+    });
+
+    if (!response.success) {
+      console.warn(`[onevision-status] Платеж ${paymentRow.id} вернул неуспешный ответ при опросе статуса`);
+      return;
+    }
+
+    const decoded = response.data ? decodeData(response.data) : {};
+    const parsed = callbackDataSchema.parse(decoded);
+
+    await persistOneVisionStatus({ paymentRow, parsed, source: "status_poll" });
+  } catch (error) {
+    console.error(`[onevision-status] Не удалось обновить статус платежа ${paymentRow.id}:`, error);
+  }
+}
+
+async function runOneVisionStatusPollCycle() {
+  if (statusPollInProgress) {
+    return;
+  }
+  statusPollInProgress = true;
+
+  try {
+    const payments = await loadPaymentsForStatusPolling(STATUS_POLL_BATCH_LIMIT);
+    for (const paymentRow of payments) {
+      await pollPaymentStatus(paymentRow);
+    }
+  } catch (error) {
+    console.error("[onevision-status] Ошибка фонового опроса статусов:", error);
+  } finally {
+    statusPollInProgress = false;
+  }
+}
+
+export function startOneVisionStatusPolling() {
+  if (statusPollTimer) {
+    return;
+  }
+
+  const run = () => {
+    void runOneVisionStatusPollCycle();
+  };
+
+  run();
+  statusPollTimer = setInterval(run, STATUS_POLL_INTERVAL_MS);
 }
