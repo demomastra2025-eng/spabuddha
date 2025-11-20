@@ -2,6 +2,16 @@ import { z } from "zod";
 import { pool, query, type PoolClientLike } from "../db/pool";
 import { generateCertificateCode } from "../utils/certificate";
 
+const templateBackgroundSchema = z.preprocess((value) => {
+  if (typeof value !== "string") {
+    return undefined;
+  }
+  const trimmed = value.trim();
+  return trimmed.length ? trimmed : undefined;
+}, z.string().refine((val) => /^https?:\/\//i.test(val) || /^\/?[-\w./]+$/i.test(val), {
+  message: "Invalid template background",
+}));
+
 const certificateRow = z.object({
   id: z.string(),
   name_cert: z.string(),
@@ -12,6 +22,8 @@ const certificateRow = z.object({
   price_cert: z.coerce.number(),
   service_cert: z.string().nullable(),
   template_id: z.string().nullable(),
+  template_background_url: z.string().nullable().optional(),
+  template_text_color: z.string().nullable().optional(),
   code: z.string(),
   status: z.string(),
   sender_name: z.string().nullable(),
@@ -61,6 +73,8 @@ export interface CertificateView {
   updatedAt: Date;
   createdBy: string | null;
   fileUrl: string | null;
+  templateBackgroundUrl: string | null;
+  templateTextColor: string | null;
 }
 
 export interface CertificateListItem extends CertificateView {
@@ -86,6 +100,8 @@ export const certificateInputSchema = z.object({
   price: z.number().nonnegative(),
   service: z.string().optional(),
   templateId: z.string().optional(),
+  templateBackgroundUrl: templateBackgroundSchema.optional(),
+  templateTextColor: z.string().optional(),
   senderName: z.string().optional(),
   recipientName: z.string().optional(),
   recipientEmail: z.string().email().optional(),
@@ -118,16 +134,19 @@ function mapCertificate(row: CertificateRow): CertificateView {
     updatedAt: row.updated_at,
     createdBy: row.created_by,
     fileUrl: row.file_url,
+    templateBackgroundUrl: row.template_background_url,
+    templateTextColor: row.template_text_color,
   };
 }
 
 export async function listCertificates(filter?: { companyId?: string }): Promise<CertificateListItem[]> {
   const params: unknown[] = [];
-  let whereClause = "";
+  const conditions = ["o.payment_status = 'paid'"];
   if (filter?.companyId) {
     params.push(filter.companyId);
-    whereClause = `WHERE c.company_id = $${params.length}`;
+    conditions.push(`c.company_id = $${params.length}`);
   }
+  const whereClause = conditions.length ? `WHERE ${conditions.join(" AND ")}` : "";
 
   const result = await query<z.infer<typeof certificateListRow>>(
     `SELECT
@@ -143,7 +162,7 @@ export async function listCertificates(filter?: { companyId?: string }): Promise
         t.utm_campaign AS utm_tag_campaign,
         t.utm_medium AS utm_tag_medium
       FROM certificates c
-      LEFT JOIN orders o ON o.certificate_id = c.id
+      LEFT JOIN orders o ON o.certificate_id = c.id AND o.status <> 'archived'
       LEFT JOIN client cli ON cli.id = o.client_id
       LEFT JOIN utm_tags t ON t.id = o.utm_tag_id
       ${whereClause}
@@ -180,8 +199,9 @@ export async function createCertificate(input: CertificateInput, client?: PoolCl
   const result = await executor.query<CertificateRow>(
     `INSERT INTO certificates
       (name_cert, start_date, finish_date, company_id, type_cert, price_cert, service_cert,
-       template_id, code, status, sender_name, recipient_name, recipient_email, message, currency, created_by)
-     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,'active',$10,$11,$12,$13,$14,$15)
+       template_id, template_background_url, template_text_color, code, status, sender_name,
+       recipient_name, recipient_email, message, currency, created_by)
+     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,'active',$12,$13,$14,$15,$16,$17)
      RETURNING *`,
     [
       input.name,
@@ -192,6 +212,8 @@ export async function createCertificate(input: CertificateInput, client?: PoolCl
       input.price,
       input.service ?? null,
       input.templateId ?? null,
+      input.templateBackgroundUrl ?? null,
+      input.templateTextColor ?? null,
       code,
       input.senderName ?? null,
       input.recipientName ?? null,
@@ -210,4 +232,29 @@ export async function getCertificateById(id: string) {
     return null;
   }
   return mapCertificate(result.rows[0]);
+}
+
+export async function markCertificateUsed(id: string, userId?: string) {
+  const result = await query<CertificateRow>(
+    `UPDATE certificates
+        SET status = 'used',
+            updated_at = NOW(),
+            message = message
+      WHERE id = $1
+      RETURNING *`,
+    [id],
+  );
+
+  const row = result.rows[0];
+  if (!row) {
+    return null;
+  }
+
+  await query(
+    `INSERT INTO certificate_events (certificate_id, event_type, metadata)
+     VALUES ($1,'used', jsonb_build_object('performedBy', $2::text))`,
+    [id, userId ?? null],
+  );
+
+  return mapCertificate(row);
 }

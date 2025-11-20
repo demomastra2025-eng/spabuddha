@@ -48,6 +48,8 @@ export const StepPayment = ({ data, onPrev }: StepPaymentProps) => {
       amount: orderTotal,
       type: data.type,
       templateId: data.templateId,
+      templateBackgroundUrl: data.templateBackgroundUrl?.trim() || undefined,
+      templateTextColor: data.templateTextColor ?? undefined,
       senderName: data.senderName || undefined,
       recipientName: data.recipientName,
       message: data.message || undefined,

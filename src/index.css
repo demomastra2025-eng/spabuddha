@@ -37,6 +37,14 @@ All colors MUST be HSL.
     font-display: swap;
   }
 
+  @font-face {
+    font-family: "Playfair Display";
+    src: url("/fonts/PlayfairDisplay-Regular.ttf") format("truetype");
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+
   :root {
     /* Buddha Spa Color System */
     --background: 52 94% 94%; /* Warm cream #FEFAE0 */

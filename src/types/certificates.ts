@@ -33,7 +33,6 @@ export interface CertificateData {
   // Step 3
   templateId: string | null;
   templateBackgroundUrl?: string | null;
-  templateFontFamily?: string | null;
   templateTextColor?: string | null;
   templateName?: string | null;
 

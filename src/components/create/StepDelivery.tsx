@@ -5,6 +5,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { CertificateData, DeliveryMethod } from "@/types/certificates";
 import { Mail, Smartphone, Download } from "lucide-react";
 import { toast } from "sonner";
+import { formatPhoneDisplay, normalizePhoneInput } from "@/lib/phone";
 
 interface StepDeliveryProps {
   data: CertificateData;
@@ -23,6 +24,8 @@ export const StepDelivery = ({ data, updateData, onNext, onPrev }: StepDeliveryP
 
     updateData({ deliveryMethod: value });
   };
+
+
 
   const handleNext = () => {
     if (data.deliveryMethod !== "download" && !data.deliveryContact) {
@@ -95,9 +98,9 @@ export const StepDelivery = ({ data, updateData, onNext, onPrev }: StepDeliveryP
                   {data.deliveryMethod === "whatsapp" && (
                     <Input
                       type="tel"
-                      placeholder="+7 (___) ___-__-__"
-                      value={data.deliveryContact}
-                      onChange={(e) => updateData({ deliveryContact: e.target.value })}
+                      placeholder="+77001234567"
+                      value={formatPhoneDisplay(data.deliveryContact)}
+                      onChange={(e) => updateData({ deliveryContact: normalizePhoneInput(e.target.value) })}
                       className="h-12"
                       onClick={(e) => e.stopPropagation()}
                     />
@@ -128,7 +131,7 @@ export const StepDelivery = ({ data, updateData, onNext, onPrev }: StepDeliveryP
         {/* Info Box */}
         <div className="p-6 rounded-xl bg-primary/5 border border-primary/20">
           <p className="text-sm text-foreground/80 leading-relaxed">
-            <strong>Совет:</strong> Если вы выбираете email или WhatsApp, сертификат будет отправлен сразу после оплаты. 
+            <strong>Совет:</strong> Если вы выбираете email или WhatsApp, сертификат будет отправлен сразу после оплаты.
             При выборе "Скачать" вы сможете самостоятельно распечатать или переслать сертификат получателю.
           </p>
         </div>

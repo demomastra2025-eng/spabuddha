@@ -20,11 +20,26 @@ const serviceSelectionSchema = z.object({
   currency: z.string().default("KZT"),
 });
 
+const templateBackgroundSchema = z.preprocess((value) => {
+  if (value === null || value === undefined) {
+    return undefined;
+  }
+  if (typeof value !== "string") {
+    return undefined;
+  }
+  const trimmed = value.trim();
+  return trimmed.length ? trimmed : undefined;
+}, z.string().refine((val) => /^https?:\/\//i.test(val) || /^\/?[-\w./]+$/i.test(val), {
+  message: "Invalid template background",
+}));
+
 export const createOrderSchema = z.object({
   companyId: z.string().min(1),
   amount: z.number().positive().optional(),
   type: z.enum(["gift", "procedure"]),
   templateId: z.string().nullable().optional(),
+  templateBackgroundUrl: templateBackgroundSchema.optional(),
+  templateTextColor: z.string().nullable().optional(),
   senderName: z.string().optional(),
   recipientName: z.string().min(1),
   message: z.string().optional(),
@@ -164,6 +179,8 @@ export async function createOrder(input: CreateOrderInput, options?: { provider?
         type: input.type,
         price: normalizedAmount,
         templateId: input.templateId ?? undefined,
+        templateBackgroundUrl: input.templateBackgroundUrl ?? undefined,
+        templateTextColor: input.templateTextColor ?? undefined,
         senderName: input.senderName,
         recipientName: input.recipientName,
         recipientEmail: input.client.email,
@@ -238,12 +255,14 @@ export async function createOrder(input: CreateOrderInput, options?: { provider?
 export async function listOrders(filter?: { companyId?: string }) {
   return withTransaction(async (client) => {
     const params: unknown[] = [];
-    let whereClause = "";
+    const conditions = ["o.status <> 'archived'"];
 
     if (filter?.companyId) {
       params.push(filter.companyId);
-      whereClause = `WHERE o.company_id = $${params.length}`;
+      conditions.push(`o.company_id = $${params.length}`);
     }
+
+    const whereClause = conditions.length ? `WHERE ${conditions.join(" AND ")}` : "";
 
     const orders = await client.query<OrderRow>(
       `SELECT o.*, c.recipient_name, c.sender_name

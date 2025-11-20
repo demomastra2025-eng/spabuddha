@@ -27,7 +27,6 @@ const Create = () => {
       email: "",
       templateId: null,
       templateBackgroundUrl: null,
-      templateFontFamily: null,
       templateTextColor: null,
       templateName: null,
       deliveryMethod: "email",

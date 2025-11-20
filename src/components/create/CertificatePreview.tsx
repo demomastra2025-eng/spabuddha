@@ -1,5 +1,6 @@
 import { forwardRef } from "react";
 import { CertificateData, DEFAULT_VALIDITY_MONTHS } from "@/types/certificates";
+import { CERTIFICATE_DISPLAY_FONT } from "@/shared/certificate";
 import { addMonths, format } from "date-fns";
 import { ru } from "date-fns/locale";
 import { formatCurrency } from "@/lib/currency";
@@ -15,7 +16,7 @@ export const CertificatePreview = forwardRef<HTMLDivElement, CertificatePreviewP
   const validUntilDate = data.validUntil || fallbackValidUntil;
   const formattedValidUntil = format(validUntilDate, "d.MM.yy", { locale: ru });
   const textColor = data.templateTextColor ?? "#ffffff";
-  const fontFamily = data.templateFontFamily ?? "Playfair Display, serif";
+  const fontFamily = CERTIFICATE_DISPLAY_FONT;
   let backgroundImage = data.templateBackgroundUrl ?? null;
   if (backgroundImage && backgroundImage.includes("dummyimage.com") && !backgroundImage.includes("&text=")) {
     backgroundImage = `${backgroundImage}&text=+`;
@@ -52,20 +53,20 @@ export const CertificatePreview = forwardRef<HTMLDivElement, CertificatePreviewP
         <p className="text-sm sm:text-base font-semibold leading-snug max-w-[65%] whitespace-pre-line">
           {formattedBranchAddress}
         </p>
-        <div className="text-sm sm:text-base font-semibold leading-snug max-w-[70%] whitespace-pre-line text-right">
+        <div className="text-sm sm:text-base font-semibold leading-snug max-w-[100%] whitespace-pre-line text-right">
           <p>№ {certificateNumber}</p>
-          <p className="text-sm sm:text-base font-semibold leading-snug max-w-[80%] whitespace-pre-line text-right">До {formattedValidUntil}</p>
+          <p className="text-sm sm:text-base font-semibold leading-snug max-w-[100%] whitespace-pre-line text-right">До {formattedValidUntil}</p>
         </div>
       </div>
 
       {/* Content */}
       <div className="relative z-10 flex-1 flex flex-col py-1">
-        <div className="mt-auto flex flex-col gap-4 sm:flex-row">
-          <div className="flex-1  px-6 py-6 text-left">
+        <div className="mt-auto flex flex-row items-end gap-4 sm:flex-row">
+          <div className="flex-1  px-3 py-3 text-left">
             <p className="text-2xl sm:text-3xl font-black tracking-tight">{data.recipientName?.trim() || "Получатель"}</p>
           </div>
 
-          <div className="flex-1  px-6 py-6 text-right">
+          <div className="flex-1  px-3 py-3 text-right">
             <p className="text-3xl sm:text-4xl font-black tracking-tight">{formatCurrency(amountToShow)}</p>
           </div>
         </div>

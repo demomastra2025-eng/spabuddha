@@ -6,7 +6,6 @@ export interface TemplateOption {
   description?: string | null;
   backgroundUrl?: string | null;
   previewUrl?: string | null;
-  fontFamily?: string | null;
   textColor?: string | null;
 }
 
@@ -50,7 +49,6 @@ export function useTemplates() {
 
         const mapped: TemplateOption[] = payload.map((template) => {
           const layout = (template.layoutConfig ?? {}) as Record<string, unknown>;
-          const fontFamily = typeof layout.fontFamily === "string" ? layout.fontFamily : null;
           const textColor = typeof layout.textColor === "string" ? layout.textColor : null;
 
           return {
@@ -59,7 +57,6 @@ export function useTemplates() {
             description: template.description,
             backgroundUrl: template.backgroundUrl,
             previewUrl: template.previewUrl ?? template.backgroundUrl,
-            fontFamily,
             textColor,
           };
         });

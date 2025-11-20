@@ -6,6 +6,7 @@ import { CalendarIcon, User, Heart, Phone } from "lucide-react";
 import { addMonths, format } from "date-fns";
 import { ru } from "date-fns/locale";
 import { toast } from "sonner";
+import { formatPhoneDisplay, normalizePhoneInput } from "@/lib/phone";
 
 interface StepDetailsProps {
   data: CertificateData;
@@ -120,8 +121,8 @@ export const StepDetails = ({ data, updateData, onNext, onPrev }: StepDetailsPro
               id="phone"
               type="tel"
               placeholder="+7 (___) ___-__-__"
-              value={data.phone}
-              onChange={(e) => updateData({ phone: e.target.value })}
+              value={formatPhoneDisplay(data.phone)}
+              onChange={(e) => updateData({ phone: normalizePhoneInput(e.target.value) })}
               className="h-12"
               required
             />

@@ -136,36 +136,31 @@ export async function sendWhatsAppFile(payload: WhatsAppFilePayload, credentials
     return { skipped: true } as const;
   }
 
-  const shouldUseContentUri = Boolean(payload.contentUri);
-
-  if (!shouldUseContentUri && !payload.buffer) {
+  const useContentUri = Boolean(payload.contentUri);
+  if (!useContentUri && !payload.buffer) {
     throw new Error("WhatsApp file payload requires buffer when contentUri is not provided");
   }
 
-  const response = await postToWazzup(
-    {
-      channelId: credentials.channelId,
-      chatId: payload.chatId,
-      chatType: "whatsapp",
-      type: "file",
-      caption: payload.caption,
-      file: {
-        name: payload.fileName,
-        contentType: payload.mimeType,
-        ...(shouldUseContentUri ? {} : { data: payload.buffer?.toString("base64") }),
-      },
-    },
-    credentials,
-  );
+  const body: Record<string, unknown> = {
+    channelId: credentials.channelId,
+    chatId: payload.chatId,
+    chatType: "whatsapp",
+  };
 
-  if (shouldUseContentUri && payload.contentUri) {
-    const messageId = extractMessageId(response);
-    if (messageId) {
-      await patchWazzupMessage(messageId, { contentUri: payload.contentUri }, credentials);
-    } else {
-      console.warn("[whatsapp] Unable to determine message ID for file upload", { chatId: payload.chatId });
-    }
+  if (useContentUri) {
+    // По требованиям Wazzup нельзя одновременно передавать text и contentUri.
+    body.contentUri = payload.contentUri;
+  } else {
+    body.text = payload.caption ?? payload.fileName;
+    body.type = "file";
+    body.file = {
+      name: payload.fileName,
+      contentType: payload.mimeType,
+      data: payload.buffer?.toString("base64"),
+    };
   }
+
+  const response = await postToWazzup(body, credentials);
 
   return response;
 }

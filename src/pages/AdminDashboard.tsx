@@ -85,7 +85,6 @@ const templateFormDefaults = {
   description: "",
   backgroundUrl: "",
   previewUrl: "",
-  fontFamily: "Playfair Display",
   textColor: "#FFFFFF",
 };
 
@@ -142,6 +141,7 @@ export const AdminDashboard = () => {
   const [certificatesError, setCertificatesError] = useState<string | null>(null);
   const [certificateSearch, setCertificateSearch] = useState("");
   const [showAllCertificates, setShowAllCertificates] = useState(false);
+  const [usingCertificateId, setUsingCertificateId] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<AdminTab>("dashboard");
   const [editingServiceId, setEditingServiceId] = useState<string | null>(null);
   const [selectedServiceCompanyId, setSelectedServiceCompanyId] = useState("");
@@ -191,33 +191,65 @@ export const AdminDashboard = () => {
     [certificateForm.services],
   );
 
+  const [orderSearch, setOrderSearch] = useState("");
+  const [orderStatusFilter, setOrderStatusFilter] = useState<string>("all");
+
+  const filteredOrders = useMemo(() => {
+    let result = orders;
+
+    if (orderStatusFilter !== "all") {
+      result = result.filter((order) => order.paymentStatus === orderStatusFilter);
+    }
+
+    const search = orderSearch.trim().toLowerCase();
+    if (search) {
+      result = result.filter((order) =>
+        order.orderNumber.toLowerCase().includes(search) ||
+        (order.recipientName && order.recipientName.toLowerCase().includes(search))
+      );
+    }
+
+    return result.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  }, [orders, orderSearch, orderStatusFilter]);
+
   const filteredCertificates = useMemo(() => {
     const scoped =
       !certificateForm.companyId || certificateForm.companyId === "all"
         ? certificates
         : certificates.filter((cert) => cert.companyId === certificateForm.companyId);
 
-    const byStatus = showAllCertificates ? scoped : scoped.filter((cert) => cert.status === "active");
+    // Archive logic:
+    // unchecked (false) -> show ONLY active
+    // checked (true) -> show ONLY used/expired (status !== 'active')
+    const byStatus = scoped.filter((cert) => {
+      if (showAllCertificates) {
+        return cert.status !== "active";
+      }
+      return cert.status === "active";
+    });
 
     const search = certificateSearch.trim().toLowerCase();
-    if (!search) {
-      return byStatus;
+    let result = byStatus;
+
+    if (search) {
+      const searchDigits = search.replace(/\D+/g, "");
+      result = byStatus.filter((cert) => {
+        const codeMatch = cert.code.toLowerCase().includes(search);
+        const orderMatch = cert.orderNumber?.toLowerCase().includes(search) ?? false;
+        if (!searchDigits && (codeMatch || orderMatch)) {
+          return true;
+        }
+        const phoneNormalized = cert.buyerPhone?.toLowerCase() ?? "";
+        const phoneDigits = cert.buyerPhone?.replace(/\D+/g, "") ?? "";
+        const phoneMatch = searchDigits
+          ? searchDigits.length > 0 && phoneDigits.includes(searchDigits)
+          : phoneNormalized.includes(search);
+        return codeMatch || orderMatch || phoneMatch;
+      });
     }
 
-    const searchDigits = search.replace(/\D+/g, "");
-    return byStatus.filter((cert) => {
-      const codeMatch = cert.code.toLowerCase().includes(search);
-      const orderMatch = cert.orderNumber?.toLowerCase().includes(search) ?? false;
-      if (!searchDigits && (codeMatch || orderMatch)) {
-        return true;
-      }
-      const phoneNormalized = cert.buyerPhone?.toLowerCase() ?? "";
-      const phoneDigits = cert.buyerPhone?.replace(/\D+/g, "") ?? "";
-      const phoneMatch = searchDigits
-        ? searchDigits.length > 0 && phoneDigits.includes(searchDigits)
-        : phoneNormalized.includes(search);
-      return codeMatch || orderMatch || phoneMatch;
-    });
+    // Sort by newest first
+    return result.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
   }, [certificates, certificateForm.companyId, showAllCertificates, certificateSearch]);
 
   useEffect(() => {
@@ -361,6 +393,36 @@ export const AdminDashboard = () => {
     }
   }, [session?.token, loadOrders, loadCertificates]);
 
+  const handleUseCertificate = useCallback(
+    async (certificateId: string) => {
+      if (!session?.token) {
+        toast.error("Сессия истекла. Перезайдите.");
+        return;
+      }
+      setUsingCertificateId(certificateId);
+      try {
+        const response = await fetch(`/api/certificates/${certificateId}/use`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${session.token}`,
+          },
+        });
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => null);
+          throw new Error(errorData?.message ?? "Не удалось отметить сертификат использованным");
+        }
+        toast.success("Сертификат отмечен как использованный");
+        await loadCertificates();
+      } catch (error) {
+        console.error(error);
+        toast.error(error instanceof Error ? error.message : "Не удалось обновить сертификат");
+      } finally {
+        setUsingCertificateId(null);
+      }
+    },
+    [session?.token, loadCertificates],
+  );
+
   const handleSignOut = async () => {
     await logout();
     toast.success("Вы вышли из аккаунта");
@@ -424,17 +486,17 @@ export const AdminDashboard = () => {
       const nextServices = isSelected
         ? prev.services.filter((item) => item.id !== service.id)
         : [
-            ...prev.services,
-            {
-              id: service.id,
-              name: service.name,
-              price: service.price,
-              discountPercent: service.discountPercent ?? 0,
-              branchId: service.companyId ?? prev.companyId ?? "",
-              currency: service.currency ?? "KZT",
-              durationMinutes: service.durationMinutes ?? null,
-            },
-          ];
+          ...prev.services,
+          {
+            id: service.id,
+            name: service.name,
+            price: service.price,
+            discountPercent: service.discountPercent ?? 0,
+            branchId: service.companyId ?? prev.companyId ?? "",
+            currency: service.currency ?? "KZT",
+            durationMinutes: service.durationMinutes ?? null,
+          },
+        ];
 
       return {
         ...prev,
@@ -646,7 +708,6 @@ export const AdminDashboard = () => {
       description: template.description ?? "",
       backgroundUrl: template.backgroundUrl ?? "",
       previewUrl: template.previewUrl ?? "",
-      fontFamily: template.fontFamily ?? "Playfair Display",
       textColor: template.textColor ?? "#FFFFFF",
     });
   };
@@ -708,13 +769,13 @@ export const AdminDashboard = () => {
         services:
           isProcedureCertificate && certificateForm.services.length
             ? certificateForm.services.map((service) => ({
-                id: service.id,
-                name: service.name,
-                price: service.price,
-                discountPercent: service.discountPercent ?? 0,
-                branchId: service.branchId ?? certificateForm.companyId,
-                currency: service.currency ?? "KZT",
-              }))
+              id: service.id,
+              name: service.name,
+              price: service.price,
+              discountPercent: service.discountPercent ?? 0,
+              branchId: service.branchId ?? certificateForm.companyId,
+              currency: service.currency ?? "KZT",
+            }))
             : undefined,
       };
 
@@ -779,7 +840,6 @@ export const AdminDashboard = () => {
         backgroundUrl: templateForm.backgroundUrl.trim(),
         previewUrl: templateForm.previewUrl.trim(),
         layoutConfig: {
-          fontFamily: templateForm.fontFamily.trim() || undefined,
           textColor: templateForm.textColor.trim() || undefined,
         },
       };
@@ -956,14 +1016,14 @@ export const AdminDashboard = () => {
 
       <main className="container px-4 py-10 space-y-10">
         <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as AdminTab)} className="space-y-8">
-        <TabsList className="w-full flex-wrap justify-start gap-2">
-          <TabsTrigger value="dashboard">Дашборд</TabsTrigger>
-          <TabsTrigger value="certificate">Сертификаты</TabsTrigger>
-          <TabsTrigger value="templates">Шаблоны</TabsTrigger>
-          <TabsTrigger value="services">Услуги</TabsTrigger>
-          <TabsTrigger value="branches">Филиалы</TabsTrigger>
-          <TabsTrigger value="utm">UTM-метки</TabsTrigger>
-        </TabsList>
+          <TabsList className="w-full flex-wrap justify-start gap-2">
+            <TabsTrigger value="dashboard">Дашборд</TabsTrigger>
+            <TabsTrigger value="certificate">Сертификаты</TabsTrigger>
+            <TabsTrigger value="templates">Шаблоны</TabsTrigger>
+            <TabsTrigger value="services">Услуги</TabsTrigger>
+            <TabsTrigger value="branches">Филиалы</TabsTrigger>
+            <TabsTrigger value="utm">UTM-метки</TabsTrigger>
+          </TabsList>
 
           <TabsContent value="dashboard" className="space-y-8">
             <section className="space-y-4">
@@ -998,22 +1058,67 @@ export const AdminDashboard = () => {
 
             <section className="grid gap-6">
               <Card className="border border-border/60 bg-card shadow-sm">
-                <CardHeader className="flex flex-row items-center justify-between gap-4">
-                  <div>
-                    <CardTitle>Последние заказы</CardTitle>
-                    <CardDescription>Сертификаты, созданные за смену</CardDescription>
+                <CardHeader className="space-y-4">
+                  <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+                    <div>
+                      <CardTitle>Заказы</CardTitle>
+                      <CardDescription>История покупок</CardDescription>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => loadOrders()}
+                        disabled={ordersLoading}
+                        className="inline-flex items-center gap-2"
+                      >
+                        <RefreshCw className="w-4 h-4" />
+                        {ordersLoading ? "Обновляем..." : "Обновить"}
+                      </Button>
+                    </div>
+                  </div>
+                  <div className="flex flex-col gap-3 md:flex-row md:items-center">
+                    <Input
+                      placeholder="Поиск по номеру или имени..."
+                      value={orderSearch}
+                      onChange={(e) => setOrderSearch(e.target.value)}
+                      className="md:max-w-sm"
+                    />
+                    <Select value={orderStatusFilter} onValueChange={setOrderStatusFilter}>
+                      <SelectTrigger className="w-[180px]">
+                        <SelectValue placeholder="Статус оплаты" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">Все статусы</SelectItem>
+                        <SelectItem value="paid">Оплачен</SelectItem>
+                        <SelectItem value="pending">Ожидает</SelectItem>
+                        <SelectItem value="failed">Ошибка</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   {ordersLoading && <p className="text-sm text-muted-foreground">Загружаем данные...</p>}
                   {ordersError && <p className="text-sm text-destructive">{ordersError}</p>}
-                  {!recentOrders.length && !ordersLoading && (
-                    <p className="text-sm text-muted-foreground">Ещё нет заказов. Создайте первый сертификат.</p>
+                  {!filteredOrders.length && !ordersLoading && (
+                    <p className="text-sm text-muted-foreground">Заказы не найдены.</p>
                   )}
-                  {recentOrders.map((order) => {
+                  {filteredOrders.map((order) => {
                     const company = companies.find((c) => c.id === order.companyId);
                     const branchTitle = company ? `${company.label} — ${company.address}` : "Филиал";
                     const created = new Date(order.createdAt);
+                    const paymentLabel =
+                      order.paymentStatus === "paid"
+                        ? "Оплачен"
+                        : order.paymentStatus === "failed"
+                          ? "Ошибка оплаты"
+                          : "Ожидает";
+                    const paymentColor =
+                      order.paymentStatus === "paid"
+                        ? "text-emerald-600"
+                        : order.paymentStatus === "failed"
+                          ? "text-destructive"
+                          : "text-amber-500";
                     return (
                       <div key={order.id} className="p-4 rounded-xl border border-border/60 space-y-1">
                         <div className="flex items-center justify-between text-xs text-muted-foreground">
@@ -1024,9 +1129,7 @@ export const AdminDashboard = () => {
                         <p className="text-sm text-muted-foreground">{branchTitle}</p>
                         <div className="flex items-center justify-between text-sm">
                           <span className="font-medium text-primary">{formatCurrency(order.amount)}</span>
-                          <span className={order.paymentStatus === "paid" ? "text-emerald-600" : "text-amber-500"}>
-                            {order.paymentStatus === "paid" ? "Оплачен" : "Ожидает"}
-                          </span>
+                          <span className={paymentColor}>{paymentLabel}</span>
                         </div>
                       </div>
                     );
@@ -1034,10 +1137,10 @@ export const AdminDashboard = () => {
                 </CardContent>
               </Card>
             </section>
-        </TabsContent>
-        <TabsContent value="utm" className="space-y-8">
-          <UtmManagement token={session?.token} canManage={isGlobalManager} />
-        </TabsContent>
+          </TabsContent>
+          <TabsContent value="utm" className="space-y-8">
+            <UtmManagement token={session?.token} canManage={isGlobalManager} />
+          </TabsContent>
 
           <TabsContent value="certificate" className="space-y-8">
             <section className="grid gap-6 lg:grid-cols-3">
@@ -1101,9 +1204,8 @@ export const AdminDashboard = () => {
                         >
                           <Label
                             htmlFor="type-gift"
-                            className={`block w-full cursor-pointer space-y-1 rounded-xl border p-3 transition-colors ${
-                              certificateForm.type === "gift" ? "border-primary bg-primary/5" : "border-border"
-                            }`}
+                            className={`block w-full cursor-pointer space-y-1 rounded-xl border p-3 transition-colors ${certificateForm.type === "gift" ? "border-primary bg-primary/5" : "border-border"
+                              }`}
                           >
                             <RadioGroupItem value="gift" id="type-gift" className="sr-only" />
                             <span className="font-semibold block">Подарочный</span>
@@ -1111,9 +1213,8 @@ export const AdminDashboard = () => {
                           </Label>
                           <Label
                             htmlFor="type-procedure"
-                            className={`flex w-full cursor-pointer items-center gap-2 rounded-xl border p-3 transition-colors ${
-                              certificateForm.type === "procedure" ? "border-primary bg-primary/5" : "border-border"
-                            }`}
+                            className={`flex w-full cursor-pointer items-center gap-2 rounded-xl border p-3 transition-colors ${certificateForm.type === "procedure" ? "border-primary bg-primary/5" : "border-border"
+                              }`}
                           >
                             <RadioGroupItem value="procedure" id="type-procedure" className="sr-only" />
                             <TbMassage className="w-4 h-4 text-primary" />
@@ -1250,9 +1351,8 @@ export const AdminDashboard = () => {
                                 <label
                                   key={procedure.id}
                                   htmlFor={`procedure-${procedure.id}`}
-                                  className={`w-full rounded-2xl border px-3 py-2 text-left transition cursor-pointer ${
-                                    checked ? "border-primary bg-primary/5" : "border-border hover:border-primary/40"
-                                  }`}
+                                  className={`w-full rounded-2xl border px-3 py-2 text-left transition cursor-pointer ${checked ? "border-primary bg-primary/5" : "border-border hover:border-primary/40"
+                                    }`}
                                 >
                                   <div className="flex items-start gap-3">
                                     <Checkbox
@@ -1348,7 +1448,7 @@ export const AdminDashboard = () => {
                     <Input
                       value={certificateSearch}
                       onChange={(event) => setCertificateSearch(event.target.value)}
-                      placeholder="Поиск по сертификату или номеру покупателя"
+                      placeholder="ID сертификата или номеру покупателя"
                       className="md:max-w-sm"
                     />
                     <label htmlFor="show-all-certificates" className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -1357,7 +1457,7 @@ export const AdminDashboard = () => {
                         checked={showAllCertificates}
                         onCheckedChange={(checked) => setShowAllCertificates(checked === true)}
                       />
-                      <span>Показать все статусы</span>
+                      <span>Архив</span>
                     </label>
                   </div>
                 </CardHeader>
@@ -1368,23 +1468,32 @@ export const AdminDashboard = () => {
                     <p className="text-sm text-muted-foreground">Сертификатов пока нет. Создайте первый заказ.</p>
                   )}
                   {!certificatesLoading && filteredCertificates.length > 0 && (
-                    <div className="space-y-3 max-h-[420px] overflow-y-auto pr-1">
+                    <div className="space-y-3 h-[calc(100vh-300px)] overflow-y-auto pr-1">
                       {filteredCertificates.map((certificate) => {
                         const company = companies.find((item) => item.id === certificate.companyId);
                         const branchTitle = company ? `${company.label} — ${company.address}` : "Филиал";
                         const createdAt = new Date(certificate.createdAt);
-                        const statusText = certificate.status === "active" ? "Активен" : "Закрыт";
+                        const statusText =
+                          certificate.status === "active"
+                            ? "Активен"
+                            : certificate.status === "used"
+                              ? "Использован"
+                              : "Закрыт";
                         const statusColor =
-                          certificate.status === "active" ? "text-emerald-600" : "text-muted-foreground";
+                          certificate.status === "active"
+                            ? "text-emerald-600"
+                            : certificate.status === "used"
+                              ? "text-muted-foreground"
+                              : "text-muted-foreground";
                         const paymentLabel =
                           certificate.paymentStatus === "paid"
-                            ? "Оплачен"
+                            ? null
                             : certificate.paymentStatus === "failed"
                               ? "Ошибка оплаты"
                               : "Ожидание оплаты";
                         const paymentColor =
                           certificate.paymentStatus === "paid"
-                            ? "text-emerald-600"
+                            ? "hidden"
                             : certificate.paymentStatus === "failed"
                               ? "text-destructive"
                               : "text-amber-500";
@@ -1436,6 +1545,17 @@ export const AdminDashboard = () => {
                               <span className="font-medium text-primary">{formatCurrency(certificate.price)}</span>
                               <span className={statusColor}>{statusText}</span>
                             </div>
+                            {certificate.status === "active" && (
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className="w-full"
+                                disabled={usingCertificateId === certificate.id}
+                                onClick={() => void handleUseCertificate(certificate.id)}
+                              >
+                                {usingCertificateId === certificate.id ? "Отмечаем..." : "Использовать"}
+                              </Button>
+                            )}
                           </div>
                         );
                       })}
@@ -1487,14 +1607,6 @@ export const AdminDashboard = () => {
                           placeholder="https://..."
                           value={templateForm.previewUrl}
                           onChange={(event) => handleTemplateChange("previewUrl")(event.target.value)}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label>Шрифт</Label>
-                        <Input
-                          placeholder="Playfair Display"
-                          value={templateForm.fontFamily}
-                          onChange={(event) => handleTemplateChange("fontFamily")(event.target.value)}
                         />
                       </div>
                       <div className="space-y-2">
@@ -1650,7 +1762,7 @@ export const AdminDashboard = () => {
                           disabled={!serviceForm.hasDiscount}
                           onChange={(event) => handleServiceFieldChange("discountPercent")(event.target.value)}
                         />
-                       
+
                       </div>
                     </div>
 

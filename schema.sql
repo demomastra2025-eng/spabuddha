@@ -74,6 +74,8 @@ CREATE TABLE IF NOT EXISTS certificates (
     price_cert NUMERIC(12,2) NOT NULL,
     service_cert TEXT,
     template_id UUID REFERENCES template(id),
+    template_background_url TEXT,
+    template_text_color TEXT,
     code TEXT NOT NULL UNIQUE,
     status TEXT NOT NULL DEFAULT 'active',
     sender_name TEXT,

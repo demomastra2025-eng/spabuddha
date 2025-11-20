@@ -85,6 +85,8 @@ const fulfillmentRowSchema = z.object({
   template_id: z.string().nullable(),
   template_background_url: z.string().nullable(),
   template_layout_config: z.any().nullable(),
+  certificate_template_background_url: z.string().nullable(),
+  certificate_template_text_color: z.string().nullable(),
   company_wazzup_api_token: z.string().nullable(),
   company_wazzup_channel_id: z.string().nullable(),
   company_wazzup_number: z.string().nullable(),
@@ -95,6 +97,15 @@ export type PaymentConfirmationResult = {
   downloadUrl: string | null;
   filePath: string;
 };
+
+async function safeRunOrderFulfillment(payload: FulfillmentPayload) {
+  try {
+    return await runOrderFulfillment(payload);
+  } catch (error) {
+    console.error("[fulfillment] Не удалось выполнить доставку сертификата:", error);
+    return null;
+  }
+}
 
 export async function markPaymentAsPaid(
   id: string,
@@ -130,7 +141,9 @@ export async function markPaymentAsPaid(
          c.start_date,
          c.finish_date,
          c.file_url AS certificate_file_url,
-         c.template_id,
+        c.template_id,
+        c.template_background_url AS certificate_template_background_url,
+        c.template_text_color AS certificate_template_text_color,
          t.background_url AS template_background_url,
          t.layout_config AS template_layout_config,
          comp.label AS company_label,
@@ -174,14 +187,6 @@ export async function markPaymentAsPaid(
     throw new AppError(403, "Недостаточно прав для подтверждения платежа этого филиала");
   }
 
-  if (payment.status === "paid") {
-    return {
-      payment,
-      downloadUrl: buildDownloadUrl(fulfillment.certificate_id),
-      filePath: fulfillment.certificate_file_url ?? "",
-    };
-  }
-
   const clientName = [fulfillment.client_first_name, fulfillment.client_last_name]
     .filter((value) => Boolean(value))
     .join(" ") || null;
@@ -192,9 +197,13 @@ export async function markPaymentAsPaid(
       : {};
 
   const templateSettings = {
-    backgroundUrl: fulfillment.template_background_url ?? undefined,
-    fontFamily: typeof layoutConfig.fontFamily === "string" ? layoutConfig.fontFamily : undefined,
-    textColor: typeof layoutConfig.textColor === "string" ? layoutConfig.textColor : undefined,
+    backgroundUrl:
+      fulfillment.certificate_template_background_url ??
+      fulfillment.template_background_url ??
+      undefined,
+    textColor:
+      fulfillment.certificate_template_text_color ??
+      (typeof layoutConfig.textColor === "string" ? layoutConfig.textColor : undefined),
   };
 
   const fulfillmentPayload: FulfillmentPayload = {
@@ -229,10 +238,8 @@ export async function markPaymentAsPaid(
     template: templateSettings,
   };
 
-  const fulfillmentResult = await runOrderFulfillment(fulfillmentPayload);
-
   await query(
-    `UPDATE payments SET status = 'paid', transaction_id = $2, paid_at = NOW(), updated_at = NOW()
+    `UPDATE payments SET status = 'paid', transaction_id = $2, paid_at = COALESCE(paid_at, NOW()), updated_at = NOW()
      WHERE id = $1`,
     [id, transactionId],
   );
@@ -246,10 +253,17 @@ export async function markPaymentAsPaid(
   const updatedPaymentRow = latestPaymentResult.rows[0];
   const updatedPayment = updatedPaymentRow ? mapPayment(paymentRowSchema.parse(updatedPaymentRow)) : payment;
 
+  const requiresFulfillment = !fulfillment.certificate_file_url;
+  const fulfillmentResult = requiresFulfillment ? await safeRunOrderFulfillment(fulfillmentPayload) : null;
+
+  const downloadUrl =
+    fulfillmentResult?.downloadUrl ?? buildDownloadUrl(fulfillment.certificate_id);
+  const filePath = fulfillmentResult?.relativePath ?? fulfillment.certificate_file_url ?? "";
+
   return {
     payment: updatedPayment,
-    downloadUrl: fulfillmentResult.downloadUrl,
-    filePath: fulfillmentResult.relativePath,
+    downloadUrl,
+    filePath,
   };
 }
 

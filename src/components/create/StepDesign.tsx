@@ -23,7 +23,6 @@ export const StepDesign = ({ data, updateData, onNext, onPrev }: StepDesignProps
     updateData({
       templateId: template.id,
       templateBackgroundUrl: template.backgroundUrl ?? template.previewUrl ?? null,
-      templateFontFamily: template.fontFamily ?? null,
       templateTextColor: template.textColor ?? null,
       templateName: template.name,
     });

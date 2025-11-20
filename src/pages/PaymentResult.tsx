@@ -9,18 +9,26 @@ type ResultView = {
   variant: "success" | "error" | "processing";
 };
 
-const getView = (status: string): ResultView => {
+const successDescriptions: Record<string, string> = {
+  download: "Сертификат готов к скачиванию — ссылка появится ниже, а на почту мы тоже отправили подтверждение.",
+  email: "Сертификат отправлен на указанный email — проверьте входящие и спам.",
+  whatsapp: "Сертификат доставлен в WhatsApp, проверьте чат указанного номера.",
+};
+
+const getView = (status: string, deliveryMethod: string): ResultView => {
   switch (status) {
     case "success":
       return {
         title: "Оплата подтверждена",
-        description: "Мы отправили сертификат на выбранный канал доставки и уведомили администратора филиала.",
+        description:
+          successDescriptions[deliveryMethod] ??
+          "Сертификат доставлен по выбранному каналу, отправим также уведомление администратору.",
         variant: "success",
       };
     case "failed":
       return {
         title: "Оплата не завершена",
-        description: "Платёж был отменён или отклонён. Вы можете вернуться и попробовать снова.",
+        description: "Платёж был отменён или отклонён. Вернитесь и попробуйте снова или свяжитесь с банком.",
         variant: "error",
       };
     default:
@@ -74,7 +82,7 @@ const PaymentResult = () => {
   const [downloading, setDownloading] = useState(false);
   const [downloadError, setDownloadError] = useState<string | null>(null);
 
-  const view = useMemo(() => getView(status), [status]);
+  const view = useMemo(() => getView(status, deliveryMethod), [status, deliveryMethod]);
   const shouldOfferDownload = view.variant === "success" && deliveryMethod === "download" && Boolean(certificateId);
 
   const triggerDownload = useCallback(async () => {

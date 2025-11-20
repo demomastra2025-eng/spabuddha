@@ -38,7 +38,6 @@ const fulfillmentPayloadSchema = z.object({
   template: z
     .object({
       backgroundUrl: z.string().nullable().optional(),
-      fontFamily: z.string().nullable().optional(),
       textColor: z.string().nullable().optional(),
     })
     .optional(),
@@ -68,7 +67,6 @@ export async function runOrderFulfillment(payload: FulfillmentPayload) {
     issuedAt: data.certificate.startDate ?? new Date(),
     backgroundImageUrl: data.template?.backgroundUrl ?? undefined,
     textColor: data.template?.textColor ?? undefined,
-    fontFamily: data.template?.fontFamily ?? undefined,
   });
   const downloadUrl = env.APP_BASE_URL
     ? `${env.APP_BASE_URL.replace(/\/$/, "")}/api/certificates/${data.certificate.id}/download`
@@ -107,25 +105,33 @@ export async function runOrderFulfillment(payload: FulfillmentPayload) {
         company: data.company.label,
       });
     } else {
-      await sendWhatsAppMessage(
-        {
-          chatId: whatsappChatId,
-          text: whatsappMessage,
-        },
-        whatsappCredentials,
-      );
+      try {
+        await sendWhatsAppMessage(
+          {
+            chatId: whatsappChatId,
+            text: whatsappMessage,
+          },
+          whatsappCredentials,
+        );
+      } catch (error) {
+        console.error("[fulfillment] Не удалось отправить WhatsApp сообщение:", error);
+      }
 
-      await sendWhatsAppFile(
-        {
-          chatId: whatsappChatId,
-          fileName: pdf.fileName,
-          buffer: pdf.buffer,
-          contentUri: downloadUrl ?? undefined,
-          caption: summaryText,
-          mimeType: "application/pdf",
-        },
-        whatsappCredentials,
-      );
+      try {
+        await sendWhatsAppFile(
+          {
+            chatId: whatsappChatId,
+            fileName: pdf.fileName,
+            buffer: pdf.buffer,
+            contentUri: downloadUrl ?? undefined,
+            caption: summaryText,
+            mimeType: "application/pdf",
+          },
+          whatsappCredentials,
+        );
+      } catch (error) {
+        console.error("[fulfillment] Не удалось отправить файл в WhatsApp:", error);
+      }
     }
   }
 
@@ -136,17 +142,21 @@ export async function runOrderFulfillment(payload: FulfillmentPayload) {
 
   if (emailRecipient) {
     const downloadText = downloadUrl ?? "доступно после оплаты";
-    await sendCertificateEmail({
-      to: emailRecipient,
-      subject: `Ваш сертификат Buddha Spa №${data.certificate.code}`,
-      text: `${summaryText}\n\nСкачать сертификат: ${downloadText}.`,
-      attachments: [
-        {
-          filename: pdf.fileName,
-          content: pdf.buffer,
-        },
-      ],
-    });
+    try {
+      await sendCertificateEmail({
+        to: emailRecipient,
+        subject: `Ваш сертификат Buddha Spa №${data.certificate.code}`,
+        text: `${summaryText}\n\nСкачать сертификат: ${downloadText}.`,
+        attachments: [
+          {
+            filename: pdf.fileName,
+            content: pdf.buffer,
+          },
+        ],
+      });
+    } catch (error) {
+      console.error("[fulfillment] Не удалось отправить email с сертификатом:", error);
+    }
   }
 
   return {

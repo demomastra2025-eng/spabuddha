@@ -4,7 +4,13 @@ import { Router } from "express";
 import { asyncHandler } from "../middleware/asyncHandler";
 import { requireAdmin, requireManagerOrAdmin } from "../middleware/authMiddleware";
 import { query } from "../db/pool";
-import { certificateInputSchema, createCertificate, getCertificateById, listCertificates } from "../services/certificateService";
+import {
+  certificateInputSchema,
+  createCertificate,
+  getCertificateById,
+  listCertificates,
+  markCertificateUsed,
+} from "../services/certificateService";
 
 export const certificateRouter = Router();
 
@@ -16,6 +22,26 @@ certificateRouter.get(
       req.user?.role === "manager" && req.user.companyId ? { companyId: req.user.companyId } : undefined;
     const certificates = await listCertificates(filter);
     res.json(certificates);
+  }),
+);
+
+certificateRouter.post(
+  "/:id/use",
+  requireManagerOrAdmin,
+  asyncHandler(async (req, res) => {
+    const certificate = await getCertificateById(req.params.id);
+    if (!certificate) {
+      res.status(404).json({ message: "Сертификат не найден" });
+      return;
+    }
+
+    if (certificate.status !== "active") {
+      res.status(400).json({ message: "Сертификат уже использован или недоступен" });
+      return;
+    }
+
+    const updated = await markCertificateUsed(req.params.id, req.user?.id);
+    res.json(updated);
   }),
 );
 

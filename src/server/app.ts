@@ -11,6 +11,7 @@ import { errorHandler } from "./middleware/errorHandler";
 import { spaProcedureRouter } from "./routes/spaProcedureRouter";
 import { previewRouter } from "./routes/previewRouter";
 import { utmRouter } from "./routes/utmRouter";
+import { tmpCertificateRouter } from "./routes/tmpFileRouter";
 
 export function createApp() {
   const app = express();
@@ -29,6 +30,7 @@ export function createApp() {
   app.use("/api/spa-procedures", spaProcedureRouter);
   app.use("/api/preview", previewRouter);
   app.use("/api/utm", utmRouter);
+  app.use("/api/tmp/certificates", tmpCertificateRouter);
 
   app.use(errorHandler);
 

@@ -286,12 +286,14 @@ function resolveCallbackStatus({
   const normalizedOperationStatus = typeof operationStatus === "string" ? operationStatus.toLowerCase() : undefined;
 
   const statusCandidate = normalizedPaymentStatus ?? normalizedOperationType ?? null;
+  const hasOperationError = normalizedOperationStatus === "error";
+  const hasOperationSuccess = normalizedOperationStatus === "success";
 
   const markAsPaid =
-    (statusCandidate && successStatuses.has(statusCandidate)) ||
-    (!statusCandidate && normalizedOperationStatus === "success");
+    !hasOperationError &&
+    ((statusCandidate && successStatuses.has(statusCandidate)) || (!statusCandidate && hasOperationSuccess));
   const markAsFailed =
-    (statusCandidate && failureStatuses.has(statusCandidate)) || normalizedOperationStatus === "error";
+    hasOperationError || (statusCandidate && failureStatuses.has(statusCandidate));
 
   let normalizedStatus: string;
   if (markAsPaid) {
@@ -440,6 +442,8 @@ const STATUS_POLL_INTERVAL_MS = 2 * 60 * 1000;
 const STATUS_POLL_BATCH_LIMIT = 25;
 const STATUS_POLL_MIN_AGE_MINUTES = 2;
 const STATUS_POLL_MAX_AGE_SECONDS = 62 * 60;
+const STATUS_POLL_ARCHIVE_BATCH_LIMIT = 50;
+const FAILED_ORDER_ARCHIVE_SECONDS = 62 * 60;
 
 let statusPollTimer: NodeJS.Timeout | null = null;
 let statusPollInProgress = false;
@@ -487,6 +491,87 @@ async function loadPaymentsForStatusPolling(limit: number) {
   return result.rows.filter((row) => !shouldSkipPolling(row));
 }
 
+async function archiveExpiredPendingPayments(limit: number) {
+  const expiredPayments = await query<PaymentRow & { order_status: string }>(
+    `SELECT p.*, o.status AS order_status
+       FROM payments p
+       JOIN orders o ON o.id = p.order_id
+      WHERE p.provider = 'onevision'
+        AND p.status NOT IN ('paid','failed')
+        AND o.status <> 'archived'
+        AND p.created_at <= NOW() - INTERVAL '${STATUS_POLL_MAX_AGE_SECONDS} seconds'
+      ORDER BY p.created_at ASC
+      LIMIT $1`,
+    [limit],
+  );
+
+  for (const payment of expiredPayments.rows) {
+    try {
+      const metadata = normalizePaymentRowMetadata(payment);
+      const existingOneVision = (metadata.onevision as Record<string, unknown> | undefined) ?? {};
+      const nowIso = new Date().toISOString();
+      const nextMetadata = {
+        ...metadata,
+        archivedAt: nowIso,
+        onevision: {
+          ...existingOneVision,
+          expiredAt: existingOneVision.expiredAt ?? nowIso,
+        },
+      };
+
+      await query(
+        `UPDATE payments
+           SET status = 'failed',
+               metadata = $2,
+               updated_at = NOW()
+         WHERE id = $1`,
+        [payment.id, JSON.stringify(nextMetadata)],
+      );
+
+      await query(
+        `UPDATE orders
+           SET status = 'archived',
+               payment_status = 'failed',
+               updated_at = NOW()
+         WHERE id = $1`,
+        [payment.order_id],
+      );
+
+      console.info(`[onevision-status] Архивирован платёж ${payment.id} (order ${payment.order_id}) по таймауту`);
+    } catch (error) {
+      console.error(`[onevision-status] Не удалось архивировать платёж ${payment.id}:`, error);
+    }
+  }
+}
+
+async function archiveFailedOrders(limit: number) {
+  const failedOrders = await query<{ id: string }>(
+    `SELECT id
+       FROM orders
+      WHERE payment_status = 'failed'
+        AND status <> 'archived'
+        AND updated_at <= NOW() - INTERVAL '${FAILED_ORDER_ARCHIVE_SECONDS} seconds'
+      ORDER BY updated_at ASC
+      LIMIT $1`,
+    [limit],
+  );
+
+  for (const order of failedOrders.rows) {
+    try {
+      await query(
+        `UPDATE orders
+           SET status = 'archived',
+               updated_at = NOW()
+         WHERE id = $1`,
+        [order.id],
+      );
+      console.info(`[onevision-status] Архивирован заказ ${order.id} со статусом failed`);
+    } catch (error) {
+      console.error(`[onevision-status] Не удалось архивировать заказ ${order.id}:`, error);
+    }
+  }
+}
+
 async function pollPaymentStatus(paymentRow: PaymentRow & { company_id: string }) {
   try {
     const company = await getCompany(paymentRow.company_id);
@@ -507,6 +592,12 @@ async function pollPaymentStatus(paymentRow: PaymentRow & { company_id: string }
       providerPaymentId && providerPaymentId.length > 0
         ? { payment_id: providerPaymentId }
         : { order_id: paymentRow.order_id };
+
+    console.log(
+      `[onevision-status] Запрос статуса платежа ${paymentRow.id}: ${
+        payload.payment_id ? `payment_id=${payload.payment_id}` : `order_id=${payload.order_id}`
+      }`,
+    );
 
     const response = await requestOneVision<Record<string, unknown>>("payment/status", {
       apiKey: company.keyOneVision,
@@ -539,6 +630,8 @@ async function runOneVisionStatusPollCycle() {
     for (const paymentRow of payments) {
       await pollPaymentStatus(paymentRow);
     }
+    await archiveExpiredPendingPayments(STATUS_POLL_ARCHIVE_BATCH_LIMIT);
+    await archiveFailedOrders(STATUS_POLL_ARCHIVE_BATCH_LIMIT);
   } catch (error) {
     console.error("[onevision-status] Ошибка фонового опроса статусов:", error);
   } finally {
