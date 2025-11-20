@@ -1,0 +1,58 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: spasert-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: buddha
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./schema.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres -d buddha" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - spasert-network
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: spasert-app
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/buddha
+      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET:-your-nextauth-secret-here}
+      - JWT_SECRET=${JWT_SECRET:-your-jwt-secret-here}
+      - APP_BASE_URL=${APP_BASE_URL:-http://localhost:3000}
+      - WAZZUP_API_URL=${WAZZUP_API_URL:-https://api.wazzup24.com/v3}
+      - ONEVISION_API_URL=${ONEVISION_API_URL:-https://api.onevisionpay.com/}
+      - ONEVISION_PAYMENT_LIFETIME=${ONEVISION_PAYMENT_LIFETIME:-900}
+      - RESEND_API_KEY=${RESEND_API_KEY}
+      - RESEND_FROM=${RESEND_FROM:-no-reply@buddhaspa.kz}
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./font:/app/font:ro
+      - ./public:/app/public:ro
+    networks:
+      - spasert-network
+
+volumes:
+  postgres-data:
+    driver: local
+
+networks:
+  spasert-network:
+    driver: bridge
