@@ -18,6 +18,8 @@ const companyRow = z.object({
   key_one_vision: z.string().nullable(),
   company_name_one_vision_id: z.string().nullable(),
   email: z.string().nullable(),
+  altegio_company_id: z.string().nullable(),
+  altegio_document_id: z.string().nullable(),
   status: z.string(),
   manager_name: z.string().nullable(),
   timezone: z.string().nullable(),
@@ -45,6 +47,8 @@ export interface CompanyView {
   keyOneVision: string | null;
   companyNameOneVisionId: string | null;
   email: string | null;
+  altegioCompanyId: string | null;
+  altegioDocumentId: string | null;
   status: string;
   managerName: string | null;
   timezone: string | null;
@@ -67,6 +71,8 @@ export const upsertCompanySchema = z.object({
   keyOneVision: z.string().optional(),
   companyNameOneVisionId: z.string().optional(),
   email: z.string().email().optional(),
+  altegioCompanyId: z.string().optional(),
+  altegioDocumentId: z.string().optional(),
   status: z.enum(["active", "inactive"]).default("active"),
   managerName: z.string().optional(),
   timezone: z.string().optional(),
@@ -92,6 +98,8 @@ function mapCompany(row: Company): CompanyView {
     keyOneVision: row.key_one_vision,
     companyNameOneVisionId: row.company_name_one_vision_id,
     email: row.email,
+    altegioCompanyId: row.altegio_company_id,
+    altegioDocumentId: row.altegio_document_id,
     status: row.status,
     managerName: row.manager_name,
     timezone: row.timezone,
@@ -118,8 +126,9 @@ export async function createCompany(input: z.infer<typeof upsertCompanySchema>) 
     `INSERT INTO company
       (label, address, phone, name_company, bin_company, bik_company, official_address,
        company_one_vision_id, pass_one_vision, key_one_vision, company_name_one_vision_id,
-       email, status, manager_name, timezone, wazzup_api_token, wazzup_channel_id, wazzup_number)
-     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18)
+       email, altegio_company_id, altegio_document_id, status, manager_name, timezone,
+       wazzup_api_token, wazzup_channel_id, wazzup_number)
+     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20)
      RETURNING *`,
     [
       input.label,
@@ -134,6 +143,8 @@ export async function createCompany(input: z.infer<typeof upsertCompanySchema>) 
       input.keyOneVision ?? null,
       input.companyNameOneVisionId ?? null,
       input.email ?? null,
+      input.altegioCompanyId?.trim() ? input.altegioCompanyId.trim() : null,
+      input.altegioDocumentId?.trim() ? input.altegioDocumentId.trim() : null,
       input.status,
       input.managerName ?? null,
       input.timezone ?? null,
@@ -154,20 +165,22 @@ export async function updateCompany(id: string, input: z.infer<typeof upsertComp
       name_company = $4,
       bin_company = $5,
       bik_company = $6,
-      official_address = $7,
-      company_one_vision_id = $8,
-      pass_one_vision = $9,
-      key_one_vision = $10,
-      company_name_one_vision_id = $11,
-      email = $12,
-      status = $13,
-      manager_name = $14,
-      timezone = $15,
-      wazzup_api_token = $16,
-      wazzup_channel_id = $17,
-      wazzup_number = $18,
-      updated_at = NOW()
-     WHERE id = $19
+       official_address = $7,
+       company_one_vision_id = $8,
+       pass_one_vision = $9,
+       key_one_vision = $10,
+       company_name_one_vision_id = $11,
+       email = $12,
+       altegio_company_id = $13,
+       altegio_document_id = $14,
+       status = $15,
+       manager_name = $16,
+       timezone = $17,
+       wazzup_api_token = $18,
+       wazzup_channel_id = $19,
+       wazzup_number = $20,
+       updated_at = NOW()
+     WHERE id = $21
      RETURNING *`,
     [
       input.label,
@@ -182,6 +195,8 @@ export async function updateCompany(id: string, input: z.infer<typeof upsertComp
       input.keyOneVision ?? null,
       input.companyNameOneVisionId ?? null,
       input.email ?? null,
+      input.altegioCompanyId?.trim() ? input.altegioCompanyId.trim() : null,
+      input.altegioDocumentId?.trim() ? input.altegioDocumentId.trim() : null,
       input.status,
       input.managerName ?? null,
       input.timezone ?? null,

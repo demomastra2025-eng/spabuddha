@@ -69,6 +69,11 @@ const fulfillmentRowSchema = z.object({
   certificate_id: z.string(),
   certificate_code: z.string(),
   certificate_name: z.string(),
+  certificate_type: z.string(),
+  certificate_price: z.coerce.number(),
+  certificate_service: z.string().nullable(),
+  certificate_altegio_operation_id: z.string().nullable(),
+  certificate_altegio_transaction_id: z.string().nullable(),
   sender_name: z.string().nullable(),
   recipient_name: z.string().nullable(),
   recipient_email: z.string().nullable(),
@@ -77,10 +82,14 @@ const fulfillmentRowSchema = z.object({
   finish_date: z.coerce.date().nullable(),
   company_label: z.string().nullable(),
   company_address: z.string().nullable(),
+  company_altegio_company_id: z.string().nullable(),
+  company_altegio_document_id: z.string().nullable(),
   client_first_name: z.string().nullable(),
   client_last_name: z.string().nullable(),
   client_email: z.string().nullable(),
   client_phone: z.string().nullable(),
+  client_id: z.string().nullable(),
+  client_altegio_client_id: z.string().nullable(),
   certificate_file_url: z.string().nullable(),
   template_id: z.string().nullable(),
   template_background_url: z.string().nullable(),
@@ -105,6 +114,159 @@ async function safeRunOrderFulfillment(payload: FulfillmentPayload) {
     console.error("[fulfillment] Не удалось выполнить доставку сертификата:", error);
     return null;
   }
+}
+
+function parseServiceSelections(serviceData: string | null): unknown[] {
+  if (!serviceData) {
+    return [];
+  }
+  try {
+    const parsed = JSON.parse(serviceData);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+async function resolveAltegioGoodId(fulfillment: z.infer<typeof fulfillmentRowSchema>) {
+  if (fulfillment.certificate_type === "procedure") {
+    const services = parseServiceSelections(fulfillment.certificate_service);
+    for (const rawService of services) {
+      const service = rawService as { id?: string; good_id?: string | number; altegio_good_id?: string | number };
+      const directGoodId =
+        service?.altegio_good_id ?? service?.good_id ?? (typeof service === "number" ? service : null);
+      if (directGoodId) {
+        return String(directGoodId);
+      }
+      if (service?.id) {
+        const lookup = await query<{ altegio_good_id: string | null }>(
+          `SELECT altegio_good_id FROM spa_procedures WHERE id = $1 LIMIT 1`,
+          [service.id],
+        );
+        if (lookup.rows[0]?.altegio_good_id) {
+          return lookup.rows[0].altegio_good_id;
+        }
+      }
+    }
+  }
+
+  const nominalLookup = await query<{ altegio_good_id: string | null }>(
+    `SELECT altegio_good_id FROM certificate_nominal_options WHERE amount = $1 AND currency = 'KZT' LIMIT 1`,
+    [fulfillment.total_amount],
+  );
+  const nominalGoodId = nominalLookup.rows[0]?.altegio_good_id ?? null;
+
+  if (!nominalGoodId) {
+    throw new AppError(400, `Не настроен товар Altegio для суммы ${fulfillment.total_amount}`);
+  }
+
+  return nominalGoodId;
+}
+
+async function ensureAltegioClientIdForCompany(
+  fulfillment: z.infer<typeof fulfillmentRowSchema>,
+  altegioCompanyId: string,
+) {
+  if (fulfillment.client_altegio_client_id) {
+    return fulfillment.client_altegio_client_id;
+  }
+
+  const phone = fulfillment.client_phone ?? fulfillment.delivery_contact ?? null;
+  if (!phone) {
+    return null;
+  }
+
+  const displayName = [fulfillment.client_first_name, fulfillment.client_last_name]
+    .filter(Boolean)
+    .join(" ")
+    .trim() || phone;
+
+  const { searchClientByPhone, createClientInAltegio } = await import("./altegioService");
+  const existing = await searchClientByPhone(phone, altegioCompanyId);
+  const foundId = Array.isArray(existing) && existing[0]?.id ? String(existing[0].id) : null;
+
+  let altegioClientId = foundId;
+
+  if (!altegioClientId) {
+    const created = await createClientInAltegio(altegioCompanyId, {
+      name: displayName,
+      phone,
+      email: fulfillment.client_email ?? undefined,
+    });
+    altegioClientId = created?.id ? String(created.id) : null;
+  }
+
+  if (altegioClientId && fulfillment.client_id) {
+    await query(
+      `UPDATE client SET altegio_client_id = COALESCE(altegio_client_id, $1), updated_at = NOW() WHERE id = $2`,
+      [altegioClientId, fulfillment.client_id],
+    );
+  }
+
+  return altegioClientId;
+}
+
+async function syncAltegioSale(fulfillment: z.infer<typeof fulfillmentRowSchema>) {
+  if (!env.ALTEGIO_USER_TOKEN) {
+    return null;
+  }
+
+  if (!fulfillment.company_altegio_company_id) {
+    return null;
+  }
+
+  if (fulfillment.certificate_altegio_transaction_id) {
+    return {
+      operationId: fulfillment.certificate_altegio_operation_id ?? null,
+      transactionId: fulfillment.certificate_altegio_transaction_id,
+      skipped: true,
+    };
+  }
+
+  const documentId =
+    fulfillment.certificate_altegio_operation_id ??
+    fulfillment.company_altegio_document_id ??
+    env.ALTEGIO_DEFAULT_DOCUMENT_ID ??
+    null;
+
+  if (!documentId) {
+    throw new AppError(400, "Не настроен document_id для Altegio");
+  }
+
+  const goodId = await resolveAltegioGoodId(fulfillment);
+  const altegioClientId = await ensureAltegioClientIdForCompany(fulfillment, fulfillment.company_altegio_company_id);
+
+  const { createGoodsTransaction } = await import("./altegioService");
+  const payload = {
+    document_id: Number.isFinite(Number(documentId)) ? Number(documentId) : documentId,
+    good_id: Number.isFinite(Number(goodId)) ? Number(goodId) : goodId,
+    amount: 1,
+    cost_per_unit: fulfillment.total_amount,
+    discount: 0,
+    cost: fulfillment.total_amount,
+    operation_unit_type: 1,
+    client_id: altegioClientId ? (Number.isFinite(Number(altegioClientId)) ? Number(altegioClientId) : altegioClientId) : 0,
+    comment: `Order ${fulfillment.order_number}`,
+  };
+
+  const response = await createGoodsTransaction(fulfillment.company_altegio_company_id, payload);
+  const transactionId = response?.id ? String(response.id) : null;
+  const operationId = response?.document_id
+    ? String(response.document_id)
+    : documentId
+      ? String(documentId)
+      : null;
+
+  await query(
+    `UPDATE certificates
+       SET altegio_operation_id = COALESCE(altegio_operation_id, $1),
+           altegio_transaction_id = COALESCE(altegio_transaction_id, $2),
+           updated_at = NOW()
+     WHERE id = $3`,
+    [operationId, transactionId, fulfillment.certificate_id],
+  );
+
+  return { operationId, transactionId };
 }
 
 export async function markPaymentAsPaid(
@@ -134,6 +296,11 @@ export async function markPaymentAsPaid(
          c.id AS certificate_id,
          c.code AS certificate_code,
          c.name_cert AS certificate_name,
+         c.type_cert AS certificate_type,
+         c.price_cert AS certificate_price,
+         c.service_cert AS certificate_service,
+         c.altegio_operation_id AS certificate_altegio_operation_id,
+         c.altegio_transaction_id AS certificate_altegio_transaction_id,
          c.sender_name,
          c.recipient_name,
          c.recipient_email,
@@ -148,13 +315,17 @@ export async function markPaymentAsPaid(
          t.layout_config AS template_layout_config,
          comp.label AS company_label,
          comp.address AS company_address,
+         comp.altegio_company_id AS company_altegio_company_id,
+         comp.altegio_document_id AS company_altegio_document_id,
          comp.wazzup_api_token AS company_wazzup_api_token,
          comp.wazzup_channel_id AS company_wazzup_channel_id,
          comp.wazzup_number AS company_wazzup_number,
          cli.first_name AS client_first_name,
          cli.last_name AS client_last_name,
          cli.email AS client_email,
-         cli.phone AS client_phone
+         cli.phone AS client_phone,
+         cli.id AS client_id,
+         cli.altegio_client_id AS client_altegio_client_id
        FROM orders o
        JOIN certificates c ON c.id = o.certificate_id
        LEFT JOIN template t ON t.id = c.template_id
@@ -237,6 +408,8 @@ export async function markPaymentAsPaid(
     },
     template: templateSettings,
   };
+
+  await syncAltegioSale(fulfillment);
 
   await query(
     `UPDATE payments SET status = 'paid', transaction_id = $2, paid_at = COALESCE(paid_at, NOW()), updated_at = NOW()

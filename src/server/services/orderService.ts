@@ -170,6 +170,11 @@ export async function createOrder(input: CreateOrderInput, options?: { provider?
         phone: input.client.phone,
       },
       client,
+      {
+        companyId: normalizedCompanyId,
+        syncWithAltegio: true,
+        contactName,
+      },
     );
 
     const certificate = await createCertificate(

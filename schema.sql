@@ -26,6 +26,8 @@ CREATE TABLE IF NOT EXISTS company (
     key_one_vision TEXT,
     company_name_one_vision_id TEXT,
     email TEXT,
+    altegio_company_id TEXT,
+    altegio_document_id TEXT,
     status TEXT NOT NULL DEFAULT 'active',
     manager_name TEXT,
     timezone TEXT,
@@ -56,6 +58,7 @@ CREATE TABLE IF NOT EXISTS client (
     last_name TEXT,
     email TEXT UNIQUE,
     phone TEXT UNIQUE,
+    altegio_client_id TEXT,
     preferred_language TEXT,
     notes TEXT,
     consent_marketing BOOLEAN,
@@ -85,6 +88,8 @@ CREATE TABLE IF NOT EXISTS certificates (
     currency TEXT NOT NULL DEFAULT 'KZT',
     created_by UUID REFERENCES users(id),
     file_url TEXT,
+    altegio_operation_id TEXT,
+    altegio_transaction_id TEXT,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
@@ -171,6 +176,8 @@ CREATE TABLE IF NOT EXISTS certificate_nominal_options (
     amount NUMERIC(12,2) NOT NULL,
     currency TEXT NOT NULL DEFAULT 'KZT',
     description TEXT,
+    altegio_good_id TEXT,
+    altegio_certificate_type_id TEXT,
     is_featured BOOLEAN NOT NULL DEFAULT FALSE,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
@@ -186,6 +193,7 @@ CREATE TABLE IF NOT EXISTS spa_procedures (
     duration_minutes INTEGER,
     price NUMERIC(12,2) NOT NULL,
     discount_percent NUMERIC(5,2) NOT NULL DEFAULT 0,
+    altegio_good_id TEXT,
     currency TEXT NOT NULL DEFAULT 'KZT',
     company_id UUID REFERENCES company(id),
     is_active BOOLEAN NOT NULL DEFAULT TRUE,
@@ -195,6 +203,30 @@ CREATE TABLE IF NOT EXISTS spa_procedures (
 
 ALTER TABLE spa_procedures
     ADD COLUMN IF NOT EXISTS discount_percent NUMERIC(5,2) NOT NULL DEFAULT 0;
+
+ALTER TABLE client
+    ADD COLUMN IF NOT EXISTS altegio_client_id TEXT;
+
+ALTER TABLE company
+    ADD COLUMN IF NOT EXISTS altegio_company_id TEXT,
+    ADD COLUMN IF NOT EXISTS altegio_document_id TEXT;
+
+ALTER TABLE certificates
+    ADD COLUMN IF NOT EXISTS altegio_operation_id TEXT,
+    ADD COLUMN IF NOT EXISTS altegio_transaction_id TEXT;
+
+ALTER TABLE certificate_nominal_options
+    ADD COLUMN IF NOT EXISTS altegio_good_id TEXT,
+    ADD COLUMN IF NOT EXISTS altegio_certificate_type_id TEXT;
+
+ALTER TABLE spa_procedures
+    ADD COLUMN IF NOT EXISTS altegio_good_id TEXT;
+
+CREATE UNIQUE INDEX IF NOT EXISTS idx_company_altegio_company_id ON company(altegio_company_id);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_client_altegio_client_id ON client(altegio_client_id);
+CREATE INDEX IF NOT EXISTS idx_certificate_nominal_options_altegio_good_id ON certificate_nominal_options(altegio_good_id);
+CREATE INDEX IF NOT EXISTS idx_spa_procedures_altegio_good_id ON spa_procedures(altegio_good_id);
+CREATE INDEX IF NOT EXISTS idx_certificates_altegio_operation_id ON certificates(altegio_operation_id);
 
 CREATE TABLE IF NOT EXISTS utm_tags (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -244,6 +276,3 @@ CREATE INDEX IF NOT EXISTS idx_orders_utm_tag ON orders(utm_tag_id);
 CREATE INDEX IF NOT EXISTS idx_orders_utm_visitor ON orders(utm_visitor_id);
 
 CREATE INDEX IF NOT EXISTS idx_spa_procedures_company_id ON spa_procedures(company_id);
-
-ALTER TABLE spa_procedures
-    ADD COLUMN IF NOT EXISTS discount_percent NUMERIC(5,2) NOT NULL DEFAULT 0;

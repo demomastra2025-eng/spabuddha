@@ -28,6 +28,17 @@ const envSchema = z.object({
       (value) => (value === undefined || (Number.isFinite(value) && value > 0)),
       "ONEVISION_PAYMENT_LIFETIME must be a positive number",
     ),
+  ALTEGIO_API_URL: z.string().url().default("https://api.alteg.io/api/v1"),
+  ALTEGIO_USER_TOKEN: z.string().optional(),
+  ALTEGIO_TIMEOUT_MS: z
+    .string()
+    .optional()
+    .transform((value) => (value ? Number(value) : undefined))
+    .refine(
+      (value) => (value === undefined || (Number.isFinite(value) && value > 0)),
+      "ALTEGIO_TIMEOUT_MS must be a positive number",
+    ),
+  ALTEGIO_DEFAULT_DOCUMENT_ID: z.string().optional(),
 });
 
 const parsed = envSchema.safeParse(process.env);
@@ -43,4 +54,7 @@ export const env = {
   hashRounds: parsed.data.BCRYPT_ROUNDS ?? 10,
   ONEVISION_API_URL: parsed.data.ONEVISION_API_URL.replace(/\/+$/, ""),
   ONEVISION_PAYMENT_LIFETIME: parsed.data.ONEVISION_PAYMENT_LIFETIME ?? 900,
+  ALTEGIO_API_URL: parsed.data.ALTEGIO_API_URL.replace(/\/+$/, ""),
+  ALTEGIO_TIMEOUT_MS: parsed.data.ALTEGIO_TIMEOUT_MS ?? 10000,
+  ALTEGIO_DEFAULT_DOCUMENT_ID: parsed.data.ALTEGIO_DEFAULT_DOCUMENT_ID,
 };

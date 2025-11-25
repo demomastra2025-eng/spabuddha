@@ -31,8 +31,8 @@ WORKDIR /app
 COPY package.json pnpm-lock.yaml ./
 COPY .npmrc* ./
 
-# Install production dependencies only
-RUN pnpm install --frozen-lockfile --prod
+# Install all dependencies (tsx is needed for runtime)
+RUN pnpm install --frozen-lockfile
 
 # Copy built files from builder
 COPY --from=builder /app/dist ./dist
