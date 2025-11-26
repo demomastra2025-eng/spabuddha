@@ -1,5 +1,4 @@
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
-
 CREATE TABLE IF NOT EXISTS users (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     email TEXT NOT NULL UNIQUE,
@@ -11,7 +10,6 @@ CREATE TABLE IF NOT EXISTS users (
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
-
 CREATE TABLE IF NOT EXISTS company (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     label TEXT NOT NULL,
@@ -37,7 +35,6 @@ CREATE TABLE IF NOT EXISTS company (
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
-
 CREATE TABLE IF NOT EXISTS template (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name TEXT NOT NULL,
@@ -51,7 +48,6 @@ CREATE TABLE IF NOT EXISTS template (
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
-
 CREATE TABLE IF NOT EXISTS client (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     first_name TEXT,
@@ -66,7 +62,6 @@ CREATE TABLE IF NOT EXISTS client (
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
-
 CREATE TABLE IF NOT EXISTS certificates (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name_cert TEXT NOT NULL,
@@ -74,7 +69,7 @@ CREATE TABLE IF NOT EXISTS certificates (
     finish_date TIMESTAMPTZ,
     company_id UUID NOT NULL REFERENCES company(id),
     type_cert TEXT NOT NULL,
-    price_cert NUMERIC(12,2) NOT NULL,
+    price_cert NUMERIC(12, 2) NOT NULL,
     service_cert TEXT,
     template_id UUID REFERENCES template(id),
     template_background_url TEXT,
@@ -93,7 +88,6 @@ CREATE TABLE IF NOT EXISTS certificates (
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
-
 CREATE TABLE IF NOT EXISTS orders (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     order_number TEXT NOT NULL UNIQUE,
@@ -101,7 +95,7 @@ CREATE TABLE IF NOT EXISTS orders (
     certificate_id UUID NOT NULL REFERENCES certificates(id),
     company_id UUID NOT NULL REFERENCES company(id),
     status TEXT NOT NULL DEFAULT 'created',
-    total_amount NUMERIC(12,2) NOT NULL,
+    total_amount NUMERIC(12, 2) NOT NULL,
     currency TEXT NOT NULL DEFAULT 'KZT',
     payment_status TEXT NOT NULL DEFAULT 'pending',
     delivery_method TEXT NOT NULL,
@@ -112,11 +106,10 @@ CREATE TABLE IF NOT EXISTS orders (
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
-
 CREATE TABLE IF NOT EXISTS payments (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     order_id UUID NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
-    amount NUMERIC(12,2) NOT NULL,
+    amount NUMERIC(12, 2) NOT NULL,
     currency TEXT NOT NULL DEFAULT 'KZT',
     status TEXT NOT NULL DEFAULT 'pending',
     provider TEXT,
@@ -128,7 +121,6 @@ CREATE TABLE IF NOT EXISTS payments (
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
-
 CREATE TABLE IF NOT EXISTS certificate_events (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     certificate_id UUID NOT NULL REFERENCES certificates(id) ON DELETE CASCADE,
@@ -136,7 +128,6 @@ CREATE TABLE IF NOT EXISTS certificate_events (
     metadata JSONB,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
-
 CREATE TABLE IF NOT EXISTS audit_logs (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     entity_type TEXT NOT NULL,
@@ -146,34 +137,26 @@ CREATE TABLE IF NOT EXISTS audit_logs (
     metadata JSONB,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
-
 CREATE INDEX IF NOT EXISTS idx_company_status ON company(status);
 CREATE INDEX IF NOT EXISTS idx_certificates_code ON certificates(code);
 CREATE INDEX IF NOT EXISTS idx_orders_order_number ON orders(order_number);
 CREATE INDEX IF NOT EXISTS idx_payments_order_id ON payments(order_id);
 CREATE INDEX IF NOT EXISTS idx_certificate_events_certificate_id ON certificate_events(certificate_id);
 CREATE UNIQUE INDEX IF NOT EXISTS idx_template_name_unique ON template(name);
-
 ALTER TABLE company
-    ADD COLUMN IF NOT EXISTS slug TEXT UNIQUE;
-
+ADD COLUMN IF NOT EXISTS slug TEXT UNIQUE;
 ALTER TABLE company
-    ADD COLUMN IF NOT EXISTS wazzup_api_token TEXT;
-
+ADD COLUMN IF NOT EXISTS wazzup_api_token TEXT;
 ALTER TABLE company
-    ADD COLUMN IF NOT EXISTS wazzup_channel_id TEXT;
-
+ADD COLUMN IF NOT EXISTS wazzup_channel_id TEXT;
 ALTER TABLE company
-    ADD COLUMN IF NOT EXISTS wazzup_number TEXT;
-
+ADD COLUMN IF NOT EXISTS wazzup_number TEXT;
 ALTER TABLE users
-    ADD COLUMN IF NOT EXISTS company_id UUID REFERENCES company(id);
-
+ADD COLUMN IF NOT EXISTS company_id UUID REFERENCES company(id);
 CREATE INDEX IF NOT EXISTS idx_users_company_id ON users(company_id);
-
 CREATE TABLE IF NOT EXISTS certificate_nominal_options (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    amount NUMERIC(12,2) NOT NULL,
+    amount NUMERIC(12, 2) NOT NULL,
     currency TEXT NOT NULL DEFAULT 'KZT',
     description TEXT,
     altegio_good_id TEXT,
@@ -182,17 +165,15 @@ CREATE TABLE IF NOT EXISTS certificate_nominal_options (
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
-
 CREATE UNIQUE INDEX IF NOT EXISTS idx_certificate_nominal_unique ON certificate_nominal_options(amount, currency);
-
 CREATE TABLE IF NOT EXISTS spa_procedures (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name TEXT NOT NULL,
     description TEXT,
     category TEXT,
     duration_minutes INTEGER,
-    price NUMERIC(12,2) NOT NULL,
-    discount_percent NUMERIC(5,2) NOT NULL DEFAULT 0,
+    price NUMERIC(12, 2) NOT NULL,
+    discount_percent NUMERIC(5, 2) NOT NULL DEFAULT 0,
     altegio_good_id TEXT,
     currency TEXT NOT NULL DEFAULT 'KZT',
     company_id UUID REFERENCES company(id),
@@ -200,34 +181,26 @@ CREATE TABLE IF NOT EXISTS spa_procedures (
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
-
 ALTER TABLE spa_procedures
-    ADD COLUMN IF NOT EXISTS discount_percent NUMERIC(5,2) NOT NULL DEFAULT 0;
-
+ADD COLUMN IF NOT EXISTS discount_percent NUMERIC(5, 2) NOT NULL DEFAULT 0;
 ALTER TABLE client
-    ADD COLUMN IF NOT EXISTS altegio_client_id TEXT;
-
+ADD COLUMN IF NOT EXISTS altegio_client_id TEXT;
 ALTER TABLE company
-    ADD COLUMN IF NOT EXISTS altegio_company_id TEXT,
+ADD COLUMN IF NOT EXISTS altegio_company_id TEXT,
     ADD COLUMN IF NOT EXISTS altegio_document_id TEXT;
-
 ALTER TABLE certificates
-    ADD COLUMN IF NOT EXISTS altegio_operation_id TEXT,
+ADD COLUMN IF NOT EXISTS altegio_operation_id TEXT,
     ADD COLUMN IF NOT EXISTS altegio_transaction_id TEXT;
-
 ALTER TABLE certificate_nominal_options
-    ADD COLUMN IF NOT EXISTS altegio_good_id TEXT,
+ADD COLUMN IF NOT EXISTS altegio_good_id TEXT,
     ADD COLUMN IF NOT EXISTS altegio_certificate_type_id TEXT;
-
 ALTER TABLE spa_procedures
-    ADD COLUMN IF NOT EXISTS altegio_good_id TEXT;
-
+ADD COLUMN IF NOT EXISTS altegio_good_id TEXT;
 CREATE UNIQUE INDEX IF NOT EXISTS idx_company_altegio_company_id ON company(altegio_company_id);
 CREATE UNIQUE INDEX IF NOT EXISTS idx_client_altegio_client_id ON client(altegio_client_id);
 CREATE INDEX IF NOT EXISTS idx_certificate_nominal_options_altegio_good_id ON certificate_nominal_options(altegio_good_id);
 CREATE INDEX IF NOT EXISTS idx_spa_procedures_altegio_good_id ON spa_procedures(altegio_good_id);
 CREATE INDEX IF NOT EXISTS idx_certificates_altegio_operation_id ON certificates(altegio_operation_id);
-
 CREATE TABLE IF NOT EXISTS utm_tags (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name TEXT NOT NULL,
@@ -240,7 +213,6 @@ CREATE TABLE IF NOT EXISTS utm_tags (
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
-
 CREATE UNIQUE INDEX IF NOT EXISTS idx_utm_tags_unique_params ON utm_tags(
     COALESCE(utm_source, ''),
     COALESCE(utm_medium, ''),
@@ -248,31 +220,36 @@ CREATE UNIQUE INDEX IF NOT EXISTS idx_utm_tags_unique_params ON utm_tags(
     COALESCE(utm_term, ''),
     COALESCE(utm_content, '')
 );
-
 CREATE TABLE IF NOT EXISTS utm_visits (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    utm_tag_id UUID REFERENCES utm_tags(id) ON DELETE SET NULL,
-    visitor_id TEXT NOT NULL,
-    utm_source TEXT,
-    utm_medium TEXT,
-    utm_campaign TEXT,
-    utm_term TEXT,
-    utm_content TEXT,
-    landing_path TEXT,
-    user_agent TEXT,
-    referer TEXT,
-    first_visit_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    utm_tag_id UUID REFERENCES utm_tags(id) ON DELETE
+    SET NULL,
+        visitor_id TEXT NOT NULL,
+        utm_source TEXT,
+        utm_medium TEXT,
+        utm_campaign TEXT,
+        utm_term TEXT,
+        utm_content TEXT,
+        landing_path TEXT,
+        user_agent TEXT,
+        referer TEXT,
+        first_visit_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
-
 CREATE INDEX IF NOT EXISTS idx_utm_visits_tag ON utm_visits(utm_tag_id);
 CREATE INDEX IF NOT EXISTS idx_utm_visits_visitor ON utm_visits(visitor_id);
 DROP INDEX IF EXISTS idx_utm_visits_unique;
-
 ALTER TABLE orders
-    ADD COLUMN IF NOT EXISTS utm_tag_id UUID REFERENCES utm_tags(id),
+ADD COLUMN IF NOT EXISTS utm_tag_id UUID REFERENCES utm_tags(id),
     ADD COLUMN IF NOT EXISTS utm_visitor_id TEXT;
-
 CREATE INDEX IF NOT EXISTS idx_orders_utm_tag ON orders(utm_tag_id);
 CREATE INDEX IF NOT EXISTS idx_orders_utm_visitor ON orders(utm_visitor_id);
-
 CREATE INDEX IF NOT EXISTS idx_spa_procedures_company_id ON spa_procedures(company_id);
+ALTER TABLE company
+ADD COLUMN IF NOT EXISTS altegio_category_id TEXT;
+CREATE TABLE IF NOT EXISTS system_settings (
+    key TEXT PRIMARY KEY,
+    value TEXT NOT NULL,
+    description TEXT,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);

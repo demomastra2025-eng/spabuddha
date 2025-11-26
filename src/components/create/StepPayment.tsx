@@ -28,7 +28,8 @@ export const StepPayment = ({ data, onPrev }: StepPaymentProps) => {
   const branchAddress = selectedBranch?.address ?? "—";
   const hasServices = data.selectedServices.length > 0;
   const orderTotal =
-    data.type === "procedure" && hasServices ? calculateServicesTotal(data.selectedServices) : data.amount;
+    data.selectedGood?.cost ??
+    (hasServices ? calculateServicesTotal(data.selectedServices) : data.amount);
 
   const buildOrderPayload = () => {
     const deliveryContact = data.deliveryContact?.trim() ?? "";
@@ -64,17 +65,25 @@ export const StepPayment = ({ data, onPrev }: StepPaymentProps) => {
         email: clientEmail || undefined,
         phone: clientPhone || undefined,
       },
-      services:
-        data.type === "procedure"
-          ? data.selectedServices.map((service) => ({
-              id: service.id,
-              name: service.name,
-              price: service.price,
-              discountPercent: service.discountPercent ?? 0,
-              branchId: service.branchId,
-              currency: service.currency ?? "KZT",
-            }))
-          : undefined,
+      services: data.type === "procedure" && !data.selectedGood
+        ? data.selectedServices.map((service) => ({
+            id: service.id,
+            name: service.name,
+            price: service.price,
+            discountPercent: service.discountPercent ?? 0,
+            branchId: service.branchId,
+            currency: service.currency ?? "KZT",
+          }))
+        : undefined,
+      selectedGood: data.selectedGood
+        ? {
+            goodId: data.selectedGood.goodId,
+            title: data.selectedGood.title,
+            cost: data.selectedGood.cost,
+            categoryId: data.selectedGood.categoryId,
+            salonId: data.selectedGood.salonId ?? data.branch,
+          }
+        : undefined,
       utmVisitorId: utmVisitorId ?? undefined,
     };
   };
@@ -86,6 +95,10 @@ export const StepPayment = ({ data, onPrev }: StepPaymentProps) => {
     }
     if (!data.branch) {
       toast.error("Выберите филиал");
+      return;
+    }
+    if (!data.selectedGood) {
+      toast.error("Выберите сертификат на предыдущем шаге");
       return;
     }
 
@@ -221,6 +234,20 @@ export const StepPayment = ({ data, onPrev }: StepPaymentProps) => {
                 <span className="font-semibold"> {branchLabel} - {branchAddress}</span>
               </div>
             </div>
+
+            {data.selectedGood && (
+              <div className="mb-8 rounded-2xl border border-border bg-muted/20 p-4 space-y-3">
+                <p className="font-semibold text-foreground">Выбранный сертификат</p>
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <p className="font-medium leading-tight">{data.selectedGood.title}</p>
+                  </div>
+                  <div className="text-right">
+                    <span className="font-semibold">{formatCurrency(data.selectedGood.cost)}</span>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {hasServices && (
               <div className="mb-8 rounded-2xl border border-border bg-muted/20 p-4 space-y-3">

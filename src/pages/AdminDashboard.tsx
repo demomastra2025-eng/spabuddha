@@ -9,16 +9,13 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Gift, LogOut, Mail, PenSquare, RefreshCw, Trash2, TrendingUp, Users } from "lucide-react";
-import { TbMassage } from "react-icons/tb";
+import { Gift, LogOut, Mail, PenSquare, RefreshCw, TrendingUp, Users } from "lucide-react";
 import { toast } from "sonner";
 import { useCompanies } from "@/hooks/useCompanies";
 import { useTemplates } from "@/hooks/useTemplates";
-import { useSpaProcedures, type SpaProcedureOption } from "@/hooks/useSpaProcedures";
+import { useAltegioGoods } from "@/hooks/useAltegioGoods";
 import { formatCurrency } from "@/lib/currency";
-import { calculateServicesTotal, getDiscountedPrice } from "@/lib/services";
 import { UtmManagement } from "@/components/admin/UtmManagement";
 
 type DashboardOrder = {
@@ -54,21 +51,18 @@ type DashboardCertificate = {
   } | null;
 };
 
-type CertificateServiceSelection = {
-  id: string;
-  name: string;
-  price: number;
-  discountPercent?: number;
-  branchId: string;
-  currency?: string;
-  durationMinutes?: number | null;
-};
-
 const certificateFormDefaults = {
   companyId: "",
   templateId: "",
   type: "gift" as "gift" | "procedure",
-  amount: 50000,
+  amount: 0,
+  selectedGood: null as null | {
+    goodId: string | number;
+    title: string;
+    cost: number;
+    categoryId?: string | number | null;
+    salonId?: string | number | null;
+  },
   senderName: "",
   recipientName: "",
   recipientEmail: "",
@@ -77,7 +71,6 @@ const certificateFormDefaults = {
   deliveryMethod: "email" as "email" | "whatsapp" | "download",
   deliveryContact: "",
   validUntil: "",
-  services: [] as CertificateServiceSelection[],
 };
 
 const templateFormDefaults = {
@@ -86,16 +79,6 @@ const templateFormDefaults = {
   backgroundUrl: "",
   previewUrl: "",
   textColor: "#FFFFFF",
-};
-
-const serviceFormDefaults = {
-  companyId: "",
-  name: "",
-  description: "",
-  durationMinutes: "",
-  price: "",
-  discountPercent: "",
-  hasDiscount: false,
 };
 
 const branchFormDefaults = {
@@ -117,9 +100,12 @@ const branchFormDefaults = {
   wazzupApiToken: "",
   wazzupChannelId: "",
   wazzupNumber: "",
+  altegioCompanyId: "",
+  altegioCategoryId: "",
+  altegioDocumentId: "",
 };
 
-type AdminTab = "dashboard" | "certificate" | "templates" | "services" | "branches" | "utm";
+type AdminTab = "dashboard" | "certificate" | "templates" | "branches" | "utm";
 
 export const AdminDashboard = () => {
   const { session, logout } = useAuth();
@@ -128,10 +114,8 @@ export const AdminDashboard = () => {
 
   const [certificateForm, setCertificateForm] = useState(certificateFormDefaults);
   const [templateForm, setTemplateForm] = useState(templateFormDefaults);
-  const [serviceForm, setServiceForm] = useState(serviceFormDefaults);
   const [submittingCertificate, setSubmittingCertificate] = useState(false);
   const [submittingTemplate, setSubmittingTemplate] = useState(false);
-  const [serviceSubmitting, setServiceSubmitting] = useState(false);
   const [editingTemplateId, setEditingTemplateId] = useState<string | null>(null);
   const [orders, setOrders] = useState<DashboardOrder[]>([]);
   const [ordersLoading, setOrdersLoading] = useState(false);
@@ -143,8 +127,6 @@ export const AdminDashboard = () => {
   const [showAllCertificates, setShowAllCertificates] = useState(false);
   const [usingCertificateId, setUsingCertificateId] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<AdminTab>("dashboard");
-  const [editingServiceId, setEditingServiceId] = useState<string | null>(null);
-  const [selectedServiceCompanyId, setSelectedServiceCompanyId] = useState("");
   const [selectedBranchId, setSelectedBranchId] = useState("");
   const [branchForm, setBranchForm] = useState(branchFormDefaults);
   const [branchLoading, setBranchLoading] = useState(false);
@@ -162,34 +144,14 @@ export const AdminDashboard = () => {
   }, [companies, isGlobalManager, userCompanyId]);
 
   const {
-    services: managedServices,
-    loading: managedServicesLoading,
-    reload: reloadManagedServices,
-  } = useSpaProcedures({
-    companyId: selectedServiceCompanyId,
-    includeInactive: true,
-    enabled: Boolean(selectedServiceCompanyId),
-  });
-
-  const {
-    services: certificateProcedures,
-    loading: certificateProceduresLoading,
-    error: certificateProceduresError,
-    reload: reloadCertificateProcedures,
-  } = useSpaProcedures({
+    goods: altegioGoods,
+    loading: altegioGoodsLoading,
+    error: altegioGoodsError,
+    reload: reloadAltegioGoods,
+  } = useAltegioGoods({
     companyId: certificateForm.companyId || undefined,
-    includeInactive: false,
-    enabled: Boolean(certificateForm.companyId && certificateForm.type === "procedure"),
+    enabled: Boolean(certificateForm.companyId),
   });
-
-  const selectedProcedureIds = useMemo(
-    () => new Set(certificateForm.services.map((service) => service.id)),
-    [certificateForm.services],
-  );
-  const procedureTotal = useMemo(
-    () => calculateServicesTotal(certificateForm.services),
-    [certificateForm.services],
-  );
 
   const [orderSearch, setOrderSearch] = useState("");
   const [orderStatusFilter, setOrderStatusFilter] = useState<string>("all");
@@ -263,14 +225,6 @@ export const AdminDashboard = () => {
       setCertificateForm((prev) => ({ ...prev, templateId: templates[0].id }));
     }
   }, [templates, certificateForm.templateId]);
-
-  useEffect(() => {
-    if (!selectedServiceCompanyId && allowedCompanies.length) {
-      const fallbackCompanyId = allowedCompanies[0].id;
-      setSelectedServiceCompanyId(fallbackCompanyId);
-      setServiceForm((prev) => ({ ...prev, companyId: fallbackCompanyId }));
-    }
-  }, [allowedCompanies, selectedServiceCompanyId]);
 
   const loadOrders = useCallback(async () => {
     if (!session?.token) {
@@ -429,9 +383,6 @@ export const AdminDashboard = () => {
   };
 
   const handleCertificateChange = (field: keyof typeof certificateForm) => (value: string) => {
-    if (field === "amount" && certificateForm.type === "procedure") {
-      return;
-    }
     setCertificateForm((prev) => ({ ...prev, [field]: value }));
   };
 
@@ -439,78 +390,40 @@ export const AdminDashboard = () => {
     setTemplateForm((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleServiceFieldChange = (field: keyof typeof serviceForm) => (value: string) => {
-    setServiceForm((prev) => ({ ...prev, [field]: value }));
-  };
-
-  const toggleServiceDiscount = (enabled: boolean) => {
-    setServiceForm((prev) => ({
-      ...prev,
-      hasDiscount: enabled,
-      discountPercent: enabled ? prev.discountPercent || "10" : "",
-    }));
-  };
-
   const handleCompanyChange = (value: string) => {
     setCertificateForm((prev) => ({
       ...prev,
       companyId: value,
-      services: [],
-      amount: prev.type === "procedure" ? 0 : prev.amount,
+      amount: 0,
+      selectedGood: null,
     }));
-    if (certificateForm.type === "procedure") {
-      reloadCertificateProcedures();
+  };
+
+  const handleSelectGood = (
+    goodId: string | number,
+    goods: {
+      goodId: string | number;
+      title: string;
+      cost: number;
+      categoryId: number | string | null;
+      companyId: number | string | null;
+    }[],
+  ) => {
+    const good = goods.find((item) => item.goodId === goodId);
+    if (!good) {
+      return;
     }
-  };
-
-  const handleCertificateTypeChange = (value: "gift" | "procedure") => {
-    setCertificateForm((prev) => {
-      const services = value === "gift" ? [] : prev.services;
-      const amount = value === "procedure" ? calculateServicesTotal(services) : prev.amount || 50000;
-      return {
-        ...prev,
-        type: value,
-        services,
-        amount: value === "procedure" ? amount : prev.amount,
-      };
-    });
-
-    if (value === "procedure") {
-      reloadCertificateProcedures();
-    }
-  };
-
-  const toggleProcedureSelection = (service: SpaProcedureOption) => {
-    setCertificateForm((prev) => {
-      const isSelected = prev.services.some((item) => item.id === service.id);
-      const nextServices = isSelected
-        ? prev.services.filter((item) => item.id !== service.id)
-        : [
-          ...prev.services,
-          {
-            id: service.id,
-            name: service.name,
-            price: service.price,
-            discountPercent: service.discountPercent ?? 0,
-            branchId: service.companyId ?? prev.companyId ?? "",
-            currency: service.currency ?? "KZT",
-            durationMinutes: service.durationMinutes ?? null,
-          },
-        ];
-
-      return {
-        ...prev,
-        services: nextServices,
-        amount: prev.type === "procedure" ? calculateServicesTotal(nextServices) : prev.amount,
-      };
-    });
-  };
-
-  const clearProcedureSelection = () => {
     setCertificateForm((prev) => ({
       ...prev,
-      services: [],
-      amount: prev.type === "procedure" ? 0 : prev.amount,
+      selectedGood: {
+        goodId: good.goodId,
+        title: good.title,
+        cost: good.cost,
+        categoryId: good.categoryId ?? null,
+        salonId: good.companyId ?? null,
+      },
+      amount: good.cost,
+      type: "gift",
     }));
   };
 
@@ -557,6 +470,9 @@ export const AdminDashboard = () => {
           wazzupApiToken?: string | null;
           wazzupChannelId?: string | null;
           wazzupNumber?: string | null;
+          altegioCompanyId?: string | null;
+          altegioCategoryId?: string | null;
+          altegioDocumentId?: string | null;
         };
 
         setBranchForm({
@@ -578,6 +494,9 @@ export const AdminDashboard = () => {
           wazzupApiToken: data.wazzupApiToken ?? "",
           wazzupChannelId: data.wazzupChannelId ?? "",
           wazzupNumber: data.wazzupNumber ?? "",
+          altegioCompanyId: data.altegioCompanyId ?? "",
+          altegioCategoryId: data.altegioCategoryId ?? "",
+          altegioDocumentId: data.altegioDocumentId ?? "",
         });
         setBranchError(null);
       } catch (error) {
@@ -642,6 +561,9 @@ export const AdminDashboard = () => {
         wazzupApiToken: branchForm.wazzupApiToken.trim() || undefined,
         wazzupChannelId: branchForm.wazzupChannelId.trim() || undefined,
         wazzupNumber: branchForm.wazzupNumber.trim() || undefined,
+        altegioCompanyId: branchForm.altegioCompanyId.trim() || undefined,
+        altegioCategoryId: branchForm.altegioCategoryId.trim() || undefined,
+        altegioDocumentId: branchForm.altegioDocumentId.trim() || undefined,
       };
 
       const response = await fetch(`/api/companies/${selectedBranchId}`, {
@@ -666,34 +588,6 @@ export const AdminDashboard = () => {
     } finally {
       setBranchSaving(false);
     }
-  };
-
-  const handleServiceCompanyChange = (value: string) => {
-    setSelectedServiceCompanyId(value);
-    setServiceForm((prev) => ({ ...prev, companyId: value }));
-    setEditingServiceId(null);
-  };
-
-  const resetServiceForm = () => {
-    setServiceForm((prev) => ({ ...serviceFormDefaults, companyId: selectedServiceCompanyId }));
-    setEditingServiceId(null);
-  };
-
-  const startServiceEdit = (service: SpaProcedureOption) => {
-    const companyId = service.companyId ?? selectedServiceCompanyId;
-    if (companyId && companyId !== selectedServiceCompanyId) {
-      setSelectedServiceCompanyId(companyId);
-    }
-    setEditingServiceId(service.id);
-    setServiceForm({
-      companyId: companyId ?? "",
-      name: service.name,
-      description: service.description ?? "",
-      durationMinutes: service.durationMinutes ? String(service.durationMinutes) : "",
-      price: String(service.price),
-      discountPercent: service.discountPercent && service.discountPercent > 0 ? String(service.discountPercent) : "",
-      hasDiscount: (service.discountPercent ?? 0) > 0,
-    });
   };
 
   const startTemplateEdit = (templateId: string) => {
@@ -731,14 +625,8 @@ export const AdminDashboard = () => {
       toast.error("Укажите получателя");
       return;
     }
-    const isProcedureCertificate = certificateForm.type === "procedure";
-    const amount = Number(certificateForm.amount);
-    if (!isProcedureCertificate && (Number.isNaN(amount) || amount <= 0)) {
-      toast.error("Некорректный номинал");
-      return;
-    }
-    if (isProcedureCertificate && certificateForm.services.length === 0) {
-      toast.error("Добавьте хотя бы одну услугу");
+    if (!certificateForm.selectedGood) {
+      toast.error("Выберите сертификат из списка Altegio");
       return;
     }
     if (!session?.token) {
@@ -750,8 +638,7 @@ export const AdminDashboard = () => {
     try {
       const payload = {
         companyId: certificateForm.companyId,
-        amount: isProcedureCertificate ? undefined : amount,
-        type: certificateForm.type,
+        type: "gift",
         templateId: certificateForm.templateId,
         senderName: certificateForm.senderName || undefined,
         recipientName: certificateForm.recipientName.trim(),
@@ -766,17 +653,15 @@ export const AdminDashboard = () => {
           email: certificateForm.recipientEmail || undefined,
           phone: certificateForm.recipientPhone || undefined,
         },
-        services:
-          isProcedureCertificate && certificateForm.services.length
-            ? certificateForm.services.map((service) => ({
-              id: service.id,
-              name: service.name,
-              price: service.price,
-              discountPercent: service.discountPercent ?? 0,
-              branchId: service.branchId ?? certificateForm.companyId,
-              currency: service.currency ?? "KZT",
-            }))
-            : undefined,
+        selectedGood: certificateForm.selectedGood
+          ? {
+              goodId: certificateForm.selectedGood.goodId,
+              title: certificateForm.selectedGood.title,
+              cost: certificateForm.selectedGood.cost,
+              categoryId: certificateForm.selectedGood.categoryId,
+              salonId: certificateForm.selectedGood.salonId ?? certificateForm.companyId,
+            }
+          : undefined,
       };
 
       const response = await fetch("/api/orders/admin", {
@@ -870,107 +755,6 @@ export const AdminDashboard = () => {
     }
   };
 
-  const submitService: React.FormEventHandler<HTMLFormElement> = async (event) => {
-    event.preventDefault();
-    if (!serviceForm.companyId || serviceForm.companyId === "all") {
-      toast.error("Выберите филиал для услуги");
-      return;
-    }
-    if (!serviceForm.name.trim()) {
-      toast.error("Введите название услуги");
-      return;
-    }
-    const priceValue = Number(serviceForm.price);
-    if (!Number.isFinite(priceValue) || priceValue <= 0) {
-      toast.error("Укажите корректную стоимость");
-      return;
-    }
-    const discountEnabled = serviceForm.hasDiscount;
-    const discountValue = discountEnabled ? Number(serviceForm.discountPercent || 0) : 0;
-    if (discountEnabled && (discountValue < 0 || discountValue > 100)) {
-      toast.error("Скидка должна быть от 0% до 100%");
-      return;
-    }
-    const durationValue = serviceForm.durationMinutes ? Number(serviceForm.durationMinutes) : undefined;
-    if (serviceForm.durationMinutes && (!Number.isFinite(durationValue) || (durationValue ?? 0) <= 0)) {
-      toast.error("Длительность указывается в минутах");
-      return;
-    }
-    if (!session?.token) {
-      toast.error("Сессия истекла. Перезайдите.");
-      return;
-    }
-
-    setServiceSubmitting(true);
-    try {
-      const payload = {
-        name: serviceForm.name.trim(),
-        description: serviceForm.description.trim() || undefined,
-        durationMinutes: durationValue,
-        price: priceValue,
-        discountPercent: discountEnabled ? discountValue : 0,
-        companyId: serviceForm.companyId,
-        isActive: true,
-      };
-
-      const response = await fetch(
-        editingServiceId ? `/api/spa-procedures/${editingServiceId}` : "/api/spa-procedures",
-        {
-          method: editingServiceId ? "PUT" : "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${session.token}`,
-          },
-          body: JSON.stringify(payload),
-        },
-      );
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => null);
-        throw new Error(errorData?.message ?? "Не удалось сохранить услугу");
-      }
-
-      toast.success(editingServiceId ? "Услуга обновлена" : "Услуга добавлена");
-      resetServiceForm();
-      reloadManagedServices();
-    } catch (error) {
-      console.error(error);
-      toast.error(error instanceof Error ? error.message : "Не удалось сохранить услугу");
-    } finally {
-      setServiceSubmitting(false);
-    }
-  };
-
-  const handleRemoveService = async (serviceId: string) => {
-    if (!session?.token) {
-      toast.error("Сессия истекла. Перезайдите.");
-      return;
-    }
-    if (!window.confirm("Удалить услугу из списка?")) {
-      return;
-    }
-    try {
-      const response = await fetch(`/api/spa-procedures/${serviceId}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${session.token}`,
-        },
-      });
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => null);
-        throw new Error(errorData?.message ?? "Не удалось удалить услугу");
-      }
-      toast.success("Услуга отключена");
-      if (editingServiceId === serviceId) {
-        resetServiceForm();
-      }
-      reloadManagedServices();
-    } catch (error) {
-      console.error(error);
-      toast.error(error instanceof Error ? error.message : "Не удалось удалить услугу");
-    }
-  };
-
   const managerName = useMemo(() => {
     if (session?.user?.name) {
       return session.user.name;
@@ -1020,7 +804,6 @@ export const AdminDashboard = () => {
             <TabsTrigger value="dashboard">Дашборд</TabsTrigger>
             <TabsTrigger value="certificate">Сертификаты</TabsTrigger>
             <TabsTrigger value="templates">Шаблоны</TabsTrigger>
-            <TabsTrigger value="services">Услуги</TabsTrigger>
             <TabsTrigger value="branches">Филиалы</TabsTrigger>
             <TabsTrigger value="utm">UTM-метки</TabsTrigger>
           </TabsList>
@@ -1195,51 +978,77 @@ export const AdminDashboard = () => {
                     </div>
 
                     <div className="grid md:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label>Тип сертификата</Label>
-                        <RadioGroup
-                          value={certificateForm.type}
-                          onValueChange={(value) => handleCertificateTypeChange(value as "gift" | "procedure")}
-                          className="grid grid-cols-2 gap-3"
-                        >
-                          <Label
-                            htmlFor="type-gift"
-                            className={`block w-full cursor-pointer space-y-1 rounded-xl border p-3 transition-colors ${certificateForm.type === "gift" ? "border-primary bg-primary/5" : "border-border"
-                              }`}
+                      <div className="space-y-2 md:col-span-2">
+                        <div className="flex items-center justify-between gap-2">
+                          <Label>Сертификаты из Altegio</Label>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => reloadAltegioGoods()}
+                            disabled={altegioGoodsLoading}
                           >
-                            <RadioGroupItem value="gift" id="type-gift" className="sr-only" />
-                            <span className="font-semibold block">Подарочный</span>
-                            <span className="text-xs text-muted-foreground">Свободный номинал</span>
-                          </Label>
-                          <Label
-                            htmlFor="type-procedure"
-                            className={`flex w-full cursor-pointer items-center gap-2 rounded-xl border p-3 transition-colors ${certificateForm.type === "procedure" ? "border-primary bg-primary/5" : "border-border"
-                              }`}
-                          >
-                            <RadioGroupItem value="procedure" id="type-procedure" className="sr-only" />
-                            <TbMassage className="w-4 h-4 text-primary" />
-                            <span>
-                              <span className="font-semibold block">Процедурный</span>
-                              <span className="text-xs text-muted-foreground block">Конкретная услуга</span>
-                            </span>
-                          </Label>
-                        </RadioGroup>
-                      </div>
-                      <div className="space-y-2">
-                        <Label>Номинал, ₸</Label>
-                        <Input
-                          type="number"
-                          min={10000}
-                          max={500000}
-                          value={certificateForm.type === "procedure" ? procedureTotal : certificateForm.amount}
-                          disabled={certificateForm.type === "procedure"}
-                          onChange={(event) => handleCertificateChange("amount")(event.target.value)}
-                        />
-                        {certificateForm.type === "procedure" && (
-                          <p className="text-xs text-muted-foreground">
-                            Сумма рассчитывается по выбранным услугам.
+                            <RefreshCw className="w-4 h-4 mr-1" />
+                            Обновить
+                          </Button>
+                        </div>
+                        {!certificateForm.companyId && (
+                          <p className="text-sm text-muted-foreground">Выберите филиал, чтобы загрузить сертификаты.</p>
+                        )}
+                        {certificateForm.companyId && altegioGoodsLoading && (
+                          <div className="space-y-2">
+                            {Array.from({ length: 3 }).map((_, index) => (
+                              <div key={`good-skeleton-${index}`} className="h-16 rounded-xl bg-muted/30 animate-pulse" />
+                            ))}
+                          </div>
+                        )}
+                        {certificateForm.companyId && !altegioGoodsLoading && altegioGoods.length === 0 && (
+                          <p className="text-sm text-muted-foreground">
+                            Для этого филиала нет настроенных сертификатов в Altegio.
                           </p>
                         )}
+                        {certificateForm.companyId && altegioGoods.length > 0 && (
+                          <div className="space-y-2 max-h-64 overflow-y-auto pr-1">
+                            {altegioGoods.map((good) => {
+                              const isSelected = certificateForm.selectedGood?.goodId === good.goodId;
+                              return (
+                                <label
+                                  key={good.goodId}
+                                  className={`w-full rounded-2xl border px-3 py-2 text-left transition cursor-pointer ${isSelected ? "border-primary bg-primary/5" : "border-border hover:border-primary/40"
+                                    }`}
+                                  onClick={() => handleSelectGood(good.goodId, altegioGoods)}
+                                  onKeyDown={(event) => {
+                                    if (event.key === "Enter" || event.key === " ") {
+                                      event.preventDefault();
+                                      handleSelectGood(good.goodId, altegioGoods);
+                                    }
+                                  }}
+                                  role="button"
+                                  tabIndex={0}
+                                >
+                                  <div className="flex items-center gap-3">
+                                    <div className="flex-1 space-y-1">
+                                      <p className="font-semibold text-foreground">{good.title}</p>
+                                    </div>
+                                    <div className="text-right text-sm min-w-[120px]">
+                                      <span className="block font-semibold">{formatCurrency(good.cost)}</span>
+                                    </div>
+                                  </div>
+                                </label>
+                              );
+                            })}
+                          </div>
+                        )}
+                        {certificateForm.selectedGood && (
+                          <div className="rounded-xl border border-primary/40 bg-primary/5 px-4 py-3">
+                            <p className="text-sm text-muted-foreground">Выбрано:</p>
+                            <p className="font-semibold text-foreground">{certificateForm.selectedGood.title}</p>
+                            <p className="text-sm font-medium text-primary">
+                              {formatCurrency(certificateForm.selectedGood.cost)}
+                            </p>
+                          </div>
+                        )}
+                        {altegioGoodsError && <p className="text-sm text-destructive">{altegioGoodsError}</p>}
                       </div>
                     </div>
 
@@ -1291,109 +1100,6 @@ export const AdminDashboard = () => {
                         onChange={(event) => handleCertificateChange("message")(event.target.value)}
                       />
                     </div>
-
-                    {certificateForm.type === "procedure" && (
-                      <div className="space-y-4 rounded-2xl border border-border p-4">
-                        <div className="flex flex-wrap items-center justify-between gap-3">
-                          <div>
-                            <Label className="font-semibold">Процедуры филиала</Label>
-                            <p className="text-sm text-muted-foreground">
-                              Добавьте услуги. Итоговая сумма подставится автоматически.
-                            </p>
-                          </div>
-                          <div className="flex flex-wrap gap-2">
-                            <Button
-                              type="button"
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => reloadCertificateProcedures()}
-                              disabled={certificateProceduresLoading}
-                            >
-                              <RefreshCw className="w-4 h-4 mr-1" />
-                              Обновить
-                            </Button>
-                            {certificateForm.services.length > 0 && (
-                              <Button type="button" variant="ghost" size="sm" onClick={clearProcedureSelection}>
-                                Очистить
-                              </Button>
-                            )}
-                          </div>
-                        </div>
-
-                        {certificateProceduresError && (
-                          <p className="text-sm text-destructive">{certificateProceduresError}</p>
-                        )}
-
-                        {certificateProceduresLoading && (
-                          <div className="space-y-2">
-                            {Array.from({ length: 3 }).map((_, index) => (
-                              <div key={`certificate-service-skeleton-${index}`} className="h-20 rounded-xl bg-muted/30 animate-pulse" />
-                            ))}
-                          </div>
-                        )}
-
-                        {!certificateProceduresLoading && certificateProcedures.length === 0 && (
-                          <p className="text-sm text-muted-foreground">
-                            Для этого филиала ещё нет услуг. Добавьте их во вкладке «Услуги».
-                          </p>
-                        )}
-
-                        {!certificateProceduresLoading && certificateProcedures.length > 0 && (
-                          <div className="space-y-2 max-h-64 overflow-y-auto pr-1">
-                            {certificateProcedures.map((procedure) => {
-                              const checked = selectedProcedureIds.has(procedure.id);
-                              const hasDiscount =
-                                typeof procedure.discountPercent === "number" && procedure.discountPercent > 0;
-                              const finalPrice = hasDiscount
-                                ? getDiscountedPrice(procedure.price, procedure.discountPercent)
-                                : procedure.price;
-                              return (
-                                <label
-                                  key={procedure.id}
-                                  htmlFor={`procedure-${procedure.id}`}
-                                  className={`w-full rounded-2xl border px-3 py-2 text-left transition cursor-pointer ${checked ? "border-primary bg-primary/5" : "border-border hover:border-primary/40"
-                                    }`}
-                                >
-                                  <div className="flex items-start gap-3">
-                                    <Checkbox
-                                      id={`procedure-${procedure.id}`}
-                                      checked={checked}
-                                      onCheckedChange={() => toggleProcedureSelection(procedure)}
-                                      className="mt-1"
-                                      aria-label={`Добавить услугу ${procedure.name}`}
-                                    />
-                                    <div className="flex-1 space-y-1">
-                                      <div className="flex flex-wrap items-center gap-2">
-                                        <p className="font-semibold text-foreground">{procedure.name}</p>
-                                        {hasDiscount && (
-                                          <span className="text-xs px-2 py-0.5 rounded-full bg-primary/10 text-primary">
-                                            -{procedure.discountPercent}%
-                                          </span>
-                                        )}
-                                      </div>
-                                      {procedure.description && (
-                                        <p className="text-xs text-muted-foreground">{procedure.description}</p>
-                                      )}
-                                    </div>
-                                    <div className="text-right text-sm min-w-[120px]">
-                                      {hasDiscount && (
-                                        <span className="block text-muted-foreground line-through">
-                                          {formatCurrency(procedure.price)}
-                                        </span>
-                                      )}
-                                      <span className="block font-semibold">{formatCurrency(finalPrice)}</span>
-                                      {procedure.durationMinutes ? (
-                                        <span className="text-xs text-muted-foreground">{procedure.durationMinutes} мин.</span>
-                                      ) : null}
-                                    </div>
-                                  </div>
-                                </label>
-                              );
-                            })}
-                          </div>
-                        )}
-                      </div>
-                    )}
 
                     <div className="grid md:grid-cols-2 gap-4">
                       <div className="space-y-2">
@@ -1674,201 +1380,6 @@ export const AdminDashboard = () => {
             </section>
           </TabsContent>
 
-          <TabsContent value="services" className="space-y-8">
-            <section className="grid gap-6 lg:grid-cols-3">
-              <Card className="border border-border/60 bg-card shadow-sm">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <TbMassage className="w-4 h-4 text-primary" />
-                    {editingServiceId ? "Редактирование услуги" : "Новая услуга"}
-                  </CardTitle>
-                  <CardDescription>
-                    {isGlobalManager
-                      ? "Суперадмин может добавлять услуги в любой филиал."
-                      : "Менеджер управляет услугами только своего филиала."}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <form className="space-y-4" onSubmit={submitService}>
-                    <div className="space-y-2">
-                      <Label>Филиал</Label>
-                      <Select
-                        value={selectedServiceCompanyId}
-                        onValueChange={handleServiceCompanyChange}
-                        disabled={!isGlobalManager || allowedCompanies.length <= 1}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Выберите филиал" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {allowedCompanies.map((company) => (
-                            <SelectItem key={company.id} value={company.id}>
-                              {company.label} — {company.address}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label>Название услуги</Label>
-                      <Input
-                        placeholder="SPA-ритуал «Нирвана»"
-                        value={serviceForm.name}
-                        onChange={(event) => handleServiceFieldChange("name")(event.target.value)}
-                      />
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label>Краткое описание</Label>
-                      <Textarea
-                        rows={3}
-                        placeholder="Что входит в процедуру, какие ощущения"
-                        value={serviceForm.description}
-                        onChange={(event) => handleServiceFieldChange("description")(event.target.value)}
-                      />
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label>Продолжительность, мин</Label>
-                        <Input
-                          type="number"
-                          min={15}
-                          placeholder="90"
-                          value={serviceForm.durationMinutes}
-                          onChange={(event) => handleServiceFieldChange("durationMinutes")(event.target.value)}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <div className="space-y-2 flex items-center justify-between">
-                          <Label htmlFor="service-discount">Скидка, %</Label>
-                          <label className="inline-flex items-center gap-2 text-xs text-muted-foreground">
-                            <Checkbox
-                              id="service-has-discount"
-                              checked={serviceForm.hasDiscount}
-                              onCheckedChange={(checked) => toggleServiceDiscount(Boolean(checked))}
-                            />
-                            Включить
-                          </label>
-                        </div>
-                        <Input
-                          id="service-discount"
-                          type="number"
-                          min={0}
-                          max={100}
-                          placeholder="10"
-                          value={serviceForm.discountPercent}
-                          disabled={!serviceForm.hasDiscount}
-                          onChange={(event) => handleServiceFieldChange("discountPercent")(event.target.value)}
-                        />
-
-                      </div>
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label>Стоимость, ₸</Label>
-                      <Input
-                        type="number"
-                        min={1000}
-                        placeholder="65000"
-                        value={serviceForm.price}
-                        onChange={(event) => handleServiceFieldChange("price")(event.target.value)}
-                      />
-                    </div>
-
-                    <div className="flex flex-wrap gap-3">
-                      <Button type="submit" disabled={serviceSubmitting || !selectedServiceCompanyId} className="flex-1">
-                        {serviceSubmitting ? "Сохраняем..." : editingServiceId ? "Обновить" : "Добавить"}
-                      </Button>
-                      {editingServiceId && (
-                        <Button type="button" variant="outline" onClick={resetServiceForm}>
-                          Отмена
-                        </Button>
-                      )}
-                    </div>
-                  </form>
-                </CardContent>
-              </Card>
-
-              <Card className="lg:col-span-2 border border-border/60 bg-card shadow-sm">
-                <CardHeader>
-                  <CardTitle>Список услуг филиала</CardTitle>
-                  <CardDescription>Показываем активные и скрытые услуги. Скрытые отмечены в статусе.</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  {!selectedServiceCompanyId && (
-                    <p className="text-sm text-muted-foreground">Выберите филиал, чтобы увидеть услуги.</p>
-                  )}
-
-                  {selectedServiceCompanyId && managedServicesLoading && (
-                    <div className="space-y-3">
-                      {Array.from({ length: 3 }).map((_, index) => (
-                        <div key={`service-skeleton-${index}`} className="h-24 rounded-2xl bg-muted/30 animate-pulse" />
-                      ))}
-                    </div>
-                  )}
-
-                  {selectedServiceCompanyId && !managedServicesLoading && managedServices.length === 0 && (
-                    <p className="text-sm text-muted-foreground">
-                      Ещё нет услуг. Добавьте первую позицию через форму слева.
-                    </p>
-                  )}
-
-                  {selectedServiceCompanyId && !managedServicesLoading && managedServices.length > 0 && (
-                    <div className="space-y-3">
-                      {managedServices.map((service) => (
-                        <div
-                          key={service.id}
-                          className="border border-border rounded-2xl p-4 flex flex-col gap-4 md:flex-row md:items-center md:justify-between"
-                        >
-                          <div className="flex-1 space-y-2">
-                            <div className="flex flex-wrap items-center gap-2">
-                              <p className="font-semibold">{service.name}</p>
-                              {typeof service.discountPercent === "number" && service.discountPercent > 0 && (
-                                <span className="text-xs px-2 py-0.5 rounded-full bg-primary/10 text-primary">
-                                  -{service.discountPercent}%
-                                </span>
-                              )}
-                              {service.isActive === false && <span className="text-xs px-2 py-0.5 rounded-full border">Неактивно</span>}
-                            </div>
-                            {service.description && (
-                              <p className="text-sm text-muted-foreground">{service.description}</p>
-                            )}
-                            <div className="text-sm text-muted-foreground flex flex-wrap gap-4">
-                              <span>Стоимость: {formatCurrency(service.price)}</span>
-                              {service.durationMinutes ? <span>{service.durationMinutes} мин.</span> : null}
-                            </div>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <Button
-                              type="button"
-                              variant="outline"
-                              size="icon"
-                              onClick={() => startServiceEdit(service)}
-                              aria-label="Редактировать услугу"
-                            >
-                              <PenSquare className="w-4 h-4" />
-                            </Button>
-                            <Button
-                              type="button"
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => handleRemoveService(service.id)}
-                              aria-label="Удалить услугу"
-                            >
-                              <Trash2 className="w-4 h-4 text-destructive" />
-                            </Button>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            </section>
-          </TabsContent>
-
           <TabsContent value="branches" className="space-y-8">
             <Card className="border border-border/60 bg-card shadow-sm">
               <CardHeader>
@@ -1995,6 +1506,41 @@ export const AdminDashboard = () => {
                             <p className="text-xs text-muted-foreground">
                               Для справки отображается в админке и договорах. Сам канал определяется по Channel ID.
                             </p>
+                          </div>
+                        </div>
+
+                        <div className="space-y-3 rounded-xl border border-border/60 p-4">
+                          <div>
+                            <Label className="text-base font-semibold">Altegio</Label>
+                            <p className="text-xs text-muted-foreground mt-1">
+                              Используется для загрузки сертификатов и списания продаж.
+                            </p>
+                          </div>
+                          <div className="grid md:grid-cols-3 gap-4">
+                            <div className="space-y-2">
+                              <Label>Altegio company_id</Label>
+                              <Input
+                                value={branchForm.altegioCompanyId}
+                                onChange={(event) => handleBranchFieldChange("altegioCompanyId")(event.target.value)}
+                                placeholder="например, 1266617"
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <Label>Altegio category_id</Label>
+                              <Input
+                                value={branchForm.altegioCategoryId}
+                                onChange={(event) => handleBranchFieldChange("altegioCategoryId")(event.target.value)}
+                                placeholder="например, 1005340"
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <Label>Altegio document_id</Label>
+                              <Input
+                                value={branchForm.altegioDocumentId}
+                                onChange={(event) => handleBranchFieldChange("altegioDocumentId")(event.target.value)}
+                                placeholder="например, 22254960"
+                              />
+                            </div>
                           </div>
                         </div>
 

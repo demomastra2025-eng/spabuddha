@@ -30,8 +30,43 @@ altegioRouter.get(
       throw new AppError(400, "Для филиала не указан Altegio company_id");
     }
 
-    const goods = await listGoods(company.altegioCompanyId);
+    if (!company.altegioCategoryId) {
+      throw new AppError(400, "Для филиала не указан Altegio category_id");
+    }
+
+    const goods = await listGoods(company.altegioCompanyId, company.altegioCategoryId);
     res.json(goods);
+  }),
+);
+
+altegioRouter.get(
+  "/public/goods/:companyId",
+  asyncHandler(async (req, res) => {
+    const normalizedId = await resolveCompanyId(req.params.companyId);
+    const company = await getCompany(normalizedId);
+
+    if (!company) {
+      throw new AppError(404, "Филиал не найден");
+    }
+
+    if (!company.altegioCompanyId) {
+      throw new AppError(400, "Для филиала не указан Altegio company_id");
+    }
+
+    if (!company.altegioCategoryId) {
+      throw new AppError(400, "Для филиала не указан Altegio category_id");
+    }
+
+    const goods = await listGoods(company.altegioCompanyId, company.altegioCategoryId);
+    const simplified = goods.map((good) => ({
+      title: good.title,
+      cost: good.cost,
+      goodId: good.good_id,
+      categoryId: good.category_id,
+      companyId: good.salon_id,
+    }));
+
+    res.json(simplified);
   }),
 );
 

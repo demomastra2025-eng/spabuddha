@@ -11,6 +11,14 @@ const deliverySchema = z.object({
   contact: z.string().nullable().optional(),
 });
 
+const selectedGoodSchema = z.object({
+  goodId: z.union([z.string(), z.number()]),
+  title: z.string(),
+  cost: z.number().positive(),
+  categoryId: z.union([z.string(), z.number()]).nullable().optional(),
+  salonId: z.union([z.string(), z.number()]).nullable().optional(),
+});
+
 const serviceSelectionSchema = z.object({
   id: z.string(),
   name: z.string(),
@@ -49,17 +57,20 @@ export const createOrderSchema = z.object({
     name: z.string().optional(),
   }),
   services: z.array(serviceSelectionSchema).optional(),
+  selectedGood: selectedGoodSchema.optional(),
   utmVisitorId: z.string().trim().optional(),
 }).superRefine((data, ctx) => {
   const hasServices = Boolean(data.services?.length);
-  if (data.type === "procedure" && !hasServices) {
+  const hasSelectedGood = Boolean(data.selectedGood);
+
+  if (data.type === "procedure" && !hasServices && !hasSelectedGood) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
       message: "Для процедурного сертификата выберите хотя бы одну услугу",
       path: ["services"],
     });
   }
-  if (!hasServices && (!data.amount || data.amount <= 0)) {
+  if (!hasServices && !hasSelectedGood && (!data.amount || data.amount <= 0)) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
       message: "Укажите номинал сертификата",
@@ -134,24 +145,37 @@ export type OrderView = ReturnType<typeof mapOrder>;
 
 export async function createOrder(input: CreateOrderInput, options?: { provider?: string }) {
   return withTransaction(async (client) => {
-    const normalizedCompanyId = await resolveCompanyId(input.companyId);
-    const contactName = input.client.name ?? input.recipientName;
-    const hasServices = Boolean(input.services?.length);
-    const normalizedAmount = hasServices
+  const normalizedCompanyId = await resolveCompanyId(input.companyId);
+  const contactName = input.client.name ?? input.recipientName;
+  const hasServices = Boolean(input.services?.length);
+  const hasSelectedGood = Boolean(input.selectedGood);
+  const normalizedAmount = hasSelectedGood
+    ? applyDiscount(input.selectedGood!.cost, 0)
+    : hasServices
       ? input.services!.reduce(
           (sum, service) => sum + applyDiscount(service.price, service.discountPercent),
           0,
         )
       : input.amount ?? null;
 
-    if (!normalizedAmount || normalizedAmount <= 0) {
-      throw new AppError(400, "Некорректный номинал сертификата");
-    }
+  if (!normalizedAmount || normalizedAmount <= 0) {
+    throw new AppError(400, "Некорректный номинал сертификата");
+  }
 
-    const serviceDetails = hasServices ? JSON.stringify(input.services) : undefined;
+  const selectedGoodDetails = input.selectedGood
+    ? JSON.stringify([
+        {
+          ...input.selectedGood,
+          good_id: input.selectedGood.goodId,
+          category_id: input.selectedGood.categoryId ?? null,
+          salon_id: input.selectedGood.salonId ?? null,
+        },
+      ])
+    : undefined;
+  const serviceDetails = hasServices ? JSON.stringify(input.services) : selectedGoodDetails;
 
-    let utmTagId: string | null = null;
-    if (input.utmVisitorId) {
+  let utmTagId: string | null = null;
+  if (input.utmVisitorId) {
       const utmLookup = await client.query<{ utm_tag_id: string | null }>(
         `SELECT utm_tag_id
            FROM utm_visits
@@ -179,7 +203,9 @@ export async function createOrder(input: CreateOrderInput, options?: { provider?
 
     const certificate = await createCertificate(
       {
-        name: `${input.type === "gift" ? "Подарочный" : "Процедурный"} сертификат`,
+        name:
+          input.selectedGood?.title ??
+          `${input.type === "gift" ? "Подарочный" : "Процедурный"} сертификат`,
         companyId: normalizedCompanyId,
         type: input.type,
         price: normalizedAmount,

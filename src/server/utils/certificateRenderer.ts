@@ -1,6 +1,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import PDFDocument from "pdfkit";
+import type PDFKit from "pdfkit";
 import { CERTIFICATE_FONT_FILE, CERTIFICATE_FONT_NAME } from "@/shared/certificate";
 
 type CertificatePdfOptions = {
@@ -108,12 +109,12 @@ export async function generateCertificatePdf(options: CertificatePdfOptions) {
   if (backgroundBuffer) {
     try {
       // Use pdfkit's cover option (supported in 0.13+)
-      // Cast options to any to avoid TS error with outdated @types/pdfkit
-      doc.image(backgroundBuffer, 0, 0, {
+      const imageOptions: PDFKit.Mixins.ImageOption = {
         cover: [CARD_WIDTH, CARD_HEIGHT],
         align: "center",
         valign: "center",
-      } as any);
+      };
+      doc.image(backgroundBuffer, 0, 0, imageOptions);
     } catch (imgError) {
       console.error("[certificateRenderer] Failed to render background image:", imgError);
       doc.rect(0, 0, CARD_WIDTH, CARD_HEIGHT).fill("#1f1f1f");

@@ -13,16 +13,35 @@ interface RequestOptions {
   body?: Record<string, unknown>;
 }
 
-function ensureToken() {
-  if (!env.ALTEGIO_USER_TOKEN) {
-    throw new AppError(500, "ALTEGIO_USER_TOKEN не настроен");
+import { query } from "../db/pool";
+
+async function getAltegioCredentials() {
+  const result = await query<{ key: string; value: string }>(
+    "SELECT key, value FROM system_settings WHERE key IN ('altegio_auth_token', 'altegio_user_id')",
+  );
+
+  const settings = result.rows.reduce(
+    (acc, row) => {
+      acc[row.key] = row.value;
+      return acc;
+    },
+    {} as Record<string, string>,
+  );
+
+  if (!settings.altegio_auth_token || !settings.altegio_user_id) {
+    throw new AppError(500, "Altegio credentials not found in system_settings");
   }
+
+  // Format: Bearer <token>, User <user_id>
+  // Note: altegio_auth_token in DB already includes "Bearer " prefix if inserted as per migration
+  // If it doesn't, we might need to adjust. Assuming it does based on user input.
+  return `${settings.altegio_auth_token}, User ${settings.altegio_user_id}`;
 }
 
 async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
-  ensureToken();
+  const authHeader = await getAltegioCredentials();
 
-  const url = `${env.ALTEGIO_API_URL}/${path.replace(/^\\/+/, "")}`;
+  const url = `${env.ALTEGIO_API_URL}/${path.replace(/^\/+/, "")}`;
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), env.ALTEGIO_TIMEOUT_MS);
 
@@ -30,8 +49,9 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
     const response = await fetch(url, {
       method: options.method ?? "GET",
       headers: {
-        Authorization: `Bearer ${env.ALTEGIO_USER_TOKEN}`,
+        Authorization: authHeader,
         "Content-Type": "application/json",
+        Accept: "application/vnd.api.v2+json",
       },
       body: options.body ? JSON.stringify(options.body) : undefined,
       signal: controller.signal,
@@ -110,8 +130,9 @@ export interface AltegioGood {
   [key: string]: unknown;
 }
 
-export async function listGoods(companyId: string) {
-  return request<AltegioGood[]>(`goods/${companyId}`);
+export async function listGoods(companyId: string, categoryId?: string | number) {
+  const queryParams = categoryId ? `?category_id=${categoryId}` : "";
+  return request<AltegioGood[]>(`goods/${companyId}${queryParams}`);
 }
 
 export async function listCertificateTypes(companyId: string) {

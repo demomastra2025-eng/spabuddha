@@ -129,23 +129,29 @@ function parseServiceSelections(serviceData: string | null): unknown[] {
 }
 
 async function resolveAltegioGoodId(fulfillment: z.infer<typeof fulfillmentRowSchema>) {
-  if (fulfillment.certificate_type === "procedure") {
-    const services = parseServiceSelections(fulfillment.certificate_service);
-    for (const rawService of services) {
-      const service = rawService as { id?: string; good_id?: string | number; altegio_good_id?: string | number };
-      const directGoodId =
-        service?.altegio_good_id ?? service?.good_id ?? (typeof service === "number" ? service : null);
-      if (directGoodId) {
-        return String(directGoodId);
-      }
-      if (service?.id) {
-        const lookup = await query<{ altegio_good_id: string | null }>(
-          `SELECT altegio_good_id FROM spa_procedures WHERE id = $1 LIMIT 1`,
-          [service.id],
-        );
-        if (lookup.rows[0]?.altegio_good_id) {
-          return lookup.rows[0].altegio_good_id;
-        }
+  const services = parseServiceSelections(fulfillment.certificate_service);
+  for (const rawService of services) {
+    const service = rawService as {
+      id?: string;
+      good_id?: string | number;
+      altegio_good_id?: string | number;
+      goodId?: string | number;
+    };
+    const directGoodId =
+      service?.altegio_good_id ??
+      service?.good_id ??
+      service?.goodId ??
+      (typeof service === "number" ? service : null);
+    if (directGoodId) {
+      return String(directGoodId);
+    }
+    if (service?.id) {
+      const lookup = await query<{ altegio_good_id: string | null }>(
+        `SELECT altegio_good_id FROM spa_procedures WHERE id = $1 LIMIT 1`,
+        [service.id],
+      );
+      if (lookup.rows[0]?.altegio_good_id) {
+        return lookup.rows[0].altegio_good_id;
       }
     }
   }

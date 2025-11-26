@@ -12,8 +12,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "db:schema": "psql $DATABASE_URL -f schema.sql",
-    "seed": "tsx scripts/seed.ts",
-    "db:sync-branches": "tsx scripts/sync-branches.ts"
+    "seed": "tsx scripts/seed.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",

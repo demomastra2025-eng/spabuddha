@@ -1,6 +1,14 @@
 export type CertificateType = "gift" | "procedure";
 export type DeliveryMethod = "email" | "whatsapp" | "download";
 
+export interface SelectedGood {
+  goodId: string | number;
+  title: string;
+  cost: number;
+  categoryId: number | string | null;
+  salonId?: number | string | null;
+}
+
 export interface SelectedService {
   id: string;
   name: string;
@@ -19,6 +27,7 @@ export interface CertificateData {
   type: CertificateType;
   amount: number;
   selectedServices: SelectedService[];
+  selectedGood: SelectedGood | null;
   purchaseDate: Date;
   code?: string | null;
 

@@ -16,8 +16,9 @@ const Create = () => {
     return {
       branch: "",
       type: "gift",
-      amount: 50000,
+      amount: 0,
       selectedServices: [],
+      selectedGood: null,
       purchaseDate,
       senderName: "",
       recipientName: "",

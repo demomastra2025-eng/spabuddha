@@ -20,6 +20,7 @@ const companyRow = z.object({
   email: z.string().nullable(),
   altegio_company_id: z.string().nullable(),
   altegio_document_id: z.string().nullable(),
+  altegio_category_id: z.string().nullable(),
   status: z.string(),
   manager_name: z.string().nullable(),
   timezone: z.string().nullable(),
@@ -49,6 +50,7 @@ export interface CompanyView {
   email: string | null;
   altegioCompanyId: string | null;
   altegioDocumentId: string | null;
+  altegioCategoryId: string | null;
   status: string;
   managerName: string | null;
   timezone: string | null;
@@ -73,6 +75,7 @@ export const upsertCompanySchema = z.object({
   email: z.string().email().optional(),
   altegioCompanyId: z.string().optional(),
   altegioDocumentId: z.string().optional(),
+  altegioCategoryId: z.string().optional(),
   status: z.enum(["active", "inactive"]).default("active"),
   managerName: z.string().optional(),
   timezone: z.string().optional(),
@@ -100,6 +103,7 @@ function mapCompany(row: Company): CompanyView {
     email: row.email,
     altegioCompanyId: row.altegio_company_id,
     altegioDocumentId: row.altegio_document_id,
+    altegioCategoryId: row.altegio_category_id,
     status: row.status,
     managerName: row.manager_name,
     timezone: row.timezone,
@@ -145,6 +149,7 @@ export async function createCompany(input: z.infer<typeof upsertCompanySchema>) 
       input.email ?? null,
       input.altegioCompanyId?.trim() ? input.altegioCompanyId.trim() : null,
       input.altegioDocumentId?.trim() ? input.altegioDocumentId.trim() : null,
+      input.altegioCategoryId?.trim() ? input.altegioCategoryId.trim() : null,
       input.status,
       input.managerName ?? null,
       input.timezone ?? null,
@@ -197,6 +202,7 @@ export async function updateCompany(id: string, input: z.infer<typeof upsertComp
       input.email ?? null,
       input.altegioCompanyId?.trim() ? input.altegioCompanyId.trim() : null,
       input.altegioDocumentId?.trim() ? input.altegioDocumentId.trim() : null,
+      input.altegioCategoryId?.trim() ? input.altegioCategoryId.trim() : null,
       input.status,
       input.managerName ?? null,
       input.timezone ?? null,

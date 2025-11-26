@@ -1,10 +1,8 @@
-import { syncBranchData } from "./branchSync";
+import { runSeed } from "./seedData";
 
 export async function runDevBootstrap() {
-  const updated = await syncBranchData();
+  const result = await runSeed();
   console.info(
-    `[dev-bootstrap] Обновили данные филиалов (${updated.length}) и пересобрали услуги (${updated
-      .map((item) => `${item.slug}:${item.services}`)
-      .join(", ")})`,
+    `[dev-bootstrap] Применили seed: компании=${result.companies}, пользователи=${result.users}, шаблоны=${result.templates}`,
   );
 }
