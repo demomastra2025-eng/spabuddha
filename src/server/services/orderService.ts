@@ -15,6 +15,7 @@ const selectedGoodSchema = z.object({
   goodId: z.union([z.string(), z.number()]),
   title: z.string(),
   cost: z.number().positive(),
+  discountPercent: z.number().min(0).max(100).default(0).optional(),
   categoryId: z.union([z.string(), z.number()]).nullable().optional(),
   salonId: z.union([z.string(), z.number()]).nullable().optional(),
 });
@@ -37,7 +38,11 @@ const templateBackgroundSchema = z.preprocess((value) => {
   }
   const trimmed = value.trim();
   return trimmed.length ? trimmed : undefined;
-}, z.string().refine((val) => /^https?:\/\//i.test(val) || /^\/?[-\w./]+$/i.test(val), {
+}, z.string().refine((val) => {
+  if (/^https?:\/\//i.test(val)) return true;
+  if (!/^\/?[-\w./]+$/i.test(val)) return false;
+  return val.split(/[\\/]+/).every((segment) => segment !== "..");
+}, {
   message: "Invalid template background",
 }));
 
@@ -150,7 +155,7 @@ export async function createOrder(input: CreateOrderInput, options?: { provider?
   const hasServices = Boolean(input.services?.length);
   const hasSelectedGood = Boolean(input.selectedGood);
   const normalizedAmount = hasSelectedGood
-    ? applyDiscount(input.selectedGood!.cost, 0)
+    ? applyDiscount(input.selectedGood!.cost, input.selectedGood!.discountPercent)
     : hasServices
       ? input.services!.reduce(
           (sum, service) => sum + applyDiscount(service.price, service.discountPercent),

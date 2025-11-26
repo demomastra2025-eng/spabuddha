@@ -10,6 +10,7 @@ import { formatCurrency } from "@/lib/currency";
 import { calculateServicesTotal, getDiscountedPrice } from "@/lib/services";
 import { getStoredUtmVisitorId } from "@/lib/utmTracking";
 import { useCompanies } from "@/hooks/useCompanies";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface StepPaymentProps {
   data: CertificateData;
@@ -19,10 +20,12 @@ interface StepPaymentProps {
 export const StepPayment = ({ data, onPrev }: StepPaymentProps) => {
   const [agreed, setAgreed] = useState(false);
   const [processing, setProcessing] = useState(false);
+  const [adminProcessing, setAdminProcessing] = useState(false);
   const [paymentError, setPaymentError] = useState<string | null>(null);
   const previewRef = useRef<HTMLDivElement>(null);
 
   const { companies } = useCompanies();
+  const { session } = useAuth();
   const selectedBranch = companies.find((branch) => branch.id === data.branch);
   const branchLabel = selectedBranch?.label ?? "—";
   const branchAddress = selectedBranch?.address ?? "—";
@@ -82,6 +85,7 @@ export const StepPayment = ({ data, onPrev }: StepPaymentProps) => {
             cost: data.selectedGood.cost,
             categoryId: data.selectedGood.categoryId,
             salonId: data.selectedGood.salonId ?? data.branch,
+            discountPercent: data.selectedGood.discountPercent ?? 0,
           }
         : undefined,
       utmVisitorId: utmVisitorId ?? undefined,
@@ -151,6 +155,57 @@ export const StepPayment = ({ data, onPrev }: StepPaymentProps) => {
       toast.error(message);
     } finally {
       setProcessing(false);
+    }
+  };
+
+  const handleAdminCreate = async () => {
+    if (!session?.user || !["superadmin", "admin", "manager"].includes(session.user.role)) {
+      toast.error("Только администратор может создать сертификат без оплаты");
+      return;
+    }
+    if (!data.branch) {
+      toast.error("Выберите филиал");
+      return;
+    }
+    if (!data.selectedGood) {
+      toast.error("Выберите сертификат на предыдущем шаге");
+      return;
+    }
+    const payload = buildOrderPayload();
+
+    setAdminProcessing(true);
+    setPaymentError(null);
+
+    try {
+      const response = await fetch("/api/orders/admin", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: session.token ? `Bearer ${session.token}` : "",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => null);
+        const message = errorData?.message ?? "Не удалось создать сертификат без оплаты.";
+        setPaymentError(message);
+        toast.error(message);
+        return;
+      }
+
+      const result: { downloadUrl?: string } = await response.json();
+      toast.success("Сертификат создан и оплачен вручную");
+      if (result.downloadUrl) {
+        window.open(result.downloadUrl, "_blank", "noopener");
+      }
+    } catch (error) {
+      console.error(error);
+      const message = error instanceof Error ? error.message : "Ошибка при создании сертификата.";
+      setPaymentError(message);
+      toast.error(message);
+    } finally {
+      setAdminProcessing(false);
     }
   };
 
@@ -328,24 +383,38 @@ export const StepPayment = ({ data, onPrev }: StepPaymentProps) => {
             </div>
 
             {/* Payment Button */}
-            <Button
-              size="lg"
-              onClick={handlePayment}
-              disabled={!agreed || processing}
-              className="w-full h-14 text-lg rounded-xl bg-accent hover:bg-accent/90 text-accent-foreground shadow-glow"
-            >
-              {processing ? (
+            <div className="flex flex-col gap-3">
+              <Button
+                size="lg"
+                onClick={handlePayment}
+                disabled={!agreed || processing}
+                className="w-full h-14 text-lg rounded-xl bg-accent hover:bg-accent/90 text-accent-foreground shadow-glow"
+              >
+                {processing ? (
+                  <>
+                    <div className="w-5 h-5 border-2 border-accent-foreground/30 border-t-accent-foreground rounded-full animate-spin mr-2" />
+                    Обработка платежа...
+                  </>
+                ) : (
                 <>
-                  <div className="w-5 h-5 border-2 border-accent-foreground/30 border-t-accent-foreground rounded-full animate-spin mr-2" />
-                  Обработка платежа...
+                  <Check className="w-5 h-5 mr-2" />
+                  Оплатить через OneVision
                 </>
-              ) : (
-              <>
-                <Check className="w-5 h-5 mr-2" />
-                Оплатить через OneVision
-              </>
-            )}
-            </Button>
+              )}
+              </Button>
+
+              {session?.user && ["superadmin", "admin", "manager"].includes(session.user.role) && (
+                <Button
+                  size="lg"
+                  variant="outline"
+                  onClick={handleAdminCreate}
+                  disabled={adminProcessing}
+                  className="w-full h-12 text-base rounded-xl"
+                >
+                  {adminProcessing ? "Создаём без оплаты..." : "Создать без оплаты (админ)"}
+                </Button>
+              )}
+            </div>
 
             {/* Security Badge */}
             <div className="flex items-center justify-center gap-2 mt-6 text-sm text-muted-foreground">

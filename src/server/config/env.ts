@@ -19,6 +19,20 @@ const envSchema = z.object({
   WAZZUP_API_URL: z.string().default("https://api.wazzup24.com/v3"),
   RESEND_API_KEY: z.string().optional(),
   RESEND_FROM: z.string().email().optional(),
+  MAIL_PROVIDER: z.enum(["resend", "smtp"]).default("resend"),
+  SMTP_HOST: z.string().optional(),
+  SMTP_PORT: z
+    .string()
+    .optional()
+    .transform((value) => (value ? Number(value) : undefined))
+    .refine((value) => (value === undefined || (Number.isInteger(value) && value > 0)), "SMTP_PORT must be a positive integer"),
+  SMTP_USER: z.string().optional(),
+  SMTP_PASS: z.string().optional(),
+  SMTP_SECURE: z
+    .string()
+    .optional()
+    .transform((value) => (value ? value === "true" : undefined)),
+  SMTP_FROM: z.string().email().optional(),
   ONEVISION_API_URL: z.string().url().default("https://api.onevisionpay.com/"),
   ONEVISION_PAYMENT_LIFETIME: z
     .string()
@@ -57,4 +71,11 @@ export const env = {
   ALTEGIO_API_URL: parsed.data.ALTEGIO_API_URL.replace(/\/+$/, ""),
   ALTEGIO_TIMEOUT_MS: parsed.data.ALTEGIO_TIMEOUT_MS ?? 10000,
   ALTEGIO_DEFAULT_DOCUMENT_ID: parsed.data.ALTEGIO_DEFAULT_DOCUMENT_ID,
+  MAIL_PROVIDER: parsed.data.MAIL_PROVIDER,
+  SMTP_HOST: parsed.data.SMTP_HOST,
+  SMTP_PORT: parsed.data.SMTP_PORT,
+  SMTP_USER: parsed.data.SMTP_USER,
+  SMTP_PASS: parsed.data.SMTP_PASS,
+  SMTP_SECURE: parsed.data.SMTP_SECURE ?? false,
+  SMTP_FROM: parsed.data.SMTP_FROM,
 };

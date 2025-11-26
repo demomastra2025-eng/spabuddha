@@ -2,108 +2,20 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Gift, LogOut, Mail, PenSquare, RefreshCw, TrendingUp, Users } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { LogOut, Gift, Users, TrendingUp, Mail } from "lucide-react";
 import { toast } from "sonner";
 import { useCompanies } from "@/hooks/useCompanies";
 import { useTemplates } from "@/hooks/useTemplates";
-import { useAltegioGoods } from "@/hooks/useAltegioGoods";
 import { formatCurrency } from "@/lib/currency";
 import { UtmManagement } from "@/components/admin/UtmManagement";
-
-type DashboardOrder = {
-  id: string;
-  orderNumber: string;
-  amount: number;
-  status: string;
-  paymentStatus: string;
-  companyId: string;
-  createdAt: string;
-  recipientName?: string | null;
-};
-
-type DashboardCertificate = {
-  id: string;
-  code: string;
-  status: string;
-  companyId: string;
-  recipientName: string | null;
-  senderName: string | null;
-  createdAt: string;
-  price: number;
-  orderNumber: string | null;
-  paymentStatus: string | null;
-  buyerPhone: string | null;
-  buyerEmail: string | null;
-  utmTag: {
-    id: string;
-    name: string | null;
-    utmSource: string | null;
-    utmCampaign: string | null;
-    utmMedium: string | null;
-  } | null;
-};
-
-const certificateFormDefaults = {
-  companyId: "",
-  templateId: "",
-  type: "gift" as "gift" | "procedure",
-  amount: 0,
-  selectedGood: null as null | {
-    goodId: string | number;
-    title: string;
-    cost: number;
-    categoryId?: string | number | null;
-    salonId?: string | number | null;
-  },
-  senderName: "",
-  recipientName: "",
-  recipientEmail: "",
-  recipientPhone: "",
-  message: "",
-  deliveryMethod: "email" as "email" | "whatsapp" | "download",
-  deliveryContact: "",
-  validUntil: "",
-};
-
-const templateFormDefaults = {
-  name: "",
-  description: "",
-  backgroundUrl: "",
-  previewUrl: "",
-  textColor: "#FFFFFF",
-};
-
-const branchFormDefaults = {
-  label: "",
-  address: "",
-  phone: "",
-  nameCompany: "",
-  binCompany: "",
-  bikCompany: "",
-  officialAddress: "",
-  companyOneVisionId: "",
-  passOneVision: "",
-  keyOneVision: "",
-  companyNameOneVisionId: "",
-  email: "",
-  managerName: "",
-  timezone: "",
-  status: "active" as "active" | "inactive",
-  wazzupApiToken: "",
-  wazzupChannelId: "",
-  wazzupNumber: "",
-  altegioCompanyId: "",
-  altegioCategoryId: "",
-  altegioDocumentId: "",
-};
+import { DashboardStats } from "@/components/admin/DashboardStats";
+import { OrdersTable, DashboardOrder } from "@/components/admin/OrdersTable";
+import { CertificatesTable, DashboardCertificate } from "@/components/admin/CertificatesTable";
+import { BranchEditor } from "@/components/admin/BranchEditor";
+import { TemplateEditor } from "@/components/admin/TemplateEditor";
+import { CertificateQuickCreate } from "@/components/admin/CertificateQuickCreate";
 
 type AdminTab = "dashboard" | "certificate" | "templates" | "branches" | "utm";
 
@@ -112,26 +24,17 @@ export const AdminDashboard = () => {
   const { companies, loading: companiesLoading } = useCompanies();
   const { templates, loading: templatesLoading, reload: reloadTemplates } = useTemplates();
 
-  const [certificateForm, setCertificateForm] = useState(certificateFormDefaults);
-  const [templateForm, setTemplateForm] = useState(templateFormDefaults);
-  const [submittingCertificate, setSubmittingCertificate] = useState(false);
-  const [submittingTemplate, setSubmittingTemplate] = useState(false);
-  const [editingTemplateId, setEditingTemplateId] = useState<string | null>(null);
   const [orders, setOrders] = useState<DashboardOrder[]>([]);
   const [ordersLoading, setOrdersLoading] = useState(false);
   const [ordersError, setOrdersError] = useState<string | null>(null);
+
   const [certificates, setCertificates] = useState<DashboardCertificate[]>([]);
   const [certificatesLoading, setCertificatesLoading] = useState(false);
   const [certificatesError, setCertificatesError] = useState<string | null>(null);
-  const [certificateSearch, setCertificateSearch] = useState("");
-  const [showAllCertificates, setShowAllCertificates] = useState(false);
+
   const [usingCertificateId, setUsingCertificateId] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<AdminTab>("dashboard");
-  const [selectedBranchId, setSelectedBranchId] = useState("");
-  const [branchForm, setBranchForm] = useState(branchFormDefaults);
-  const [branchLoading, setBranchLoading] = useState(false);
-  const [branchSaving, setBranchSaving] = useState(false);
-  const [branchError, setBranchError] = useState<string | null>(null);
+  const [selectedBranchId, setSelectedBranchId] = useState<string>("");
 
   const isGlobalManager = session?.user?.role === "superadmin" || session?.user?.role === "admin";
   const userCompanyId = session?.user?.companyId ?? null;
@@ -143,119 +46,39 @@ export const AdminDashboard = () => {
     return companies.filter((company) => company.id === userCompanyId);
   }, [companies, isGlobalManager, userCompanyId]);
 
-  const {
-    goods: altegioGoods,
-    loading: altegioGoodsLoading,
-    error: altegioGoodsError,
-    reload: reloadAltegioGoods,
-  } = useAltegioGoods({
-    companyId: certificateForm.companyId || undefined,
-    enabled: Boolean(certificateForm.companyId),
-  });
+  // Initialize selectedBranchId
+  useEffect(() => {
+    if (selectedBranchId) return; // Already set
 
-  const [orderSearch, setOrderSearch] = useState("");
-  const [orderStatusFilter, setOrderStatusFilter] = useState<string>("all");
-
-  const filteredOrders = useMemo(() => {
-    let result = orders;
-
-    if (orderStatusFilter !== "all") {
-      result = result.filter((order) => order.paymentStatus === orderStatusFilter);
-    }
-
-    const search = orderSearch.trim().toLowerCase();
-    if (search) {
-      result = result.filter((order) =>
-        order.orderNumber.toLowerCase().includes(search) ||
-        (order.recipientName && order.recipientName.toLowerCase().includes(search))
-      );
-    }
-
-    return result.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-  }, [orders, orderSearch, orderStatusFilter]);
-
-  const filteredCertificates = useMemo(() => {
-    const scoped =
-      !certificateForm.companyId || certificateForm.companyId === "all"
-        ? certificates
-        : certificates.filter((cert) => cert.companyId === certificateForm.companyId);
-
-    // Archive logic:
-    // unchecked (false) -> show ONLY active
-    // checked (true) -> show ONLY used/expired (status !== 'active')
-    const byStatus = scoped.filter((cert) => {
-      if (showAllCertificates) {
-        return cert.status !== "active";
+    if (isGlobalManager) {
+      if (companies.length > 0) {
+        setSelectedBranchId(companies[0].id);
       }
-      return cert.status === "active";
-    });
-
-    const search = certificateSearch.trim().toLowerCase();
-    let result = byStatus;
-
-    if (search) {
-      const searchDigits = search.replace(/\D+/g, "");
-      result = byStatus.filter((cert) => {
-        const codeMatch = cert.code.toLowerCase().includes(search);
-        const orderMatch = cert.orderNumber?.toLowerCase().includes(search) ?? false;
-        if (!searchDigits && (codeMatch || orderMatch)) {
-          return true;
-        }
-        const phoneNormalized = cert.buyerPhone?.toLowerCase() ?? "";
-        const phoneDigits = cert.buyerPhone?.replace(/\D+/g, "") ?? "";
-        const phoneMatch = searchDigits
-          ? searchDigits.length > 0 && phoneDigits.includes(searchDigits)
-          : phoneNormalized.includes(search);
-        return codeMatch || orderMatch || phoneMatch;
-      });
+    } else if (userCompanyId) {
+      setSelectedBranchId(userCompanyId);
     }
-
-    // Sort by newest first
-    return result.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-  }, [certificates, certificateForm.companyId, showAllCertificates, certificateSearch]);
-
-  useEffect(() => {
-    if (!certificateForm.companyId && allowedCompanies.length) {
-      setCertificateForm((prev) => ({ ...prev, companyId: allowedCompanies[0].id }));
-    }
-  }, [allowedCompanies, certificateForm.companyId]);
-
-  useEffect(() => {
-    if (!certificateForm.templateId && templates.length) {
-      setCertificateForm((prev) => ({ ...prev, templateId: templates[0].id }));
-    }
-  }, [templates, certificateForm.templateId]);
+  }, [isGlobalManager, userCompanyId, companies, selectedBranchId]);
 
   const loadOrders = useCallback(async () => {
-    if (!session?.token) {
-      return;
-    }
+    if (!session?.token) return;
     setOrdersLoading(true);
     setOrdersError(null);
     try {
-      const response = await fetch("/api/orders", {
-        headers: {
-          Authorization: `Bearer ${session.token}`,
-        },
+      const queryParams = new URLSearchParams();
+      if (selectedBranchId && selectedBranchId !== "all") {
+        queryParams.append("companyId", selectedBranchId);
+      }
+
+      const response = await fetch(`/api/orders?${queryParams.toString()}`, {
+        headers: { Authorization: `Bearer ${session.token}` },
       });
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => null);
-        throw new Error(errorData?.message ?? "Не удалось загрузить заказы");
+        throw new Error("Не удалось загрузить заказы");
       }
 
-      const payload = (await response.json()) as Array<{
-        id: string;
-        orderNumber: string;
-        totalAmount: number;
-        status: string;
-        paymentStatus: string;
-        companyId: string;
-        createdAt: string;
-        recipientName?: string | null;
-      }>;
-
-      const mapped: DashboardOrder[] = payload.map((order) => ({
+      const payload = await response.json();
+      const mapped: DashboardOrder[] = payload.map((order: any) => ({
         id: order.id,
         orderNumber: order.orderNumber,
         amount: order.totalAmount,
@@ -269,107 +92,77 @@ export const AdminDashboard = () => {
       setOrders(mapped);
     } catch (error) {
       console.error(error);
-      setOrdersError(error instanceof Error ? error.message : "Не удалось загрузить заказы");
+      setOrdersError(error instanceof Error ? error.message : "Ошибка загрузки заказов");
     } finally {
       setOrdersLoading(false);
     }
-  }, [session?.token]);
+  }, [session?.token, selectedBranchId]);
 
   const loadCertificates = useCallback(async () => {
-    if (!session?.token) {
-      return;
-    }
+    if (!session?.token) return;
     setCertificatesLoading(true);
     setCertificatesError(null);
     try {
-      const response = await fetch("/api/certificates", {
-        headers: {
-          Authorization: `Bearer ${session.token}`,
-        },
+      const queryParams = new URLSearchParams();
+      if (selectedBranchId && selectedBranchId !== "all") {
+        queryParams.append("companyId", selectedBranchId);
+      }
+
+      const response = await fetch(`/api/certificates?${queryParams.toString()}`, {
+        headers: { Authorization: `Bearer ${session.token}` },
       });
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => null);
-        throw new Error(errorData?.message ?? "Не удалось загрузить сертификаты");
+        throw new Error("Не удалось загрузить сертификаты");
       }
 
-      const payload = (await response.json()) as Array<{
-        id: string;
-        code: string;
-        status: string;
-        companyId: string;
-        recipientName?: string | null;
-        senderName?: string | null;
-        createdAt: string;
-        price: number;
-        orderNumber: string | null;
-        paymentStatus: string | null;
-        buyerPhone: string | null;
-        buyerEmail: string | null;
-        utmTag: {
-          id: string;
-          name: string | null;
-          utmSource: string | null;
-          utmCampaign: string | null;
-          utmMedium: string | null;
-        } | null;
-      }>;
-
-      const mapped: DashboardCertificate[] = payload.map((certificate) => ({
-        id: certificate.id,
-        code: certificate.code,
-        status: certificate.status,
-        companyId: certificate.companyId,
-        recipientName: certificate.recipientName ?? null,
-        senderName: certificate.senderName ?? null,
-        createdAt: certificate.createdAt,
-        price: certificate.price,
-        orderNumber: certificate.orderNumber ?? null,
-        paymentStatus: certificate.paymentStatus ?? null,
-        buyerPhone: certificate.buyerPhone ?? null,
-        buyerEmail: certificate.buyerEmail ?? null,
-        utmTag: certificate.utmTag ?? null,
+      const payload = await response.json();
+      const mapped: DashboardCertificate[] = payload.map((cert: any) => ({
+        id: cert.id,
+        code: cert.code,
+        status: cert.status,
+        companyId: cert.companyId,
+        recipientName: cert.recipientName ?? null,
+        senderName: cert.senderName ?? null,
+        createdAt: cert.createdAt,
+        price: cert.price,
+        orderNumber: cert.orderNumber ?? null,
+        paymentStatus: cert.paymentStatus ?? null,
+        buyerPhone: cert.buyerPhone ?? null,
+        buyerEmail: cert.buyerEmail ?? null,
+        utmTag: cert.utmTag ?? null,
       }));
 
       setCertificates(mapped);
     } catch (error) {
       console.error(error);
-      setCertificatesError(error instanceof Error ? error.message : "Не удалось загрузить сертификаты");
+      setCertificatesError(error instanceof Error ? error.message : "Ошибка загрузки сертификатов");
     } finally {
       setCertificatesLoading(false);
     }
-  }, [session?.token]);
+  }, [session?.token, selectedBranchId]);
 
   useEffect(() => {
-    if (session?.token) {
+    if (session?.token && selectedBranchId) {
       void loadOrders();
       void loadCertificates();
     }
-  }, [session?.token, loadOrders, loadCertificates]);
+  }, [session?.token, selectedBranchId, loadOrders, loadCertificates]);
 
   const handleUseCertificate = useCallback(
     async (certificateId: string) => {
-      if (!session?.token) {
-        toast.error("Сессия истекла. Перезайдите.");
-        return;
-      }
+      if (!session?.token) return;
       setUsingCertificateId(certificateId);
       try {
         const response = await fetch(`/api/certificates/${certificateId}/use`, {
           method: "POST",
-          headers: {
-            Authorization: `Bearer ${session.token}`,
-          },
+          headers: { Authorization: `Bearer ${session.token}` },
         });
-        if (!response.ok) {
-          const errorData = await response.json().catch(() => null);
-          throw new Error(errorData?.message ?? "Не удалось отметить сертификат использованным");
-        }
-        toast.success("Сертификат отмечен как использованный");
+        if (!response.ok) throw new Error("Ошибка при использовании сертификата");
+        toast.success("Сертификат использован");
         await loadCertificates();
       } catch (error) {
-        console.error(error);
-        toast.error(error instanceof Error ? error.message : "Не удалось обновить сертификат");
+        toast.error("Не удалось обновить статус сертификата");
       } finally {
         setUsingCertificateId(null);
       }
@@ -382,386 +175,6 @@ export const AdminDashboard = () => {
     toast.success("Вы вышли из аккаунта");
   };
 
-  const handleCertificateChange = (field: keyof typeof certificateForm) => (value: string) => {
-    setCertificateForm((prev) => ({ ...prev, [field]: value }));
-  };
-
-  const handleTemplateChange = (field: keyof typeof templateForm) => (value: string) => {
-    setTemplateForm((prev) => ({ ...prev, [field]: value }));
-  };
-
-  const handleCompanyChange = (value: string) => {
-    setCertificateForm((prev) => ({
-      ...prev,
-      companyId: value,
-      amount: 0,
-      selectedGood: null,
-    }));
-  };
-
-  const handleSelectGood = (
-    goodId: string | number,
-    goods: {
-      goodId: string | number;
-      title: string;
-      cost: number;
-      categoryId: number | string | null;
-      companyId: number | string | null;
-    }[],
-  ) => {
-    const good = goods.find((item) => item.goodId === goodId);
-    if (!good) {
-      return;
-    }
-    setCertificateForm((prev) => ({
-      ...prev,
-      selectedGood: {
-        goodId: good.goodId,
-        title: good.title,
-        cost: good.cost,
-        categoryId: good.categoryId ?? null,
-        salonId: good.companyId ?? null,
-      },
-      amount: good.cost,
-      type: "gift",
-    }));
-  };
-
-  const handleBranchSelect = (value: string) => {
-    setSelectedBranchId(value);
-    setBranchForm(branchFormDefaults);
-    setBranchError(null);
-  };
-
-  const loadBranchDetails = useCallback(
-    async (companyId: string) => {
-      if (!session?.token || !companyId) {
-        return;
-      }
-      setBranchLoading(true);
-      try {
-        const response = await fetch(`/api/companies/${companyId}`, {
-          headers: {
-            Authorization: `Bearer ${session.token}`,
-          },
-        });
-
-        if (!response.ok) {
-          const errorData = await response.json().catch(() => null);
-          throw new Error(errorData?.message ?? "Не удалось загрузить данные филиала");
-        }
-
-        const data = (await response.json()) as {
-          label: string;
-          address: string;
-          phone?: string | null;
-          nameCompany?: string | null;
-          binCompany?: string | null;
-          bikCompany?: string | null;
-          officialAddress?: string | null;
-          companyOneVisionId?: string | null;
-          passOneVision?: string | null;
-          keyOneVision?: string | null;
-          companyNameOneVisionId?: string | null;
-          email?: string | null;
-          managerName?: string | null;
-          timezone?: string | null;
-          status?: "active" | "inactive";
-          wazzupApiToken?: string | null;
-          wazzupChannelId?: string | null;
-          wazzupNumber?: string | null;
-          altegioCompanyId?: string | null;
-          altegioCategoryId?: string | null;
-          altegioDocumentId?: string | null;
-        };
-
-        setBranchForm({
-          label: data.label ?? "",
-          address: data.address ?? "",
-          phone: data.phone ?? "",
-          nameCompany: data.nameCompany ?? "",
-          binCompany: data.binCompany ?? "",
-          bikCompany: data.bikCompany ?? "",
-          officialAddress: data.officialAddress ?? "",
-          companyOneVisionId: data.companyOneVisionId ?? "",
-          passOneVision: data.passOneVision ?? "",
-          keyOneVision: data.keyOneVision ?? "",
-          companyNameOneVisionId: data.companyNameOneVisionId ?? "",
-          email: data.email ?? "",
-          managerName: data.managerName ?? "",
-          timezone: data.timezone ?? "",
-          status: data.status ?? "active",
-          wazzupApiToken: data.wazzupApiToken ?? "",
-          wazzupChannelId: data.wazzupChannelId ?? "",
-          wazzupNumber: data.wazzupNumber ?? "",
-          altegioCompanyId: data.altegioCompanyId ?? "",
-          altegioCategoryId: data.altegioCategoryId ?? "",
-          altegioDocumentId: data.altegioDocumentId ?? "",
-        });
-        setBranchError(null);
-      } catch (error) {
-        console.error(error);
-        setBranchError(error instanceof Error ? error.message : "Не удалось загрузить данные филиала");
-      } finally {
-        setBranchLoading(false);
-      }
-    },
-    [session?.token],
-  );
-
-  useEffect(() => {
-    if (!selectedBranchId && allowedCompanies.length) {
-      setSelectedBranchId(allowedCompanies[0].id);
-    }
-  }, [allowedCompanies, selectedBranchId]);
-
-  useEffect(() => {
-    if (selectedBranchId && selectedBranchId !== "all") {
-      void loadBranchDetails(selectedBranchId);
-    }
-  }, [selectedBranchId, loadBranchDetails]);
-
-  const handleBranchFieldChange = (field: keyof typeof branchFormDefaults) => (value: string) => {
-    setBranchForm((prev) => ({ ...prev, [field]: value }));
-  };
-
-  const submitBranchForm: React.FormEventHandler<HTMLFormElement> = async (event) => {
-    event.preventDefault();
-    if (!selectedBranchId) {
-      toast.error("Выберите филиал");
-      return;
-    }
-    if (!branchForm.label.trim() || !branchForm.address.trim()) {
-      toast.error("Название и адрес обязательны");
-      return;
-    }
-    if (!session?.token) {
-      toast.error("Сессия истекла. Перезайдите.");
-      return;
-    }
-
-    setBranchSaving(true);
-    try {
-      const payload = {
-        label: branchForm.label.trim(),
-        address: branchForm.address.trim(),
-        phone: branchForm.phone.trim() || undefined,
-        nameCompany: branchForm.nameCompany.trim() || undefined,
-        binCompany: branchForm.binCompany.trim() || undefined,
-        bikCompany: branchForm.bikCompany.trim() || undefined,
-        officialAddress: branchForm.officialAddress.trim() || undefined,
-        companyOneVisionId: branchForm.companyOneVisionId.trim() || undefined,
-        passOneVision: branchForm.passOneVision.trim() || undefined,
-        keyOneVision: branchForm.keyOneVision.trim() || undefined,
-        companyNameOneVisionId: branchForm.companyNameOneVisionId.trim() || undefined,
-        email: branchForm.email.trim() || undefined,
-        status: branchForm.status,
-        managerName: branchForm.managerName.trim() || undefined,
-        timezone: branchForm.timezone.trim() || undefined,
-        wazzupApiToken: branchForm.wazzupApiToken.trim() || undefined,
-        wazzupChannelId: branchForm.wazzupChannelId.trim() || undefined,
-        wazzupNumber: branchForm.wazzupNumber.trim() || undefined,
-        altegioCompanyId: branchForm.altegioCompanyId.trim() || undefined,
-        altegioCategoryId: branchForm.altegioCategoryId.trim() || undefined,
-        altegioDocumentId: branchForm.altegioDocumentId.trim() || undefined,
-      };
-
-      const response = await fetch(`/api/companies/${selectedBranchId}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${session.token}`,
-        },
-        body: JSON.stringify(payload),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => null);
-        throw new Error(errorData?.message ?? "Не удалось сохранить изменения");
-      }
-
-      toast.success("Данные филиала обновлены");
-      await loadBranchDetails(selectedBranchId);
-    } catch (error) {
-      console.error(error);
-      toast.error(error instanceof Error ? error.message : "Не удалось обновить филиал");
-    } finally {
-      setBranchSaving(false);
-    }
-  };
-
-  const startTemplateEdit = (templateId: string) => {
-    const template = templates.find((item) => item.id === templateId);
-    if (!template) {
-      toast.error("Шаблон не найден");
-      return;
-    }
-    setEditingTemplateId(templateId);
-    setTemplateForm({
-      name: template.name,
-      description: template.description ?? "",
-      backgroundUrl: template.backgroundUrl ?? "",
-      previewUrl: template.previewUrl ?? "",
-      textColor: template.textColor ?? "#FFFFFF",
-    });
-  };
-
-  const cancelTemplateEdit = () => {
-    setEditingTemplateId(null);
-    setTemplateForm(templateFormDefaults);
-  };
-
-  const submitCertificate: React.FormEventHandler<HTMLFormElement> = async (event) => {
-    event.preventDefault();
-    if (!certificateForm.companyId || certificateForm.companyId === "all") {
-      toast.error("Выберите филиал");
-      return;
-    }
-    if (!certificateForm.templateId) {
-      toast.error("Выберите шаблон");
-      return;
-    }
-    if (!certificateForm.recipientName.trim()) {
-      toast.error("Укажите получателя");
-      return;
-    }
-    if (!certificateForm.selectedGood) {
-      toast.error("Выберите сертификат из списка Altegio");
-      return;
-    }
-    if (!session?.token) {
-      toast.error("Сессия истекла. Перезайдите.");
-      return;
-    }
-
-    setSubmittingCertificate(true);
-    try {
-      const payload = {
-        companyId: certificateForm.companyId,
-        type: "gift",
-        templateId: certificateForm.templateId,
-        senderName: certificateForm.senderName || undefined,
-        recipientName: certificateForm.recipientName.trim(),
-        message: certificateForm.message || undefined,
-        validUntil: certificateForm.validUntil ? new Date(certificateForm.validUntil).toISOString() : undefined,
-        delivery: {
-          method: certificateForm.deliveryMethod,
-          contact: certificateForm.deliveryContact || undefined,
-        },
-        client: {
-          name: certificateForm.recipientName.trim(),
-          email: certificateForm.recipientEmail || undefined,
-          phone: certificateForm.recipientPhone || undefined,
-        },
-        selectedGood: certificateForm.selectedGood
-          ? {
-              goodId: certificateForm.selectedGood.goodId,
-              title: certificateForm.selectedGood.title,
-              cost: certificateForm.selectedGood.cost,
-              categoryId: certificateForm.selectedGood.categoryId,
-              salonId: certificateForm.selectedGood.salonId ?? certificateForm.companyId,
-            }
-          : undefined,
-      };
-
-      const response = await fetch("/api/orders/admin", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${session.token}`,
-        },
-        body: JSON.stringify(payload),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => null);
-        throw new Error(errorData?.message ?? "Не удалось создать сертификат");
-      }
-
-      toast.success("Сертификат создан");
-      setCertificateForm((prev) => ({
-        ...certificateFormDefaults,
-        companyId: prev.companyId,
-        templateId: prev.templateId,
-      }));
-      void loadOrders();
-      void loadCertificates();
-    } catch (error) {
-      console.error(error);
-      toast.error(error instanceof Error ? error.message : "Не удалось создать сертификат");
-    } finally {
-      setSubmittingCertificate(false);
-    }
-  };
-
-  const submitTemplate: React.FormEventHandler<HTMLFormElement> = async (event) => {
-    event.preventDefault();
-    if (!isGlobalManager) {
-      toast.error("Создавать шаблоны может только админ");
-      return;
-    }
-    if (!templateForm.name.trim()) {
-      toast.error("Введите название шаблона");
-      return;
-    }
-    if (!templateForm.backgroundUrl.trim()) {
-      toast.error("Укажите фон (URL)");
-      return;
-    }
-    if (!templateForm.previewUrl.trim()) {
-      toast.error("Укажите превью (URL)");
-      return;
-    }
-    if (!session?.token) {
-      toast.error("Сессия истекла. Перезайдите.");
-      return;
-    }
-
-    setSubmittingTemplate(true);
-    try {
-      const payload = {
-        name: templateForm.name.trim(),
-        description: templateForm.description.trim() || undefined,
-        backgroundUrl: templateForm.backgroundUrl.trim(),
-        previewUrl: templateForm.previewUrl.trim(),
-        layoutConfig: {
-          textColor: templateForm.textColor.trim() || undefined,
-        },
-      };
-
-      const endpoint = editingTemplateId ? `/api/templates/${editingTemplateId}` : "/api/templates";
-      const response = await fetch(endpoint, {
-        method: editingTemplateId ? "PUT" : "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${session.token}`,
-        },
-        body: JSON.stringify(payload),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => null);
-        throw new Error(errorData?.message ?? "Не удалось создать шаблон");
-      }
-
-      toast.success(editingTemplateId ? "Шаблон обновлён" : "Шаблон добавлен");
-      cancelTemplateEdit();
-      reloadTemplates();
-    } catch (error) {
-      console.error(error);
-      toast.error(error instanceof Error ? error.message : "Не удалось создать шаблон");
-    } finally {
-      setSubmittingTemplate(false);
-    }
-  };
-
-  const managerName = useMemo(() => {
-    if (session?.user?.name) {
-      return session.user.name;
-    }
-    return session?.user?.email?.split("@")[0] ?? "менеджер";
-  }, [session]);
-
   const totalRevenue = orders.reduce((sum, order) => sum + order.amount, 0);
   const paidOrders = orders.filter((order) => order.paymentStatus === "paid").length;
   const dashboardStats = [
@@ -770,17 +183,36 @@ export const AdminDashboard = () => {
     { label: "Выручка", value: formatCurrency(totalRevenue), icon: TrendingUp },
     { label: "Активных шаблонов", value: templates.length, icon: Mail },
   ];
-  const recentOrders = orders.slice(0, 5);
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="bg-primary text-primary-foreground shadow-md">
+      <header className="bg-primary text-primary-foreground shadow-md sticky top-0 z-50">
         <div className="container px-4 py-4 space-y-4">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-4">
               <Link to="/">
                 <img src="/logo.png" alt="Buddha Spa" className="h-10 w-auto" />
               </Link>
+              {isGlobalManager && (
+                <div className="hidden md:block">
+                  <Select value={selectedBranchId} onValueChange={setSelectedBranchId}>
+                    <SelectTrigger className="min-w-[320px] max-w-[520px] bg-primary-foreground/10 border-primary-foreground/20 text-primary-foreground">
+                      <SelectValue placeholder="Выберите филиал" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {companies.map((company) => (
+                        <SelectItem key={company.id} value={company.id}>
+                          <div className="flex flex-col">
+                            <span className="font-medium">{company.label}</span>
+                            <span className="text-xs text-muted-foreground">{company.address}</span>
+                          </div>
+                        </SelectItem>
+                      ))}
+                      <SelectItem value="all">Все филиалы</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
             </div>
             <nav className="flex items-center gap-4 text-sm">
               <Link to="/" className="hover:underline">
@@ -795,6 +227,26 @@ export const AdminDashboard = () => {
               Выйти
             </Button>
           </div>
+          {isGlobalManager && (
+            <div className="md:hidden">
+              <Select value={selectedBranchId} onValueChange={setSelectedBranchId}>
+                <SelectTrigger className="w-full bg-primary-foreground/10 border-primary-foreground/20 text-primary-foreground">
+                  <SelectValue placeholder="Выберите филиал" />
+                </SelectTrigger>
+                <SelectContent>
+                  {companies.map((company) => (
+                    <SelectItem key={company.id} value={company.id}>
+                      <div className="flex flex-col">
+                        <span className="font-medium">{company.label}</span>
+                        <span className="text-xs text-muted-foreground">{company.address}</span>
+                      </div>
+                    </SelectItem>
+                  ))}
+                  <SelectItem value="all">Все филиалы</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          )}
         </div>
       </header>
 
@@ -809,871 +261,55 @@ export const AdminDashboard = () => {
           </TabsList>
 
           <TabsContent value="dashboard" className="space-y-8">
-            <section className="space-y-4">
-              <div className="flex flex-wrap items-center justify-between gap-4">
-                <h2 className="text-xl font-semibold text-foreground">Ключевые показатели</h2>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => loadOrders()}
-                  disabled={ordersLoading}
-                  className="inline-flex items-center gap-2"
-                >
-                  <RefreshCw className="w-4 h-4" />
-                  {ordersLoading ? "Обновляем..." : "Обновить цифры"}
-                </Button>
-              </div>
-              <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-                {dashboardStats.map(({ label, value, icon: Icon }) => (
-                  <Card key={label} className="border border-border/60 bg-card shadow-sm">
-                    <CardHeader className="flex flex-row items-center justify-between pb-2">
-                      <CardTitle className="text-sm font-medium">{label}</CardTitle>
-                      <Icon className="w-4 h-4 text-primary" />
-                    </CardHeader>
-                    <CardContent>
-                      <div className="text-2xl font-semibold text-foreground">{value}</div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </section>
-
-            <section className="grid gap-6">
-              <Card className="border border-border/60 bg-card shadow-sm">
-                <CardHeader className="space-y-4">
-                  <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
-                    <div>
-                      <CardTitle>Заказы</CardTitle>
-                      <CardDescription>История покупок</CardDescription>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => loadOrders()}
-                        disabled={ordersLoading}
-                        className="inline-flex items-center gap-2"
-                      >
-                        <RefreshCw className="w-4 h-4" />
-                        {ordersLoading ? "Обновляем..." : "Обновить"}
-                      </Button>
-                    </div>
-                  </div>
-                  <div className="flex flex-col gap-3 md:flex-row md:items-center">
-                    <Input
-                      placeholder="Поиск по номеру или имени..."
-                      value={orderSearch}
-                      onChange={(e) => setOrderSearch(e.target.value)}
-                      className="md:max-w-sm"
-                    />
-                    <Select value={orderStatusFilter} onValueChange={setOrderStatusFilter}>
-                      <SelectTrigger className="w-[180px]">
-                        <SelectValue placeholder="Статус оплаты" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="all">Все статусы</SelectItem>
-                        <SelectItem value="paid">Оплачен</SelectItem>
-                        <SelectItem value="pending">Ожидает</SelectItem>
-                        <SelectItem value="failed">Ошибка</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {ordersLoading && <p className="text-sm text-muted-foreground">Загружаем данные...</p>}
-                  {ordersError && <p className="text-sm text-destructive">{ordersError}</p>}
-                  {!filteredOrders.length && !ordersLoading && (
-                    <p className="text-sm text-muted-foreground">Заказы не найдены.</p>
-                  )}
-                  {filteredOrders.map((order) => {
-                    const company = companies.find((c) => c.id === order.companyId);
-                    const branchTitle = company ? `${company.label} — ${company.address}` : "Филиал";
-                    const created = new Date(order.createdAt);
-                    const paymentLabel =
-                      order.paymentStatus === "paid"
-                        ? "Оплачен"
-                        : order.paymentStatus === "failed"
-                          ? "Ошибка оплаты"
-                          : "Ожидает";
-                    const paymentColor =
-                      order.paymentStatus === "paid"
-                        ? "text-emerald-600"
-                        : order.paymentStatus === "failed"
-                          ? "text-destructive"
-                          : "text-amber-500";
-                    return (
-                      <div key={order.id} className="p-4 rounded-xl border border-border/60 space-y-1">
-                        <div className="flex items-center justify-between text-xs text-muted-foreground">
-                          <span>#{order.orderNumber}</span>
-                          <span>{created.toLocaleString("ru-RU", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" })}</span>
-                        </div>
-                        <p className="text-base font-semibold text-foreground">{order.recipientName ?? "Получатель"}</p>
-                        <p className="text-sm text-muted-foreground">{branchTitle}</p>
-                        <div className="flex items-center justify-between text-sm">
-                          <span className="font-medium text-primary">{formatCurrency(order.amount)}</span>
-                          <span className={paymentColor}>{paymentLabel}</span>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </CardContent>
-              </Card>
-            </section>
-          </TabsContent>
-          <TabsContent value="utm" className="space-y-8">
-            <UtmManagement token={session?.token} canManage={isGlobalManager} />
+            <DashboardStats stats={dashboardStats} />
+            <OrdersTable
+              orders={orders}
+              loading={ordersLoading}
+              error={ordersError}
+              onRefresh={loadOrders}
+              companies={companies}
+            />
           </TabsContent>
 
           <TabsContent value="certificate" className="space-y-8">
-            <section className="grid gap-6 lg:grid-cols-3">
-              <Card className="lg:col-span-2 border border-border/60 bg-card shadow-sm">
-                <CardHeader>
-                  <CardTitle>Создание сертификата</CardTitle>
-                  <CardDescription>
-                    {isGlobalManager ? "Суперадмин может выбирать любой филиал." : "Менеджер работает только со своим филиалом."}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <form className="space-y-6" onSubmit={submitCertificate}>
-                    <div className="grid md:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label>Филиал</Label>
-                        <Select
-                          value={certificateForm.companyId}
-                          onValueChange={handleCompanyChange}
-                          disabled={companiesLoading || allowedCompanies.length <= 1}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder={companiesLoading ? "Загрузка..." : "Выберите филиал"} />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {allowedCompanies.map((company) => (
-                              <SelectItem key={company.id} value={company.id}>
-                                {company.label} — {company.address}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div className="space-y-2">
-                        <Label>Шаблон</Label>
-                        <Select
-                          value={certificateForm.templateId}
-                          onValueChange={handleCertificateChange("templateId")}
-                          disabled={templatesLoading || templates.length === 0}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder={templatesLoading ? "Загрузка..." : "Выберите шаблон"} />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {templates.map((template) => (
-                              <SelectItem key={template.id} value={template.id}>
-                                {template.name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </div>
-
-                    <div className="grid md:grid-cols-2 gap-4">
-                      <div className="space-y-2 md:col-span-2">
-                        <div className="flex items-center justify-between gap-2">
-                          <Label>Сертификаты из Altegio</Label>
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => reloadAltegioGoods()}
-                            disabled={altegioGoodsLoading}
-                          >
-                            <RefreshCw className="w-4 h-4 mr-1" />
-                            Обновить
-                          </Button>
-                        </div>
-                        {!certificateForm.companyId && (
-                          <p className="text-sm text-muted-foreground">Выберите филиал, чтобы загрузить сертификаты.</p>
-                        )}
-                        {certificateForm.companyId && altegioGoodsLoading && (
-                          <div className="space-y-2">
-                            {Array.from({ length: 3 }).map((_, index) => (
-                              <div key={`good-skeleton-${index}`} className="h-16 rounded-xl bg-muted/30 animate-pulse" />
-                            ))}
-                          </div>
-                        )}
-                        {certificateForm.companyId && !altegioGoodsLoading && altegioGoods.length === 0 && (
-                          <p className="text-sm text-muted-foreground">
-                            Для этого филиала нет настроенных сертификатов в Altegio.
-                          </p>
-                        )}
-                        {certificateForm.companyId && altegioGoods.length > 0 && (
-                          <div className="space-y-2 max-h-64 overflow-y-auto pr-1">
-                            {altegioGoods.map((good) => {
-                              const isSelected = certificateForm.selectedGood?.goodId === good.goodId;
-                              return (
-                                <label
-                                  key={good.goodId}
-                                  className={`w-full rounded-2xl border px-3 py-2 text-left transition cursor-pointer ${isSelected ? "border-primary bg-primary/5" : "border-border hover:border-primary/40"
-                                    }`}
-                                  onClick={() => handleSelectGood(good.goodId, altegioGoods)}
-                                  onKeyDown={(event) => {
-                                    if (event.key === "Enter" || event.key === " ") {
-                                      event.preventDefault();
-                                      handleSelectGood(good.goodId, altegioGoods);
-                                    }
-                                  }}
-                                  role="button"
-                                  tabIndex={0}
-                                >
-                                  <div className="flex items-center gap-3">
-                                    <div className="flex-1 space-y-1">
-                                      <p className="font-semibold text-foreground">{good.title}</p>
-                                    </div>
-                                    <div className="text-right text-sm min-w-[120px]">
-                                      <span className="block font-semibold">{formatCurrency(good.cost)}</span>
-                                    </div>
-                                  </div>
-                                </label>
-                              );
-                            })}
-                          </div>
-                        )}
-                        {certificateForm.selectedGood && (
-                          <div className="rounded-xl border border-primary/40 bg-primary/5 px-4 py-3">
-                            <p className="text-sm text-muted-foreground">Выбрано:</p>
-                            <p className="font-semibold text-foreground">{certificateForm.selectedGood.title}</p>
-                            <p className="text-sm font-medium text-primary">
-                              {formatCurrency(certificateForm.selectedGood.cost)}
-                            </p>
-                          </div>
-                        )}
-                        {altegioGoodsError && <p className="text-sm text-destructive">{altegioGoodsError}</p>}
-                      </div>
-                    </div>
-
-                    <div className="grid md:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label>Получатель</Label>
-                        <Input
-                          placeholder="Айгуль"
-                          value={certificateForm.recipientName}
-                          onChange={(event) => handleCertificateChange("recipientName")(event.target.value)}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label>Отправитель</Label>
-                        <Input
-                          placeholder="Ваш менеджер"
-                          value={certificateForm.senderName}
-                          onChange={(event) => handleCertificateChange("senderName")(event.target.value)}
-                        />
-                      </div>
-                    </div>
-
-                    <div className="grid md:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label>Email получателя</Label>
-                        <Input
-                          type="email"
-                          placeholder="client@example.com"
-                          value={certificateForm.recipientEmail}
-                          onChange={(event) => handleCertificateChange("recipientEmail")(event.target.value)}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label>Телефон WhatsApp</Label>
-                        <Input
-                          placeholder="+7701..."
-                          value={certificateForm.recipientPhone}
-                          onChange={(event) => handleCertificateChange("recipientPhone")(event.target.value)}
-                        />
-                      </div>
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label>Поздравление</Label>
-                      <Textarea
-                        rows={3}
-                        placeholder="С юбилеем! Наслаждайся отдыхом."
-                        value={certificateForm.message}
-                        onChange={(event) => handleCertificateChange("message")(event.target.value)}
-                      />
-                    </div>
-
-                    <div className="grid md:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label>Метод доставки</Label>
-                        <Select value={certificateForm.deliveryMethod} onValueChange={handleCertificateChange("deliveryMethod")}>
-                          <SelectTrigger>
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="email">Email</SelectItem>
-                            <SelectItem value="whatsapp">WhatsApp</SelectItem>
-                            <SelectItem value="download">Скачивание</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div className="space-y-2">
-                        <Label>Контакт для доставки</Label>
-                        <Input
-                          placeholder="Введите email или WhatsApp"
-                          value={certificateForm.deliveryContact}
-                          onChange={(event) => handleCertificateChange("deliveryContact")(event.target.value)}
-                        />
-                      </div>
-                    </div>
-
-                    <Button type="submit" className="w-full" disabled={submittingCertificate}>
-                      {submittingCertificate ? "Сохраняем..." : "Создать сертификат"}
-                    </Button>
-                  </form>
-                </CardContent>
-              </Card>
-
-              <Card className="border border-border/60 bg-card shadow-sm">
-                <CardHeader className="space-y-4">
-                  <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
-                    <div>
-                      <CardTitle>Сертификаты</CardTitle>
-                      <CardDescription>Активные и завершённые покупки</CardDescription>
-                    </div>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => loadCertificates()}
-                      disabled={certificatesLoading}
-                      className="inline-flex items-center gap-2"
-                    >
-                      <RefreshCw className="w-4 h-4" />
-                      {certificatesLoading ? "Обновляем..." : "Обновить"}
-                    </Button>
-                  </div>
-                  <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-                    <Input
-                      value={certificateSearch}
-                      onChange={(event) => setCertificateSearch(event.target.value)}
-                      placeholder="ID сертификата или номеру покупателя"
-                      className="md:max-w-sm"
-                    />
-                    <label htmlFor="show-all-certificates" className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <Checkbox
-                        id="show-all-certificates"
-                        checked={showAllCertificates}
-                        onCheckedChange={(checked) => setShowAllCertificates(checked === true)}
-                      />
-                      <span>Архив</span>
-                    </label>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {certificatesError && <p className="text-sm text-destructive">{certificatesError}</p>}
-                  {certificatesLoading && <p className="text-sm text-muted-foreground">Загружаем список сертификатов...</p>}
-                  {!certificatesLoading && !filteredCertificates.length && (
-                    <p className="text-sm text-muted-foreground">Сертификатов пока нет. Создайте первый заказ.</p>
-                  )}
-                  {!certificatesLoading && filteredCertificates.length > 0 && (
-                    <div className="space-y-3 h-[calc(100vh-300px)] overflow-y-auto pr-1">
-                      {filteredCertificates.map((certificate) => {
-                        const company = companies.find((item) => item.id === certificate.companyId);
-                        const branchTitle = company ? `${company.label} — ${company.address}` : "Филиал";
-                        const createdAt = new Date(certificate.createdAt);
-                        const statusText =
-                          certificate.status === "active"
-                            ? "Активен"
-                            : certificate.status === "used"
-                              ? "Использован"
-                              : "Закрыт";
-                        const statusColor =
-                          certificate.status === "active"
-                            ? "text-emerald-600"
-                            : certificate.status === "used"
-                              ? "text-muted-foreground"
-                              : "text-muted-foreground";
-                        const paymentLabel =
-                          certificate.paymentStatus === "paid"
-                            ? null
-                            : certificate.paymentStatus === "failed"
-                              ? "Ошибка оплаты"
-                              : "Ожидание оплаты";
-                        const paymentColor =
-                          certificate.paymentStatus === "paid"
-                            ? "hidden"
-                            : certificate.paymentStatus === "failed"
-                              ? "text-destructive"
-                              : "text-amber-500";
-                        const utmLabel =
-                          certificate.utmTag?.name ??
-                          certificate.utmTag?.utmCampaign ??
-                          certificate.utmTag?.utmSource ??
-                          null;
-                        return (
-                          <div key={certificate.id} className="border border-border/60 rounded-2xl p-4 space-y-2">
-                            <div className="flex items-center justify-between text-xs text-muted-foreground">
-                              <span>#{certificate.code}</span>
-                              <span>
-                                {createdAt.toLocaleDateString("ru-RU", {
-                                  day: "2-digit",
-                                  month: "short",
-                                })}
-                              </span>
-                            </div>
-                            <div className="flex items-center justify-between text-xs text-muted-foreground">
-                              <span>Заказ: {certificate.orderNumber ?? "—"}</span>
-                              <span className={paymentColor}>{paymentLabel}</span>
-                            </div>
-                            <p className="text-base font-semibold text-foreground">
-                              {certificate.recipientName ?? "Получатель"}
-                            </p>
-                            <p className="text-sm text-muted-foreground">{branchTitle}</p>
-                            <p className="text-sm text-muted-foreground">
-                              Телефон:{" "}
-                              <span className="font-medium text-foreground">
-                                {certificate.buyerPhone ?? "—"}
-                              </span>
-                            </p>
-                            <div className="text-xs text-muted-foreground">
-                              {utmLabel ? (
-                                <div className="flex items-center gap-2">
-                                  <span className="uppercase tracking-wide text-[10px] text-muted-foreground/80">
-                                    UTM
-                                  </span>
-                                  <Badge variant="secondary" className="text-xs font-medium">
-                                    {utmLabel}
-                                  </Badge>
-                                </div>
-                              ) : (
-                                <span>UTM-метка не зафиксирована</span>
-                              )}
-                            </div>
-                            <div className="flex items-center justify-between text-sm">
-                              <span className="font-medium text-primary">{formatCurrency(certificate.price)}</span>
-                              <span className={statusColor}>{statusText}</span>
-                            </div>
-                            {certificate.status === "active" && (
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                className="w-full"
-                                disabled={usingCertificateId === certificate.id}
-                                onClick={() => void handleUseCertificate(certificate.id)}
-                              >
-                                {usingCertificateId === certificate.id ? "Отмечаем..." : "Использовать"}
-                              </Button>
-                            )}
-                          </div>
-                        );
-                      })}
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            </section>
+            <CertificateQuickCreate
+              companies={allowedCompanies}
+              onCreated={() => {
+                void loadCertificates();
+                void loadOrders();
+              }}
+            />
+            <CertificatesTable
+              certificates={certificates}
+              loading={certificatesLoading}
+              error={certificatesError}
+              onRefresh={loadCertificates}
+              companies={companies}
+              onUseCertificate={handleUseCertificate}
+              usingCertificateId={usingCertificateId}
+            />
           </TabsContent>
 
           <TabsContent value="templates" className="space-y-8">
-            <section className="grid gap-6 lg:grid-cols-2">
-              <Card className="border border-border/60 bg-card shadow-sm">
-                <CardHeader>
-                  <CardTitle>{editingTemplateId ? "Редактирование шаблона" : "Создание шаблона"}</CardTitle>
-                  <CardDescription>Добавьте новый фон и превью сертификата</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  {isGlobalManager ? (
-                    <form className="space-y-4" onSubmit={submitTemplate}>
-                      <div className="space-y-2">
-                        <Label>Название</Label>
-                        <Input
-                          placeholder="Например, Лесной мох"
-                          value={templateForm.name}
-                          onChange={(event) => handleTemplateChange("name")(event.target.value)}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label>Описание</Label>
-                        <Textarea
-                          rows={2}
-                          placeholder="Короткий текст для менеджеров"
-                          value={templateForm.description}
-                          onChange={(event) => handleTemplateChange("description")(event.target.value)}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label>URL фона</Label>
-                        <Input
-                          placeholder="https://..."
-                          value={templateForm.backgroundUrl}
-                          onChange={(event) => handleTemplateChange("backgroundUrl")(event.target.value)}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label>URL превью</Label>
-                        <Input
-                          placeholder="https://..."
-                          value={templateForm.previewUrl}
-                          onChange={(event) => handleTemplateChange("previewUrl")(event.target.value)}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label>Цвет текста (HEX)</Label>
-                        <Input
-                          placeholder="#FFFFFF"
-                          value={templateForm.textColor}
-                          onChange={(event) => handleTemplateChange("textColor")(event.target.value)}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Button type="submit" className="w-full" disabled={submittingTemplate}>
-                          {submittingTemplate
-                            ? "Сохраняем..."
-                            : editingTemplateId
-                              ? "Сохранить изменения"
-                              : "Создать шаблон"}
-                        </Button>
-                        {editingTemplateId && (
-                          <Button type="button" variant="ghost" className="w-full" onClick={cancelTemplateEdit}>
-                            Отмена
-                          </Button>
-                        )}
-                      </div>
-                    </form>
-                  ) : (
-                    <p className="text-sm text-muted-foreground">
-                      Создавать шаблоны может только администратор. Обратитесь к головному офису.
-                    </p>
-                  )}
-                </CardContent>
-              </Card>
-
-              <Card className="border border-border/60 bg-card shadow-sm">
-                <CardHeader>
-                  <CardTitle>Каталог шаблонов</CardTitle>
-                  <CardDescription>Доступные варианты оформления</CardDescription>
-                </CardHeader>
-                <CardContent className="grid gap-4">
-                  {templatesLoading && <p className="text-sm text-muted-foreground">Загружаем шаблоны...</p>}
-                  {!templatesLoading && !templates.length && (
-                    <p className="text-sm text-muted-foreground">Шаблоны ещё не добавлены.</p>
-                  )}
-                  {!templatesLoading &&
-                    templates.map((template) => (
-                      <div key={template.id} className="flex gap-3 rounded-xl border border-border/60 p-3">
-                        <div
-                          className="w-24 h-16 rounded-lg bg-cover bg-center"
-                          style={{ backgroundImage: `url(${template.previewUrl ?? template.backgroundUrl ?? "/placeholder-card.png"})` }}
-                        />
-                        <div className="flex-1">
-                          <p className="font-semibold">{template.name}</p>
-                          <p className="text-xs text-muted-foreground">{template.description ?? "Фирменный стиль Buddha Spa"}</p>
-                        </div>
-                        {isGlobalManager && (
-                          <Button type="button" size="sm" variant="outline" onClick={() => startTemplateEdit(template.id)}>
-                            <PenSquare className="w-4 h-4 mr-2" />
-                            Редактировать
-                          </Button>
-                        )}
-                      </div>
-                    ))}
-                </CardContent>
-              </Card>
-            </section>
+            <TemplateEditor
+              templates={templates}
+              loading={templatesLoading}
+              onRefresh={reloadTemplates}
+              token={session?.token}
+              isGlobalManager={isGlobalManager}
+            />
           </TabsContent>
 
           <TabsContent value="branches" className="space-y-8">
-            <Card className="border border-border/60 bg-card shadow-sm">
-              <CardHeader>
-                <CardTitle>Редактор филиала</CardTitle>
-                <CardDescription>
-                  Суперадмин может обновить любой филиал, менеджер — только свой.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                {!allowedCompanies.length ? (
-                  <p className="text-sm text-muted-foreground">Нет доступных филиалов для редактирования.</p>
-                ) : (
-                  <form className="space-y-6" onSubmit={submitBranchForm}>
-                    {allowedCompanies.length > 1 && (
-                      <div className="space-y-2">
-                        <Label>Выберите филиал</Label>
-                        <Select
-                          value={selectedBranchId}
-                          onValueChange={handleBranchSelect}
-                          disabled={branchLoading}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Выберите филиал" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {allowedCompanies.map((company) => (
-                              <SelectItem key={company.id} value={company.id}>
-                                {company.label} — {company.address}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    )}
+            <BranchEditor
+              companies={allowedCompanies} // Managers only see their own
+              token={session?.token}
+              onRefresh={() => window.location.reload()} // Simple reload for now
+            />
+          </TabsContent>
 
-                    {branchError && <p className="text-sm text-destructive">{branchError}</p>}
-
-                    {branchLoading && (
-                      <div className="space-y-3">
-                        {Array.from({ length: 4 }).map((_, index) => (
-                          <div key={`branch-skeleton-${index}`} className="h-14 rounded-xl bg-muted/30 animate-pulse" />
-                        ))}
-                      </div>
-                    )}
-
-                    {!branchLoading && selectedBranchId !== "all" ? (
-                      <div className="space-y-6">
-                        <div className="grid md:grid-cols-2 gap-4">
-                          <div className="space-y-2">
-                            <Label>Название</Label>
-                            <Input
-                              value={branchForm.label}
-                              onChange={(event) => handleBranchFieldChange("label")(event.target.value)}
-                            />
-                          </div>
-                          <div className="space-y-2">
-                            <Label>Телефон</Label>
-                            <Input
-                              value={branchForm.phone}
-                              onChange={(event) => handleBranchFieldChange("phone")(event.target.value)}
-                            />
-                          </div>
-                        </div>
-
-                        <div className="space-y-2">
-                          <Label>Адрес</Label>
-                          <Input
-                            value={branchForm.address}
-                            onChange={(event) => handleBranchFieldChange("address")(event.target.value)}
-                          />
-                        </div>
-
-                        <div className="grid md:grid-cols-2 gap-4">
-                          <div className="space-y-2">
-                            <Label>Email</Label>
-                            <Input
-                              type="email"
-                              value={branchForm.email}
-                              onChange={(event) => handleBranchFieldChange("email")(event.target.value)}
-                            />
-                          </div>
-                          <div className="space-y-2">
-                            <Label>Менеджер филиала</Label>
-                            <Input
-                              value={branchForm.managerName}
-                              onChange={(event) => handleBranchFieldChange("managerName")(event.target.value)}
-                            />
-                          </div>
-                        </div>
-
-                        <div className="space-y-3 rounded-xl border border-border/60 p-4">
-                          <div>
-                            <Label className="text-base font-semibold">Настройки WhatsApp (Wazzup)</Label>
-                            <p className="text-xs text-muted-foreground mt-1">
-                              Значения используются для отправки сертификатов через WhatsApp. Оставьте пустыми, если для
-                              филиала интеграция не нужна.
-                            </p>
-                          </div>
-                          <div className="grid md:grid-cols-2 gap-4">
-                            <div className="space-y-2">
-                              <Label>API Token</Label>
-                              <Input
-                                value={branchForm.wazzupApiToken}
-                                onChange={(event) => handleBranchFieldChange("wazzupApiToken")(event.target.value)}
-                                placeholder="sk_live_..."
-                              />
-                            </div>
-                            <div className="space-y-2">
-                              <Label>Channel ID</Label>
-                              <Input
-                                value={branchForm.wazzupChannelId}
-                                onChange={(event) => handleBranchFieldChange("wazzupChannelId")(event.target.value)}
-                                placeholder="uuid канала"
-                              />
-                            </div>
-                          </div>
-                          <div className="space-y-2">
-                            <Label>Номер отправителя</Label>
-                            <Input
-                              value={branchForm.wazzupNumber}
-                              onChange={(event) => handleBranchFieldChange("wazzupNumber")(event.target.value)}
-                              placeholder="+7..."
-                            />
-                            <p className="text-xs text-muted-foreground">
-                              Для справки отображается в админке и договорах. Сам канал определяется по Channel ID.
-                            </p>
-                          </div>
-                        </div>
-
-                        <div className="space-y-3 rounded-xl border border-border/60 p-4">
-                          <div>
-                            <Label className="text-base font-semibold">Altegio</Label>
-                            <p className="text-xs text-muted-foreground mt-1">
-                              Используется для загрузки сертификатов и списания продаж.
-                            </p>
-                          </div>
-                          <div className="grid md:grid-cols-3 gap-4">
-                            <div className="space-y-2">
-                              <Label>Altegio company_id</Label>
-                              <Input
-                                value={branchForm.altegioCompanyId}
-                                onChange={(event) => handleBranchFieldChange("altegioCompanyId")(event.target.value)}
-                                placeholder="например, 1266617"
-                              />
-                            </div>
-                            <div className="space-y-2">
-                              <Label>Altegio category_id</Label>
-                              <Input
-                                value={branchForm.altegioCategoryId}
-                                onChange={(event) => handleBranchFieldChange("altegioCategoryId")(event.target.value)}
-                                placeholder="например, 1005340"
-                              />
-                            </div>
-                            <div className="space-y-2">
-                              <Label>Altegio document_id</Label>
-                              <Input
-                                value={branchForm.altegioDocumentId}
-                                onChange={(event) => handleBranchFieldChange("altegioDocumentId")(event.target.value)}
-                                placeholder="например, 22254960"
-                              />
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="space-y-2">
-                          <Label>Юр. наименование</Label>
-                          <Input
-                            value={branchForm.nameCompany}
-                            onChange={(event) => handleBranchFieldChange("nameCompany")(event.target.value)}
-                          />
-                        </div>
-
-                        <div className="grid md:grid-cols-2 gap-4">
-                          <div className="space-y-2">
-                            <Label>БИН</Label>
-                            <Input
-                              value={branchForm.binCompany}
-                              onChange={(event) => handleBranchFieldChange("binCompany")(event.target.value)}
-                            />
-                          </div>
-                          <div className="space-y-2">
-                            <Label>БИК</Label>
-                            <Input
-                              value={branchForm.bikCompany}
-                              onChange={(event) => handleBranchFieldChange("bikCompany")(event.target.value)}
-                            />
-                          </div>
-                        </div>
-
-                        <div className="space-y-2">
-                          <Label>Юридический адрес</Label>
-                          <Input
-                            value={branchForm.officialAddress}
-                            onChange={(event) => handleBranchFieldChange("officialAddress")(event.target.value)}
-                          />
-                        </div>
-
-                        <div className="grid md:grid-cols-2 gap-4">
-                          <div className="space-y-2">
-                            <Label>OneVision Merchant ID (MID)</Label>
-                            <Input
-                              value={branchForm.companyOneVisionId}
-                              onChange={(event) => handleBranchFieldChange("companyOneVisionId")(event.target.value)}
-                            />
-                            <p className="text-xs text-muted-foreground">
-                              Значение из личного кабинета OneVision, используется как <code>merchant_id</code>.
-                            </p>
-                          </div>
-                          <div className="space-y-2">
-                            <Label>OneVision API Key</Label>
-                            <Input
-                              value={branchForm.keyOneVision}
-                              onChange={(event) => handleBranchFieldChange("keyOneVision")(event.target.value)}
-                            />
-                            <p className="text-xs text-muted-foreground">
-                              Ключ магазина для формирования токена авторизации (Bearer).
-                            </p>
-                          </div>
-                        </div>
-
-                        <div className="grid md:grid-cols-2 gap-4">
-                          <div className="space-y-2">
-                            <Label>OneVision Secret</Label>
-                            <Input
-                              value={branchForm.passOneVision}
-                              onChange={(event) => handleBranchFieldChange("passOneVision")(event.target.value)}
-                            />
-                            <p className="text-xs text-muted-foreground">
-                              Секрет магазина, используется для подписи запросов/ответов.
-                            </p>
-                          </div>
-                          <div className="space-y-2">
-                            <Label>OneVision Service ID (SID)</Label>
-                            <Input
-                              value={branchForm.companyNameOneVisionId}
-                              onChange={(event) =>
-                                handleBranchFieldChange("companyNameOneVisionId")(event.target.value)
-                              }
-                            />
-                            <p className="text-xs text-muted-foreground">
-                              Идентификатор сервиса для поля <code>service_id</code>.
-                            </p>
-                          </div>
-                        </div>
-
-                        <div className="grid md:grid-cols-2 gap-4">
-                          <div className="space-y-2">
-                            <Label>Часовой пояс</Label>
-                            <Input
-                              value={branchForm.timezone}
-                              onChange={(event) => handleBranchFieldChange("timezone")(event.target.value)}
-                              placeholder="Asia/Almaty"
-                            />
-                          </div>
-                          <div className="space-y-2">
-                            <Label>Статус</Label>
-                            <Select value={branchForm.status} onValueChange={handleBranchFieldChange("status")}>
-                              <SelectTrigger>
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="active">Активен</SelectItem>
-                                <SelectItem value="inactive">Неактивен</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </div>
-                        </div>
-
-                        <div className="flex flex-wrap gap-3">
-                          <Button type="submit" disabled={branchSaving}>
-                            {branchSaving ? "Сохраняем..." : "Сохранить изменения"}
-                          </Button>
-                          <Button
-                            type="button"
-                            variant="outline"
-                            onClick={() => selectedBranchId && loadBranchDetails(selectedBranchId)}
-                            disabled={branchLoading}
-                          >
-                            <RefreshCw className="w-4 h-4 mr-2" />
-                            Обновить
-                          </Button>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="text-center py-8">
-                        <p className="text-muted-foreground">
-                          Выберите филиал из списка, чтобы изменить его данные.
-                        </p>
-                      </div>
-                    )}
-                  </form>
-                )}
-              </CardContent>
-            </Card>
+          <TabsContent value="utm" className="space-y-8">
+            <UtmManagement token={session?.token} canManage={isGlobalManager} />
           </TabsContent>
         </Tabs>
       </main>

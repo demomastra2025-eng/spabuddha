@@ -90,13 +90,36 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
   }
 }
 
+function formatPhone(phone: string): string {
+  const cleaned = phone.replace(/\s+/g, "");
+  return cleaned.startsWith("+") ? cleaned : `+${cleaned}`;
+}
+
 export async function searchClientByPhone(phone: string, companyId: string) {
   if (!phone) {
     throw new AppError(400, "Телефон обязателен для поиска клиента в Altegio");
   }
-  return request<{ id: number }[]>(`company/${companyId}/clients/search`, {
+
+  const formattedPhone = formatPhone(phone);
+
+  return request<{ id: number; name: string; phone: string }[]>(`company/${companyId}/clients/search`, {
     method: "POST",
-    body: { phone },
+    body: {
+      page: 1,
+      page_size: 1,
+      fields: ["id", "name", "phone"],
+      order_by: "name",
+      order_by_direction: "desc",
+      operation: "AND",
+      filters: [
+        {
+          type: "quick_search",
+          state: {
+            value: formattedPhone,
+          },
+        },
+      ],
+    },
   });
 }
 
@@ -107,11 +130,14 @@ export async function createClientInAltegio(
   if (!params.phone) {
     throw new AppError(400, "Телефон обязателен для создания клиента в Altegio");
   }
+
+  const formattedPhone = formatPhone(params.phone);
+
   return request<{ id: number }>(`clients/${companyId}`, {
     method: "POST",
     body: {
-      name: params.name ?? params.phone,
-      phone: params.phone,
+      name: params.name ?? formattedPhone,
+      phone: formattedPhone,
       email: params.email ?? "",
     },
   });

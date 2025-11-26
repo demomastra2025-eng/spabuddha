@@ -48,6 +48,9 @@ async function loadBackgroundImage(source?: string) {
   }
 
   const normalized = trimmed.replace(/^\/+/, "");
+  if (normalized.split(/[\\/]+/).some((segment) => segment === "..")) {
+    return null;
+  }
   const candidates = [
     path.join(process.cwd(), normalized),
     path.join(process.cwd(), "public", normalized),
@@ -65,6 +68,43 @@ async function loadBackgroundImage(source?: string) {
   return null;
 }
 
+async function registerCertificateFont(doc: PDFKit.PDFDocument, fallbackFont: string) {
+  const fontPath = path.isAbsolute(CERTIFICATE_FONT_FILE)
+    ? CERTIFICATE_FONT_FILE
+    : path.join(process.cwd(), CERTIFICATE_FONT_FILE);
+  try {
+    await fs.access(fontPath);
+    doc.registerFont(CERTIFICATE_FONT_NAME, fontPath);
+    doc.font(CERTIFICATE_FONT_NAME);
+  } catch (error) {
+    console.warn("[certificateRenderer] Не удалось загрузить кастомный шрифт, используем запасной", error);
+    doc.font(fallbackFont);
+  }
+}
+
+async function cleanupOldCertificates(directory: string, maxAgeMs = 1000 * 60 * 60 * 24 * 3) {
+  try {
+    const now = Date.now();
+    const entries = await fs.readdir(directory, { withFileTypes: true });
+    await Promise.all(
+      entries.map(async (entry) => {
+        if (!entry.isFile()) return;
+        const filePath = path.join(directory, entry.name);
+        try {
+          const stats = await fs.stat(filePath);
+          if (now - stats.mtimeMs > maxAgeMs) {
+            await fs.unlink(filePath);
+          }
+        } catch {
+          // ignore individual file errors
+        }
+      }),
+    );
+  } catch {
+    // directory may not exist yet
+  }
+}
+
 export async function generateCertificatePdf(options: CertificatePdfOptions) {
   // Match dimensions from CertificatePreview (max-w-[640px] min-h-[360px] -> approx 640x400)
   const CARD_WIDTH = 640;
@@ -79,28 +119,8 @@ export async function generateCertificatePdf(options: CertificatePdfOptions) {
   });
 
   const textColor = options.textColor ?? "#ffffff";
-  const fontPath = path.resolve(process.cwd(), "public/fonts/PlayfairDisplay-Regular.ttf");
-  const systemFont = "/System/Library/Fonts/Supplemental/Arial.ttf";
-  let fontToUse = "Helvetica-Bold";
-
-  // Try to register fonts
-  try {
-    // Try Playfair first
-    doc.registerFont("Playfair", fontPath);
-    doc.font("Playfair"); // Test if it works
-    fontToUse = "Playfair";
-  } catch (error) {
-    console.warn("[certificateRenderer] Playfair font failed, trying Arial...", error);
-    try {
-      doc.registerFont("Arial", systemFont);
-      fontToUse = "Arial";
-    } catch (fallbackError) {
-      console.error("[certificateRenderer] Arial font failed:", fallbackError);
-      // Keep Helvetica-Bold
-    }
-  }
-
-  doc.font(fontToUse);
+  const fallbackFont = "Helvetica-Bold";
+  await registerCertificateFont(doc, fallbackFont);
 
   const padding = 24;
   const backgroundBuffer = await loadBackgroundImage(options.backgroundImageUrl);
@@ -144,7 +164,8 @@ export async function generateCertificatePdf(options: CertificatePdfOptions) {
   const addressText = options.companyAddress || "—";
   // PDFKit handles wrapping automatically if width is set, but we can force newlines if needed
   // The preview replaces commas with newlines for better vertical layout
-  const formattedAddress = addressText.includes(",") ? addressText.replace(/,/g, ",\n") : addressText;
+  // The preview replaces only the FIRST comma with a newline for better vertical layout
+  const formattedAddress = addressText.replace(",", ",\n");
 
   doc
     .fontSize(16)
@@ -218,6 +239,7 @@ export async function generateCertificatePdf(options: CertificatePdfOptions) {
   const absolutePath = path.join(directory, fileName);
   await fs.writeFile(absolutePath, buffer);
   const relativePath = path.relative(process.cwd(), absolutePath);
+  void cleanupOldCertificates(directory);
 
   return { buffer, fileName, absolutePath, relativePath };
 }

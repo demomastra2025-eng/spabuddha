@@ -10,7 +10,8 @@ type ResultView = {
 };
 
 const successDescriptions: Record<string, string> = {
-  download: "Сертификат готов к скачиванию — ссылка появится ниже, а на почту мы тоже отправили подтверждение.",
+  download:
+    "Сертификат готов к скачиванию — ссылка появится ниже. Если загрузка не началась, нажмите кнопку или вернитесь на эту страницу позже по ссылке из платёжки.",
   email: "Сертификат отправлен на указанный email — проверьте входящие и спам.",
   whatsapp: "Сертификат доставлен в WhatsApp, проверьте чат указанного номера.",
 };
@@ -77,6 +78,7 @@ const PaymentResult = () => {
   const orderId = params.get("orderId");
   const certificateId = params.get("certificateId");
   const deliveryMethod = (params.get("deliveryMethod") ?? "").toLowerCase();
+  const downloadToken = params.get("token") ?? undefined;
 
   const [autoTriggered, setAutoTriggered] = useState(false);
   const [downloading, setDownloading] = useState(false);
@@ -94,7 +96,11 @@ const PaymentResult = () => {
     try {
       setDownloading(true);
       setDownloadError(null);
-      const response = await fetch(`/api/certificates/${certificateId}/download`);
+      const url = new URL(`/api/certificates/${certificateId}/download`, window.location.origin);
+      if (downloadToken) {
+        url.searchParams.set("token", downloadToken);
+      }
+      const response = await fetch(url.toString());
       if (!response.ok) {
         const fallbackMessage = "Не удалось скачать сертификат. Попробуйте ещё раз.";
         let message = fallbackMessage;

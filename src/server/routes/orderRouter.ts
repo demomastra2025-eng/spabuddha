@@ -13,8 +13,14 @@ orderRouter.get(
   "/",
   requireManagerOrAdmin,
   asyncHandler(async (req, res) => {
-    const filter =
-      req.user?.role === "manager" && req.user.companyId ? { companyId: req.user.companyId } : undefined;
+    let filter: { companyId?: string } | undefined;
+
+    if (req.user?.role === "manager" && req.user.companyId) {
+      filter = { companyId: req.user.companyId };
+    } else if (req.query.companyId) {
+      filter = { companyId: String(req.query.companyId) };
+    }
+
     const orders = await listOrders(filter);
     res.json(orders);
   }),

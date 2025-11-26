@@ -9,6 +9,7 @@ import { query } from "../db/pool";
 import { mapPayment, paymentRowSchema } from "./paymentService";
 import type { PaymentRow } from "./paymentService";
 import { markPaymentAsPaid } from "./paymentService";
+import { createDownloadToken } from "../utils/downloadToken";
 
 const successStatuses = new Set(["withdraw", "clearing", "partial_clearing", "refill"]);
 const failureStatuses = new Set(["canceled", "cancel", "error", "refunded", "partial_refund"]);
@@ -107,12 +108,14 @@ function buildReturnUrl(baseUrl: string, params: Record<string, string>) {
 export async function initiateOneVisionPayment({ order, certificate, paymentId, input, baseUrl }: InitiatePaymentArgs) {
   const normalizedBaseUrl = ensureBaseUrl(baseUrl || env.APP_BASE_URL || "");
   const callbackUrl = `${normalizedBaseUrl}/api/payments/onevision/callback`;
+  const downloadToken = createDownloadToken(certificate.id, order.id);
   const successUrl = buildReturnUrl(normalizedBaseUrl, {
     status: "success",
     orderId: order.id,
     orderNumber: order.orderNumber,
     certificateId: certificate.id,
     deliveryMethod: input.delivery.method,
+    token: downloadToken,
   });
   const failureUrl = buildReturnUrl(normalizedBaseUrl, {
     status: "failed",
@@ -120,6 +123,7 @@ export async function initiateOneVisionPayment({ order, certificate, paymentId, 
     orderNumber: order.orderNumber,
     certificateId: certificate.id,
     deliveryMethod: input.delivery.method,
+    token: downloadToken,
   });
   const merchantTermUrl = buildReturnUrl(normalizedBaseUrl, {
     status: "processing",
@@ -127,6 +131,7 @@ export async function initiateOneVisionPayment({ order, certificate, paymentId, 
     orderNumber: order.orderNumber,
     certificateId: certificate.id,
     deliveryMethod: input.delivery.method,
+    token: downloadToken,
   });
 
   const company = await getCompany(order.companyId);

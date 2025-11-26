@@ -3,6 +3,7 @@ import { query, withTransaction } from "../db/pool";
 import { runOrderFulfillment, type FulfillmentPayload } from "./fulfillmentService";
 import { env } from "../config/env";
 import { AppError } from "../errors/AppError";
+import { createDownloadToken } from "../utils/downloadToken";
 
 export const paymentRowSchema = z.object({
   id: z.string(),
@@ -436,7 +437,7 @@ export async function markPaymentAsPaid(
   const fulfillmentResult = requiresFulfillment ? await safeRunOrderFulfillment(fulfillmentPayload) : null;
 
   const downloadUrl =
-    fulfillmentResult?.downloadUrl ?? buildDownloadUrl(fulfillment.certificate_id);
+    fulfillmentResult?.downloadUrl ?? buildDownloadUrl(fulfillment.certificate_id, fulfillment.order_id);
   const filePath = fulfillmentResult?.relativePath ?? fulfillment.certificate_file_url ?? "";
 
   return {
@@ -446,6 +447,9 @@ export async function markPaymentAsPaid(
   };
 }
 
-function buildDownloadUrl(certificateId: string) {
-  return env.APP_BASE_URL ? `${env.APP_BASE_URL.replace(/\/$/, "")}/api/certificates/${certificateId}/download` : null;
+function buildDownloadUrl(certificateId: string, orderId: string) {
+  if (!env.APP_BASE_URL) return null;
+  const token = createDownloadToken(certificateId, orderId);
+  const base = env.APP_BASE_URL.replace(/\/$/, "");
+  return `${base}/api/certificates/${certificateId}/download?token=${token}`;
 }

@@ -120,7 +120,7 @@ export const StepDelivery = ({ data, updateData, onNext, onPrev }: StepDeliveryP
                 <div className="flex-1">
                   <div className="font-semibold text-lg mb-1">Скачать</div>
                   <p className="text-sm text-muted-foreground">
-                    Сразу после оплаты скачайте сертификат в формате PDF или PNG
+                    Сразу после оплаты скачайте сертификат в формате PDF или PNG. После перехода в платёжный банк вернитесь на эту страницу, чтобы забрать файл.
                   </p>
                 </div>
               </Label>
@@ -131,8 +131,10 @@ export const StepDelivery = ({ data, updateData, onNext, onPrev }: StepDeliveryP
         {/* Info Box */}
         <div className="p-6 rounded-xl bg-primary/5 border border-primary/20">
           <p className="text-sm text-foreground/80 leading-relaxed">
-            <strong>Совет:</strong> Если вы выбираете email или WhatsApp, сертификат будет отправлен сразу после оплаты.
-            При выборе "Скачать" вы сможете самостоятельно распечатать или переслать сертификат получателю.
+            <strong>Совет:</strong>{" "}
+            {data.deliveryMethod === "download"
+              ? "После оплаты система вернёт вас на страницу подтверждения — именно там появится кнопка для скачивания файла. Не закрывайте вкладку после оплаты."
+              : "Если вы выбираете email или WhatsApp, сертификат будет отправлен сразу после оплаты. При выборе \"Скачать\" вы сможете самостоятельно распечатать или переслать сертификат получателю."}
           </p>
         </div>
 

@@ -7,9 +7,17 @@ export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
     port: 8080,
-    allowedHosts: ["201f10461f6b.ngrok-free.app", "30164db41bff.ngrok-free.app", "704f9a5752ff.ngrok-free.app", "eea66bce092d.ngrok-free.app"],
+    allowedHosts: [
+      "akilah-deuteranomalous-blythe.ngrok-free.dev",
+      ".ngrok-free.dev",
+      "localhost"
+    ],
     proxy: {
-      "/api": "http://localhost:3000",
+      "/api": {
+        target: "http://localhost:3000",
+        changeOrigin: true,
+        secure: false,
+      },
     },
   },
   plugins: [react()],

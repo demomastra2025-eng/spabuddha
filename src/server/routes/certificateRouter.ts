@@ -11,6 +11,7 @@ import {
   listCertificates,
   markCertificateUsed,
 } from "../services/certificateService";
+import { verifyDownloadToken } from "../utils/downloadToken";
 
 export const certificateRouter = Router();
 
@@ -18,8 +19,14 @@ certificateRouter.get(
   "/",
   requireManagerOrAdmin,
   asyncHandler(async (req, res) => {
-    const filter =
-      req.user?.role === "manager" && req.user.companyId ? { companyId: req.user.companyId } : undefined;
+    let filter: { companyId?: string } | undefined;
+
+    if (req.user?.role === "manager" && req.user.companyId) {
+      filter = { companyId: req.user.companyId };
+    } else if (req.query.companyId) {
+      filter = { companyId: String(req.query.companyId) };
+    }
+
     const certificates = await listCertificates(filter);
     res.json(certificates);
   }),
@@ -64,12 +71,20 @@ certificateRouter.get(
       return;
     }
 
-    const orderStatus = await query<{ payment_status: string }>(
-      `SELECT payment_status FROM orders WHERE certificate_id = $1 ORDER BY created_at DESC LIMIT 1`,
+    const orderStatus = await query<{ id: string; payment_status: string }>(
+      `SELECT id, payment_status FROM orders WHERE certificate_id = $1 ORDER BY created_at DESC LIMIT 1`,
       [certificate.id],
     );
 
-    if (!orderStatus.rows[0] || orderStatus.rows[0].payment_status !== "paid") {
+    const orderRow = orderStatus.rows[0];
+
+    const token = typeof req.query.token === "string" ? req.query.token : undefined;
+    if (!orderRow || !verifyDownloadToken(token, certificate.id, orderRow.id)) {
+      res.status(403).json({ message: "Недействительная ссылка на скачивание сертификата" });
+      return;
+    }
+
+    if (orderRow.payment_status !== "paid") {
       res.status(403).json({ message: "Сертификат доступен для скачивания после оплаты" });
       return;
     }

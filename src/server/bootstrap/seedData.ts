@@ -18,6 +18,9 @@ type CompanySeed = {
   altegioCompanyId?: string;
   altegioCategoryId?: string;
   altegioDocumentId?: string;
+  wazzupApiToken?: string;
+  wazzupChannelId?: string;
+  wazzupNumber?: string;
 };
 
 type TemplateSeed = {
@@ -42,37 +45,45 @@ type UserSeed = {
 const companies: CompanySeed[] = branchDefaults.map((branch) => {
   let altegioCompanyId: string | undefined;
   let altegioCategoryId: string | undefined;
-  const isAstana = branch.slug === "astana-turan-54";
+  let wazzupChannelId: string | undefined;
+  let wazzupNumber: string | undefined;
 
-  const oneVisionOverride = isAstana
-    ? {
-        apiKey: "7110b98f-b3f4-4b4f-b7ef-af71278a657d",
-        secret: "1ebd8dfbb1b1001a6f07f8a6aa2ea8aded02d0a2209a30a2ade7df5f6e44e2d2",
-        merchantId: "c9ce6199-f2cc-451a-9b4f-55ac2f783f74",
-        serviceId: "a3384e50-a9f0-481d-9187-4d65feaf6ef4",
-      }
-    : {
-        apiKey: null,
-        secret: null,
-        merchantId: null,
-        serviceId: null,
-      };
+  // Common OneVision config for all branches
+  const oneVisionConfig = {
+    apiKey: "7110b98f-b3f4-4b4f-b7ef-af71278a657d",
+    secret: "1ebd8dfbb1b1001a6f07f8a6aa2ea8aded02d0a2209a30a2ade7df5f6e44e2d2",
+    merchantId: "c9ce6199-f2cc-451a-9b4f-55ac2f783f74",
+    serviceId: "a3384e50-a9f0-481d-9187-4d65feaf6ef4",
+  };
+
+  // Common Wazzup API Key
+  const wazzupApiToken = "0f9aa378023049da83957004e5609a3b";
 
   if (branch.address.includes("Кунаева")) {
     altegioCompanyId = "129964";
     altegioCategoryId = "224820";
+    wazzupChannelId = "22b49d4c-f53b-4c37-bc52-c4fc638bd665";
+    wazzupNumber = "77022223100";
   } else if (branch.address.includes("Тауке хана")) {
     altegioCompanyId = "717537";
     altegioCategoryId = "916963";
+    wazzupChannelId = "a23419d4-f530-46b7-8c08-d5fa0277e060";
+    wazzupNumber = "77787794309";
   } else if (branch.address.includes("Нурсат")) {
     altegioCompanyId = "750957";
     altegioCategoryId = "932166";
+    wazzupChannelId = "0bfc9109-309a-4f60-a0ea-c2a3eceaf226";
+    wazzupNumber = "77026518099";
   } else if (branch.address.includes("Туран")) {
     altegioCompanyId = "782603";
     altegioCategoryId = "967901";
+    wazzupChannelId = "1b536d64-8e95-4373-85a8-a56b689e3edc";
+    wazzupNumber = "77005298001";
   } else if (branch.address.includes("Толе Би")) {
     altegioCompanyId = "1266617";
     altegioCategoryId = "1005340";
+    wazzupChannelId = "8a02b760-dd52-4a96-a411-d4238cbadef4";
+    wazzupNumber = "77058887650";
   }
 
   return {
@@ -83,13 +94,16 @@ const companies: CompanySeed[] = branchDefaults.map((branch) => {
     managerName: branch.managerName,
     timezone: branch.timezone,
     nameCompany: branch.nameCompany,
-    keyOneVision: oneVisionOverride.apiKey,
-    passOneVision: oneVisionOverride.secret,
-    companyOneVisionId: oneVisionOverride.merchantId ?? oneVisionOverride.apiKey,
-    companyNameOneVisionId: oneVisionOverride.serviceId ?? oneVisionOverride.merchantId ?? oneVisionOverride.apiKey,
+    keyOneVision: oneVisionConfig.apiKey,
+    passOneVision: oneVisionConfig.secret,
+    companyOneVisionId: oneVisionConfig.merchantId,
+    companyNameOneVisionId: oneVisionConfig.serviceId,
     altegioCompanyId,
     altegioCategoryId,
     altegioDocumentId: "22254960",
+    wazzupApiToken,
+    wazzupChannelId,
+    wazzupNumber,
   };
 });
 
@@ -219,47 +233,47 @@ const templateSeeds: TemplateSeed[] = [
 const userSeeds: UserSeed[] = [
   {
     email: "superadmin@buddhaspa.kz",
-    password: "SuperBuddha#2024",
+    password: "SuperBuddha#2025",
     displayName: "Супер администратор",
     role: "superadmin",
   },
   {
     email: "admin@buddhaspa.kz",
-    password: "BuddhaSpa#2024",
+    password: "BuddhaSpa#2025",
     displayName: "Главный администратор",
     role: "admin",
   },
   {
     email: "astana.manager@buddhaspa.kz",
-    password: "Manager#Astana2024",
+    password: "Manager#Astana2025",
     displayName: "Менеджер Астана",
     role: "manager",
     companySlug: "astana-turan-54",
   },
   {
     email: "taukehana.manager@buddhaspa.kz",
-    password: "Manager#Tauke2024",
+    password: "Manager#Tauke2025",
     displayName: "Менеджер Шымкент Тауке",
     role: "manager",
     companySlug: "shymkent-tauke-hana-95a",
   },
   {
     email: "nursat.manager@buddhaspa.kz",
-    password: "Manager#Nursat2024",
+    password: "Manager#Nursat2025",
     displayName: "Менеджер Шымкент Нурсат",
     role: "manager",
     companySlug: "shymkent-nursat-173b",
   },
   {
     email: "kunaeva.manager@buddhaspa.kz",
-    password: "Manager#Kunaeva2024",
+    password: "Manager#Kunaeva2025",
     displayName: "Менеджер Шымкент Кунаева",
     role: "manager",
     companySlug: "shymkent-kunaeva-13",
   },
   {
     email: "taraz.manager@buddhaspa.kz",
-    password: "Manager#Taraz2024",
+    password: "Manager#Taraz2025",
     displayName: "Менеджер Тараз",
     role: "manager",
     companySlug: "taraz-tole-bi-93b",
@@ -305,8 +319,11 @@ async function seedCompanies(pool: Pool) {
              altegio_company_id = $13,
              altegio_category_id = $14,
              altegio_document_id = $15,
+             wazzup_api_token = $16,
+             wazzup_channel_id = $17,
+             wazzup_number = $18,
              updated_at = NOW()
-         WHERE id = $16`,
+         WHERE id = $19`,
         [
           company.label,
           company.address,
@@ -323,6 +340,9 @@ async function seedCompanies(pool: Pool) {
           company.altegioCompanyId ?? null,
           company.altegioCategoryId ?? null,
           company.altegioDocumentId ?? null,
+          company.wazzupApiToken ?? null,
+          company.wazzupChannelId ?? null,
+          company.wazzupNumber ?? null,
           existing.rows[0].id,
         ],
       );
@@ -333,8 +353,9 @@ async function seedCompanies(pool: Pool) {
     const result = await pool.query<{ id: string }>(
       `INSERT INTO company
         (slug, label, address, phone, status, manager_name, timezone, name_company, key_one_vision,
-         pass_one_vision, company_one_vision_id, company_name_one_vision_id, email, altegio_company_id, altegio_category_id, altegio_document_id)
-       VALUES ($1,$2,$3,$4,'active',$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15)
+         pass_one_vision, company_one_vision_id, company_name_one_vision_id, email, altegio_company_id, altegio_category_id, altegio_document_id,
+         wazzup_api_token, wazzup_channel_id, wazzup_number)
+       VALUES ($1,$2,$3,$4,'active',$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18)
        RETURNING id`,
       [
         company.slug,
@@ -352,6 +373,9 @@ async function seedCompanies(pool: Pool) {
         company.altegioCompanyId ?? null,
         company.altegioCategoryId ?? null,
         company.altegioDocumentId ?? null,
+        company.wazzupApiToken ?? null,
+        company.wazzupChannelId ?? null,
+        company.wazzupNumber ?? null,
       ],
     );
     companyMap.set(company.slug, result.rows[0].id);

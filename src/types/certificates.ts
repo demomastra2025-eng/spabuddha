@@ -7,6 +7,7 @@ export interface SelectedGood {
   cost: number;
   categoryId: number | string | null;
   salonId?: number | string | null;
+  discountPercent?: number;
 }
 
 export interface SelectedService {

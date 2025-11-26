@@ -3,6 +3,7 @@ import { z } from "zod";
 import { query } from "../db/pool";
 import { env } from "../config/env";
 import { generateCertificatePdf } from "../utils/certificateRenderer";
+import { createDownloadToken } from "../utils/downloadToken";
 import { sendCertificateEmail } from "./mailService";
 import { sendWhatsAppFile, sendWhatsAppMessage, type WhatsAppCredentials } from "./whatsappService";
 
@@ -69,7 +70,7 @@ export async function runOrderFulfillment(payload: FulfillmentPayload) {
     textColor: data.template?.textColor ?? undefined,
   });
   const downloadUrl = env.APP_BASE_URL
-    ? `${env.APP_BASE_URL.replace(/\/$/, "")}/api/certificates/${data.certificate.id}/download`
+    ? `${env.APP_BASE_URL.replace(/\/$/, "")}/api/certificates/${data.certificate.id}/download?token=${createDownloadToken(data.certificate.id, data.orderId)}`
     : null;
 
   await query(
