@@ -34,7 +34,9 @@ altegioRouter.get(
       throw new AppError(400, "Для филиала не указан Altegio category_id");
     }
 
-    const goods = await listGoods(company.altegioCompanyId, company.altegioCategoryId);
+    const page = req.query.page && Number.isFinite(Number(req.query.page)) ? Number(req.query.page) : undefined;
+    const count = req.query.count && Number.isFinite(Number(req.query.count)) ? Number(req.query.count) : undefined;
+    const goods = await listGoods(company.id, company.altegioCompanyId, company.altegioCategoryId, { page, count });
     res.json(goods);
   }),
 );
@@ -57,7 +59,9 @@ altegioRouter.get(
       throw new AppError(400, "Для филиала не указан Altegio category_id");
     }
 
-    const goods = await listGoods(company.altegioCompanyId, company.altegioCategoryId);
+    const page = req.query.page && Number.isFinite(Number(req.query.page)) ? Number(req.query.page) : undefined;
+    const count = req.query.count && Number.isFinite(Number(req.query.count)) ? Number(req.query.count) : undefined;
+    const goods = await listGoods(company.id, company.altegioCompanyId, company.altegioCategoryId, { page, count });
     const simplified = goods.map((good) => ({
       title: good.title,
       cost: good.cost,
@@ -87,7 +91,7 @@ altegioRouter.get(
       throw new AppError(400, "Для филиала не указан Altegio company_id");
     }
 
-    const types = await listCertificateTypes(company.altegioCompanyId);
+    const types = await listCertificateTypes(company.id, company.altegioCompanyId);
     res.json(types);
   }),
 );

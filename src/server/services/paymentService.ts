@@ -189,13 +189,13 @@ async function ensureAltegioClientIdForCompany(
     .trim() || phone;
 
   const { searchClientByPhone, createClientInAltegio } = await import("./altegioService");
-  const existing = await searchClientByPhone(phone, altegioCompanyId);
+  const existing = await searchClientByPhone(phone, fulfillment.company_id, altegioCompanyId);
   const foundId = Array.isArray(existing) && existing[0]?.id ? String(existing[0].id) : null;
 
   let altegioClientId = foundId;
 
   if (!altegioClientId) {
-    const created = await createClientInAltegio(altegioCompanyId, {
+    const created = await createClientInAltegio(fulfillment.company_id, altegioCompanyId, {
       name: displayName,
       phone,
       email: fulfillment.client_email ?? undefined,
@@ -214,10 +214,6 @@ async function ensureAltegioClientIdForCompany(
 }
 
 async function syncAltegioSale(fulfillment: z.infer<typeof fulfillmentRowSchema>) {
-  if (!env.ALTEGIO_USER_TOKEN) {
-    return null;
-  }
-
   if (!fulfillment.company_altegio_company_id) {
     return null;
   }
@@ -239,12 +235,18 @@ async function syncAltegioSale(fulfillment: z.infer<typeof fulfillmentRowSchema>
   const altegioClientId = await ensureAltegioClientIdForCompany(fulfillment, fulfillment.company_altegio_company_id);
 
   const { createAltegioDocument, createGoodsTransaction } = await import("./altegioService");
-  const documentResponse = await createAltegioDocument(fulfillment.company_altegio_company_id, storageId);
+  const documentResponse = await createAltegioDocument(
+    fulfillment.company_id,
+    fulfillment.company_altegio_company_id,
+    storageId,
+  );
   const documentId = documentResponse?.id ? String(documentResponse.id) : null;
 
   if (!documentId) {
     throw new AppError(400, "Не удалось создать документ в Altegio");
   }
+
+  const certificateCode = fulfillment.certificate_code;
 
   const payload = {
     document_id: Number.isFinite(Number(documentId)) ? Number(documentId) : documentId,
@@ -255,10 +257,15 @@ async function syncAltegioSale(fulfillment: z.infer<typeof fulfillmentRowSchema>
     cost: fulfillment.total_amount,
     operation_unit_type: 1,
     client_id: altegioClientId ? (Number.isFinite(Number(altegioClientId)) ? Number(altegioClientId) : altegioClientId) : 0,
-    comment: `Order ${fulfillment.order_number}`,
+    comment: `Order ${fulfillment.order_number} / ${certificateCode}`,
+    good_special_number: certificateCode,
   };
 
-  const response = await createGoodsTransaction(fulfillment.company_altegio_company_id, payload);
+  const response = await createGoodsTransaction(
+    fulfillment.company_id,
+    fulfillment.company_altegio_company_id,
+    payload,
+  );
   const transactionId = response?.id ? String(response.id) : null;
   const operationId = response?.document_id
     ? String(response.document_id)

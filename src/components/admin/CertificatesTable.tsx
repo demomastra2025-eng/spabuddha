@@ -37,6 +37,8 @@ interface CertificatesTableProps {
     companies: { id: string; label: string; address: string }[];
     onUseCertificate: (id: string) => Promise<void>;
     usingCertificateId: string | null;
+    search: string;
+    onSearchChange: (value: string) => void;
 }
 
 export const CertificatesTable = ({
@@ -47,8 +49,9 @@ export const CertificatesTable = ({
     companies,
     onUseCertificate,
     usingCertificateId,
+    search,
+    onSearchChange,
 }: CertificatesTableProps) => {
-    const [search, setSearch] = useState("");
     const [showArchive, setShowArchive] = useState(false);
 
     const filteredCertificates = useMemo(() => {
@@ -108,8 +111,8 @@ export const CertificatesTable = ({
                 <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                     <Input
                         value={search}
-                        onChange={(event) => setSearch(event.target.value)}
-                        placeholder="ID сертификата или номеру покупателя"
+                        onChange={(event) => onSearchChange(event.target.value)}
+                        placeholder="Код сертификата, номер заказа или телефона"
                         className="md:max-w-sm"
                     />
                     <label htmlFor="show-all-certificates" className="flex items-center gap-2 text-sm text-muted-foreground">

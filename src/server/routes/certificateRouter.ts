@@ -19,12 +19,16 @@ certificateRouter.get(
   "/",
   requireManagerOrAdmin,
   asyncHandler(async (req, res) => {
-    let filter: { companyId?: string } | undefined;
+    let filter: { companyId?: string; search?: string } | undefined;
 
     if (req.user?.role === "manager" && req.user.companyId) {
       filter = { companyId: req.user.companyId };
     } else if (req.query.companyId) {
       filter = { companyId: String(req.query.companyId) };
+    }
+
+    if (typeof req.query.search === "string" && req.query.search.trim()) {
+      filter = { ...(filter ?? {}), search: req.query.search.trim() };
     }
 
     const certificates = await listCertificates(filter);

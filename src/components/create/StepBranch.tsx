@@ -5,7 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { CertificateData } from "@/types/certificates";
 import { formatCurrency } from "@/lib/currency";
 import { MapPin } from "lucide-react";
-import { useCompanies } from "@/hooks/useCompanies";
+import { useCompanies, type CompanyOption } from "@/hooks/useCompanies";
 import { useAltegioGoods } from "@/hooks/useAltegioGoods";
 import { toast } from "sonner";
 
@@ -13,16 +13,24 @@ interface StepBranchProps {
   data: CertificateData;
   updateData: (data: Partial<CertificateData>) => void;
   onNext: () => void;
+  companiesOverride?: CompanyOption[];
 }
 
-export const StepBranch = ({ data, updateData, onNext }: StepBranchProps) => {
-  const { companies, loading, error } = useCompanies();
+export const StepBranch = ({ data, updateData, onNext, companiesOverride }: StepBranchProps) => {
+  const { companies: fetchedCompanies, loading: fetchedLoading, error: fetchedError } = useCompanies();
+  const companies = companiesOverride ?? fetchedCompanies;
+  const loading = companiesOverride ? false : fetchedLoading;
+  const error = companiesOverride ? null : fetchedError;
   const selectedCompany = companies.find((company) => company.id === data.branch);
   const branchFilter = data.branch === "all" ? undefined : data.branch || undefined;
   const {
     goods,
     loading: goodsLoading,
     error: goodsError,
+    page: goodsPage,
+    pageSize: goodsPageSize,
+    nextPage: nextGoodsPage,
+    prevPage: prevGoodsPage,
   } = useAltegioGoods({
     companyId: branchFilter,
     enabled: Boolean(data.branch),
@@ -175,6 +183,32 @@ export const StepBranch = ({ data, updateData, onNext }: StepBranchProps) => {
                 <p className="text-sm text-amber-600">
                   {goodsError}
                 </p>
+              )}
+
+              {data.branch && (
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between pt-2">
+                  <div className="text-sm text-muted-foreground">
+                    Страница {goodsPage}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={prevGoodsPage}
+                      disabled={goodsLoading || goodsPage <= 1}
+                    >
+                      Назад
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={nextGoodsPage}
+                      disabled={goodsLoading || (!goodsLoading && goods.length < goodsPageSize)}
+                    >
+                      Далее
+                    </Button>
+                  </div>
+                </div>
               )}
             </div>
           )}

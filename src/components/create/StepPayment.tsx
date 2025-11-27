@@ -15,15 +15,18 @@ import { useAuth } from "@/contexts/AuthContext";
 interface StepPaymentProps {
   data: CertificateData;
   onPrev: () => void;
+  mode?: "client" | "admin";
+  onCreated?: () => void;
 }
 
-export const StepPayment = ({ data, onPrev }: StepPaymentProps) => {
-  const [agreed, setAgreed] = useState(false);
+export const StepPayment = ({ data, onPrev, mode = "client", onCreated }: StepPaymentProps) => {
+  const [agreed, setAgreed] = useState(mode === "admin");
   const [processing, setProcessing] = useState(false);
   const [adminProcessing, setAdminProcessing] = useState(false);
   const [paymentError, setPaymentError] = useState<string | null>(null);
   const previewRef = useRef<HTMLDivElement>(null);
 
+  const isAdminMode = mode === "admin";
   const { companies } = useCompanies();
   const { session } = useAuth();
   const selectedBranch = companies.find((branch) => branch.id === data.branch);
@@ -159,7 +162,7 @@ export const StepPayment = ({ data, onPrev }: StepPaymentProps) => {
   };
 
   const handleAdminCreate = async () => {
-    if (!session?.user || !["superadmin", "admin", "manager"].includes(session.user.role)) {
+    if (!session?.user || !["superadmin", "manager"].includes(session.user.role)) {
       toast.error("Только администратор может создать сертификат без оплаты");
       return;
     }
@@ -199,6 +202,7 @@ export const StepPayment = ({ data, onPrev }: StepPaymentProps) => {
       if (result.downloadUrl) {
         window.open(result.downloadUrl, "_blank", "noopener");
       }
+      onCreated?.();
     } catch (error) {
       console.error(error);
       const message = error instanceof Error ? error.message : "Ошибка при создании сертификата.";
@@ -353,60 +357,70 @@ export const StepPayment = ({ data, onPrev }: StepPaymentProps) => {
               </div>
             )}
 
-            <div className="rounded-2xl border border-primary/30 bg-primary/5 p-4 text-sm text-muted-foreground">
-              После подтверждения вы будете перенаправлены на защищённую платёжную страницу OneVision. Ссылка
-              действительна ограниченное время, поэтому держите данные карты под рукой.
-            </div>
+            {isAdminMode ? (
+              <div className="rounded-2xl border border-primary/30 bg-primary/5 p-4 text-sm text-muted-foreground">
+                Сертификат будет создан без платёжной сессии. После сохранения можно сразу скачать файл и выдать клиенту.
+              </div>
+            ) : (
+              <div className="rounded-2xl border border-primary/30 bg-primary/5 p-4 text-sm text-muted-foreground">
+                После подтверждения вы будете перенаправлены на защищённую платёжную страницу OneVision. Ссылка
+                действительна ограниченное время, поэтому держите данные карты под рукой.
+              </div>
+            )}
 
             {/* Agreement */}
-            <div className="flex items-start gap-3 mb-6">
-              <Checkbox
-                id="agreement"
-                checked={agreed}
-                onCheckedChange={(checked) => setAgreed(checked as boolean)}
-                className="mt-1"
-              />
-              <Label htmlFor="agreement" className="text-sm text-muted-foreground leading-relaxed cursor-pointer">
-                Я согласен с{" "}
-                <a href="/offer-certificate" className="text-primary hover:underline">
-                  офертой
-                </a>
-                ,{" "}
-                <a href="/privacy-policy" className="text-primary hover:underline">
-                  политикой конфиденциальности
-                </a>{" "}
-                и{" "}
-                <a href="/privacy-policy" className="text-primary hover:underline">
-                  обработкой персональных данных
-                </a>
-              </Label>
-            </div>
+            {!isAdminMode && (
+              <div className="flex items-start gap-3 mb-6">
+                <Checkbox
+                  id="agreement"
+                  checked={agreed}
+                  onCheckedChange={(checked) => setAgreed(checked as boolean)}
+                  className="mt-1"
+                />
+                <Label htmlFor="agreement" className="text-sm text-muted-foreground leading-relaxed cursor-pointer">
+                  Я согласен с{" "}
+                  <a href="/offer-certificate" className="text-primary hover:underline">
+                    офертой
+                  </a>
+                  ,{" "}
+                  <a href="/privacy-policy" className="text-primary hover:underline">
+                    политикой конфиденциальности
+                  </a>{" "}
+                  и{" "}
+                  <a href="/privacy-policy" className="text-primary hover:underline">
+                    обработкой персональных данных
+                  </a>
+                </Label>
+              </div>
+            )}
 
             {/* Payment Button */}
             <div className="flex flex-col gap-3">
-              <Button
-                size="lg"
-                onClick={handlePayment}
-                disabled={!agreed || processing}
-                className="w-full h-14 text-lg rounded-xl bg-accent hover:bg-accent/90 text-accent-foreground shadow-glow"
-              >
-                {processing ? (
-                  <>
-                    <div className="w-5 h-5 border-2 border-accent-foreground/30 border-t-accent-foreground rounded-full animate-spin mr-2" />
-                    Обработка платежа...
-                  </>
-                ) : (
-                <>
-                  <Check className="w-5 h-5 mr-2" />
-                  Оплатить через OneVision
-                </>
-              )}
-              </Button>
-
-              {session?.user && ["superadmin", "admin", "manager"].includes(session.user.role) && (
+              {!isAdminMode && (
                 <Button
                   size="lg"
-                  variant="outline"
+                  onClick={handlePayment}
+                  disabled={!agreed || processing}
+                  className="w-full h-14 text-lg rounded-xl bg-accent hover:bg-accent/90 text-accent-foreground shadow-glow"
+                >
+                  {processing ? (
+                    <>
+                      <div className="w-5 h-5 border-2 border-accent-foreground/30 border-t-accent-foreground rounded-full animate-spin mr-2" />
+                      Обработка платежа...
+                    </>
+                  ) : (
+                    <>
+                      <Check className="w-5 h-5 mr-2" />
+                      Оплатить через OneVision
+                    </>
+                  )}
+                </Button>
+              )}
+
+              {(isAdminMode || (session?.user && ["superadmin", "manager"].includes(session.user.role))) && (
+                <Button
+                  size="lg"
+                  variant={isAdminMode ? "default" : "outline"}
                   onClick={handleAdminCreate}
                   disabled={adminProcessing}
                   className="w-full h-12 text-base rounded-xl"
@@ -417,10 +431,12 @@ export const StepPayment = ({ data, onPrev }: StepPaymentProps) => {
             </div>
 
             {/* Security Badge */}
-            <div className="flex items-center justify-center gap-2 mt-6 text-sm text-muted-foreground">
-              <Shield className="w-4 h-4" />
-              <span>Безопасная оплата</span>
-            </div>
+            {!isAdminMode && (
+              <div className="flex items-center justify-center gap-2 mt-6 text-sm text-muted-foreground">
+                <Shield className="w-4 h-4" />
+                <span>Безопасная оплата</span>
+              </div>
+            )}
           </div>
 
           {/* Back Button */}

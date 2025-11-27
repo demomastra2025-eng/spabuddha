@@ -11,13 +11,19 @@ export interface AltegioGoodOption {
 interface UseAltegioGoodsOptions {
   companyId?: string;
   enabled?: boolean;
+  pageSize?: number;
 }
 
-export function useAltegioGoods({ companyId, enabled = true }: UseAltegioGoodsOptions) {
+export function useAltegioGoods({ companyId, enabled = true, pageSize = 20 }: UseAltegioGoodsOptions) {
   const [goods, setGoods] = useState<AltegioGoodOption[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [refreshIndex, setRefreshIndex] = useState(0);
+  const [page, setPage] = useState(1);
+
+  useEffect(() => {
+    setPage(1);
+  }, [companyId]);
 
   useEffect(() => {
     if (!enabled || !companyId) {
@@ -33,7 +39,13 @@ export function useAltegioGoods({ companyId, enabled = true }: UseAltegioGoodsOp
     async function load() {
       try {
         setLoading(true);
-        const response = await fetch(`/api/altegio/public/goods/${companyId}`, { signal: controller.signal });
+        const params = new URLSearchParams({
+          page: String(page),
+          count: String(pageSize),
+        });
+        const response = await fetch(`/api/altegio/public/goods/${companyId}?${params.toString()}`, {
+          signal: controller.signal,
+        });
 
         if (!response.ok) {
           throw new Error(`Не удалось загрузить сертификаты: ${response.status}`);
@@ -63,9 +75,11 @@ export function useAltegioGoods({ companyId, enabled = true }: UseAltegioGoodsOp
       cancelled = true;
       controller.abort();
     };
-  }, [companyId, enabled, refreshIndex]);
+  }, [companyId, enabled, refreshIndex, page, pageSize]);
 
   const reload = () => setRefreshIndex((index) => index + 1);
+  const nextPage = () => setPage((prev) => prev + 1);
+  const prevPage = () => setPage((prev) => (prev > 1 ? prev - 1 : 1));
 
-  return { goods, loading, error, reload } as const;
+  return { goods, loading, error, reload, page, pageSize, setPage, nextPage, prevPage } as const;
 }

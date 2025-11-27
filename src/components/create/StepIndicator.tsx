@@ -2,10 +2,11 @@ import { Check } from "lucide-react";
 
 interface StepIndicatorProps {
   currentStep: number;
-  totalSteps: number;
+  totalSteps?: number;
+  steps?: string[];
 }
 
-const steps = [
+const defaultSteps = [
   "Филиал",
   "Данные",
   "Дизайн",
@@ -13,11 +14,15 @@ const steps = [
   "Оплата",
 ];
 
-export const StepIndicator = ({ currentStep, totalSteps }: StepIndicatorProps) => {
+export const StepIndicator = ({ currentStep, totalSteps, steps }: StepIndicatorProps) => {
+  const stepsToRender = steps ?? defaultSteps;
+  const resolvedTotal = totalSteps ?? stepsToRender.length;
+  const visibleSteps = stepsToRender.slice(0, resolvedTotal);
+
   return (
     <div className="w-full flex justify-center px-4">
       <div className="w-full max-w-3xl flex items-center justify-center">
-        {steps.map((step, index) => {
+        {visibleSteps.map((step, index) => {
           const stepNumber = index + 1;
           const isActive = stepNumber === currentStep;
           const isCompleted = stepNumber < currentStep;
@@ -44,7 +49,7 @@ export const StepIndicator = ({ currentStep, totalSteps }: StepIndicatorProps) =
                   {step}
                 </span>
               </div>
-              {stepNumber < totalSteps && (
+              {stepNumber < resolvedTotal && (
                 <div
                   className={`flex-1 h-1 mx-2 rounded transition-all duration-300 ${
                     stepNumber < currentStep ? "bg-primary" : "bg-muted"

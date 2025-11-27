@@ -15,7 +15,7 @@ import { OrdersTable, DashboardOrder } from "@/components/admin/OrdersTable";
 import { CertificatesTable, DashboardCertificate } from "@/components/admin/CertificatesTable";
 import { BranchEditor } from "@/components/admin/BranchEditor";
 import { TemplateEditor } from "@/components/admin/TemplateEditor";
-import { CertificateQuickCreate } from "@/components/admin/CertificateQuickCreate";
+import { CertificateAdminWizard } from "@/components/admin/CertificateAdminWizard";
 
 type AdminTab = "dashboard" | "certificate" | "templates" | "branches" | "utm";
 
@@ -31,12 +31,14 @@ export const AdminDashboard = () => {
   const [certificates, setCertificates] = useState<DashboardCertificate[]>([]);
   const [certificatesLoading, setCertificatesLoading] = useState(false);
   const [certificatesError, setCertificatesError] = useState<string | null>(null);
+  const [certificateView, setCertificateView] = useState<"list" | "create">("list");
+  const [certificateSearch, setCertificateSearch] = useState("");
 
   const [usingCertificateId, setUsingCertificateId] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<AdminTab>("dashboard");
   const [selectedBranchId, setSelectedBranchId] = useState<string>("");
 
-  const isGlobalManager = session?.user?.role === "superadmin" || session?.user?.role === "admin";
+  const isGlobalManager = session?.user?.role === "superadmin";
   const userCompanyId = session?.user?.companyId ?? null;
 
   const allowedCompanies = useMemo(() => {
@@ -77,8 +79,17 @@ export const AdminDashboard = () => {
         throw new Error("Не удалось загрузить заказы");
       }
 
-      const payload = await response.json();
-      const mapped: DashboardOrder[] = payload.map((order: any) => ({
+      const payload = (await response.json()) as {
+        id: string;
+        orderNumber: string;
+        totalAmount: number;
+        status: string;
+        paymentStatus: string;
+        companyId: string;
+        createdAt: string;
+        recipientName?: string | null;
+      }[];
+      const mapped: DashboardOrder[] = payload.map((order) => ({
         id: order.id,
         orderNumber: order.orderNumber,
         amount: order.totalAmount,
@@ -107,6 +118,9 @@ export const AdminDashboard = () => {
       if (selectedBranchId && selectedBranchId !== "all") {
         queryParams.append("companyId", selectedBranchId);
       }
+      if (certificateSearch.trim()) {
+        queryParams.append("search", certificateSearch.trim());
+      }
 
       const response = await fetch(`/api/certificates?${queryParams.toString()}`, {
         headers: { Authorization: `Bearer ${session.token}` },
@@ -116,8 +130,22 @@ export const AdminDashboard = () => {
         throw new Error("Не удалось загрузить сертификаты");
       }
 
-      const payload = await response.json();
-      const mapped: DashboardCertificate[] = payload.map((cert: any) => ({
+      const payload = (await response.json()) as {
+        id: string;
+        code: string;
+        status: string;
+        companyId: string;
+        recipientName?: string | null;
+        senderName?: string | null;
+        createdAt: string;
+        price: number;
+        orderNumber?: string | null;
+        paymentStatus?: string | null;
+        buyerPhone?: string | null;
+        buyerEmail?: string | null;
+        utmTag?: string | null;
+      }[];
+      const mapped: DashboardCertificate[] = payload.map((cert) => ({
         id: cert.id,
         code: cert.code,
         status: cert.status,
@@ -140,14 +168,14 @@ export const AdminDashboard = () => {
     } finally {
       setCertificatesLoading(false);
     }
-  }, [session?.token, selectedBranchId]);
+  }, [session?.token, selectedBranchId, certificateSearch]);
 
   useEffect(() => {
     if (session?.token && selectedBranchId) {
       void loadOrders();
       void loadCertificates();
     }
-  }, [session?.token, selectedBranchId, loadOrders, loadCertificates]);
+  }, [session?.token, selectedBranchId, certificateSearch, loadOrders, loadCertificates]);
 
   const handleUseCertificate = useCallback(
     async (certificateId: string) => {
@@ -272,22 +300,40 @@ export const AdminDashboard = () => {
           </TabsContent>
 
           <TabsContent value="certificate" className="space-y-8">
-            <CertificateQuickCreate
-              companies={allowedCompanies}
-              onCreated={() => {
-                void loadCertificates();
-                void loadOrders();
-              }}
-            />
-            <CertificatesTable
-              certificates={certificates}
-              loading={certificatesLoading}
-              error={certificatesError}
-              onRefresh={loadCertificates}
-              companies={companies}
-              onUseCertificate={handleUseCertificate}
-              usingCertificateId={usingCertificateId}
-            />
+            <Tabs value={certificateView} onValueChange={(value) => setCertificateView(value as "list" | "create")} className="space-y-6">
+              <TabsList>
+                <TabsTrigger value="list">Список сертификатов</TabsTrigger>
+                <TabsTrigger value="create">Создать сертификат</TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="list" className="space-y-6">
+                <CertificatesTable
+                  certificates={certificates}
+                  loading={certificatesLoading}
+                  error={certificatesError}
+                  onRefresh={loadCertificates}
+                  companies={companies}
+                  onUseCertificate={handleUseCertificate}
+                  usingCertificateId={usingCertificateId}
+                  search={certificateSearch}
+                  onSearchChange={(value) => {
+                    setCertificateSearch(value);
+                    void loadCertificates();
+                  }}
+                />
+              </TabsContent>
+
+              <TabsContent value="create">
+                <CertificateAdminWizard
+                  companies={allowedCompanies}
+                  onCreated={() => {
+                    void loadCertificates();
+                    void loadOrders();
+                    setCertificateView("list");
+                  }}
+                />
+              </TabsContent>
+            </Tabs>
           </TabsContent>
 
           <TabsContent value="templates" className="space-y-8">

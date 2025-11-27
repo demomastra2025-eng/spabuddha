@@ -15,37 +15,60 @@ interface RequestOptions {
 
 import { query } from "../db/pool";
 
-async function getAltegioCredentials() {
-  const result = await query<{ key: string; value: string }>(
-    "SELECT key, value FROM system_settings WHERE key IN ('altegio_auth_token', 'altegio_user_id')",
-  );
-
-  const settings = result.rows.reduce(
-    (acc, row) => {
-      acc[row.key] = row.value;
-      return acc;
-    },
-    {} as Record<string, string>,
-  );
-
-  if (!settings.altegio_auth_token || !settings.altegio_user_id) {
-    throw new AppError(500, "Altegio credentials not found in system_settings");
+async function getAltegioCredentials(companyId: string) {
+  if (!companyId) {
+    throw new AppError(400, "Не указан филиал для Altegio");
   }
 
-  // Format: Bearer <token>, User <user_id>
-  // Note: altegio_auth_token in DB already includes "Bearer " prefix if inserted as per migration
-  // If it doesn't, we might need to adjust. Assuming it does based on user input.
-  return `${settings.altegio_auth_token}, User ${settings.altegio_user_id}`;
+  const result = await query<{ altegio_provider_token: string | null; altegio_user_token: string | null }>(
+    "SELECT altegio_provider_token, altegio_user_token FROM company WHERE id = $1 LIMIT 1",
+    [companyId],
+  );
+
+  const row = result.rows[0];
+  const providerToken = row?.altegio_provider_token?.trim();
+  const userToken = row?.altegio_user_token?.trim();
+
+  if (!providerToken || !userToken) {
+    throw new AppError(500, "Altegio credentials not found for company");
+  }
+
+  const authorization = providerToken.startsWith("Bearer") ? providerToken : `Bearer ${providerToken}`;
+  return `${authorization}, User ${userToken}`;
 }
 
-async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
-  const authHeader = await getAltegioCredentials();
+const shouldLogAltegio = !env.isProduction;
+
+function logAltegio(event: "request" | "response" | "error", payload: Record<string, unknown>) {
+  if (!shouldLogAltegio) return;
+  const timestamp = new Date().toISOString();
+  const safePayload = JSON.stringify(payload, (_key, value) => {
+    if (typeof value === "string" && value.length > 500) {
+      return `${value.slice(0, 500)}…`;
+    }
+    return value;
+  });
+  console.info(`[altegio:${event}] ${timestamp} ${safePayload}`);
+}
+
+async function request<T>(companyId: string, path: string, options: RequestOptions = {}): Promise<T> {
+  const authHeader = await getAltegioCredentials(companyId);
 
   const url = `${env.ALTEGIO_API_URL}/${path.replace(/^\/+/, "")}`;
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), env.ALTEGIO_TIMEOUT_MS);
 
+  const requestInfo = {
+    companyId,
+    path,
+    method: options.method ?? "GET",
+    hasBody: Boolean(options.body),
+    body: options.body ?? null,
+  };
+
   try {
+    logAltegio("request", requestInfo);
+
     const response = await fetch(url, {
       method: options.method ?? "GET",
       headers: {
@@ -64,6 +87,14 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
       payload = null;
     }
 
+    logAltegio("response", {
+      ...requestInfo,
+      status: response.status,
+      ok: response.ok,
+      success: payload?.success,
+      hasData: Boolean(payload && "data" in payload),
+    });
+
     if (!response.ok || payload?.success === false) {
       const details = payload ?? {};
       throw new AppError(
@@ -80,8 +111,13 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
     return (payload as unknown as T) ?? ({} as T);
   } catch (error) {
     if (error instanceof AppError) {
+      logAltegio("error", { ...requestInfo, message: error.message, details: error.details ?? null });
       throw error;
     }
+    logAltegio("error", {
+      ...requestInfo,
+      message: error instanceof Error ? error.message : String(error),
+    });
     throw new AppError(502, "Не удалось выполнить запрос к Altegio", {
       message: error instanceof Error ? error.message : String(error),
     });
@@ -95,14 +131,14 @@ function formatPhone(phone: string): string {
   return cleaned.startsWith("+") ? cleaned : `+${cleaned}`;
 }
 
-export async function searchClientByPhone(phone: string, companyId: string) {
+export async function searchClientByPhone(phone: string, companyId: string, altegioCompanyId: string) {
   if (!phone) {
     throw new AppError(400, "Телефон обязателен для поиска клиента в Altegio");
   }
 
   const formattedPhone = formatPhone(phone);
 
-  return request<{ id: number; name: string; phone: string }[]>(`company/${companyId}/clients/search`, {
+  return request<{ id: number; name: string; phone: string }[]>(companyId, `company/${altegioCompanyId}/clients/search`, {
     method: "POST",
     body: {
       page: 1,
@@ -125,6 +161,7 @@ export async function searchClientByPhone(phone: string, companyId: string) {
 
 export async function createClientInAltegio(
   companyId: string,
+  altegioCompanyId: string,
   params: { name?: string; phone: string; email?: string },
 ) {
   if (!params.phone) {
@@ -133,7 +170,7 @@ export async function createClientInAltegio(
 
   const formattedPhone = formatPhone(params.phone);
 
-  return request<{ id: number }>(`clients/${companyId}`, {
+  return request<{ id: number }>(companyId, `clients/${altegioCompanyId}`, {
     method: "POST",
     body: {
       name: params.name ?? formattedPhone,
@@ -156,13 +193,25 @@ export interface AltegioGood {
   [key: string]: unknown;
 }
 
-export async function listGoods(companyId: string, categoryId?: string | number) {
-  const queryParams = categoryId ? `?category_id=${categoryId}` : "";
-  return request<AltegioGood[]>(`goods/${companyId}${queryParams}`);
+export async function listGoods(
+  companyId: string,
+  altegioCompanyId: string,
+  categoryId?: string | number,
+  options?: { page?: number; count?: number },
+) {
+  const params = new URLSearchParams();
+  if (categoryId) {
+    params.set("category_id", String(categoryId));
+  }
+  params.set("page", String(options?.page ?? 1));
+  params.set("count", String(options?.count ?? 20));
+
+  const queryString = params.toString();
+  return request<AltegioGood[]>(companyId, `goods/${altegioCompanyId}?${queryString}`);
 }
 
-export async function listCertificateTypes(companyId: string) {
-  return request<unknown[]>(`company/${companyId}/loyalty/certificate_types/search`);
+export async function listCertificateTypes(companyId: string, altegioCompanyId: string) {
+  return request<unknown[]>(companyId, `company/${altegioCompanyId}/loyalty/certificate_types/search`);
 }
 
 export interface GoodsTransactionPayload {
@@ -175,25 +224,41 @@ export interface GoodsTransactionPayload {
   operation_unit_type: number;
   client_id: number | string | null;
   comment?: string;
+  good_special_number?: string;
 }
 
-export async function createGoodsTransaction(companyId: string, payload: GoodsTransactionPayload) {
-  return request<{ id?: number; document_id?: number }>(`storage_operations/goods_transactions/${companyId}`, {
-    method: "POST",
-    body: payload as unknown as Record<string, unknown>,
-  });
+export async function createGoodsTransaction(
+  companyId: string,
+  altegioCompanyId: string,
+  payload: GoodsTransactionPayload,
+) {
+  return request<{ id?: number; document_id?: number }>(
+    companyId,
+    `storage_operations/goods_transactions/${altegioCompanyId}`,
+    {
+      method: "POST",
+      body: payload as unknown as Record<string, unknown>,
+    },
+  );
 }
 
 function formatAltegioDate(date: Date) {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, "0");
   const day = String(date.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day} 00:00:00`;
+  const hours = String(date.getHours()).padStart(2, "0");
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+  const seconds = String(date.getSeconds()).padStart(2, "0");
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 }
 
-export async function createAltegioDocument(companyId: string, storageId: string | number) {
+export async function createAltegioDocument(
+  companyId: string,
+  altegioCompanyId: string,
+  storageId: string | number,
+) {
   const createDate = formatAltegioDate(new Date());
-  return request<{ id?: number }>(`storage_operations/documents/${companyId}`, {
+  return request<{ id?: number }>(companyId, `storage_operations/documents/${altegioCompanyId}`, {
     method: "POST",
     body: {
       type_id: 1,

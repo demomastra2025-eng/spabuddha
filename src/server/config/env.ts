@@ -32,7 +32,23 @@ const envSchema = z.object({
     .string()
     .optional()
     .transform((value) => (value ? value === "true" : undefined)),
-  SMTP_FROM: z.string().email().optional(),
+  SMTP_FROM: z
+    .string()
+    .optional()
+    .refine(
+      (value) => {
+        if (!value) return true;
+        const trimmed = value.trim();
+        if (z.string().email().safeParse(trimmed).success) return true;
+        // Accept "Name <email@domain>"
+        const match = trimmed.match(/<([^>]+)>/);
+        if (match?.[1]) {
+          return z.string().email().safeParse(match[1].trim()).success;
+        }
+        return false;
+      },
+      { message: "SMTP_FROM must be an email or in the form 'Name <email@domain>'" },
+    ),
   ONEVISION_API_URL: z.string().url().default("https://api.onevisionpay.com/"),
   ONEVISION_PAYMENT_LIFETIME: z
     .string()

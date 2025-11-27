@@ -1,0 +1,5455 @@
+{
+    "success": true,
+    "data": [
+        {
+            "title": "№567-20000т",
+            "value": "№567-20000т",
+            "label": "№567-20000т",
+            "article": "",
+            "category": "Сертификаты Сеть Buddha",
+            "category_id": 224820,
+            "salon_id": 129964,
+            "good_id": 22178974,
+            "cost": 20000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 222743,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 226517,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 226518,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1351864,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 2375226,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2023-03-28T16:34:15+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "тайский ойл 1 ч",
+            "value": "тайский ойл 1 ч",
+            "label": "тайский ойл 1 ч",
+            "article": "",
+            "category": "Сертификаты Сеть Buddha",
+            "category_id": 224820,
+            "salon_id": 129964,
+            "good_id": 22178973,
+            "cost": 15000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 225889,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 226517,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 226518,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1351864,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 2375226,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2023-03-28T16:34:15+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Тайский массаж-0001010",
+            "value": "Тайский массаж-0001010",
+            "label": "Тайский массаж-0001010",
+            "article": "",
+            "category": "Сертификаты Сеть Buddha",
+            "category_id": 224820,
+            "salon_id": 129964,
+            "good_id": 19661070,
+            "cost": 13000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 189207,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 226517,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 226518,
+                    "amount": -1
+                },
+                {
+                    "storage_id": 1351864,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 2375226,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2022-01-03T14:37:15+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Тайский массаж шейн.воротниковый-000998",
+            "value": "Тайский массаж шейн.воротниковый-000998",
+            "label": "Тайский массаж шейн.воротниковый-000998",
+            "article": "",
+            "category": "Сертификаты Сеть Buddha",
+            "category_id": 224820,
+            "salon_id": 129964,
+            "good_id": 19663789,
+            "cost": 22000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 189229,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 226517,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 226518,
+                    "amount": -1
+                },
+                {
+                    "storage_id": 1351864,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 2375226,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2022-01-03T16:02:17+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Спа день Перезагрузки-0001063",
+            "value": "Спа день Перезагрузки-0001063",
+            "label": "Спа день Перезагрузки-0001063",
+            "article": "",
+            "category": "Сертификаты Сеть Buddha",
+            "category_id": 224820,
+            "salon_id": 129964,
+            "good_id": 19661145,
+            "cost": 32000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 189213,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 226517,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 226518,
+                    "amount": -1
+                },
+                {
+                    "storage_id": 1351864,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 2375226,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2022-01-03T14:57:33+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Спа день перезагрузка-000997",
+            "value": "Спа день перезагрузка-000997",
+            "label": "Спа день перезагрузка-000997",
+            "article": "",
+            "category": "Сертификаты Сеть Buddha",
+            "category_id": 224820,
+            "salon_id": 129964,
+            "good_id": 19661158,
+            "cost": 32000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 189216,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 226517,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 226518,
+                    "amount": -1
+                },
+                {
+                    "storage_id": 1351864,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 2375226,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2022-01-03T15:18:06+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Спа день перезагрузка-000994",
+            "value": "Спа день перезагрузка-000994",
+            "label": "Спа день перезагрузка-000994",
+            "article": "",
+            "category": "Сертификаты Сеть Buddha",
+            "category_id": 224820,
+            "salon_id": 129964,
+            "good_id": 19665574,
+            "cost": 32000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 189324,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 226517,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 226518,
+                    "amount": -1
+                },
+                {
+                    "storage_id": 1351864,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 2375226,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2022-01-04T09:46:47+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Спа день перезагрузка-0001036",
+            "value": "Спа день перезагрузка-0001036",
+            "label": "Спа день перезагрузка-0001036",
+            "article": "",
+            "category": "Сертификаты Сеть Buddha",
+            "category_id": 224820,
+            "salon_id": 129964,
+            "good_id": 19665642,
+            "cost": 32000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 189333,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 226517,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 226518,
+                    "amount": -1
+                },
+                {
+                    "storage_id": 1351864,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 2375226,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2022-01-04T10:45:33+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "СПА день Перезагрузка-0001018",
+            "value": "СПА день Перезагрузка-0001018",
+            "label": "СПА день Перезагрузка-0001018",
+            "article": "",
+            "category": "Сертификаты Сеть Buddha",
+            "category_id": 224820,
+            "salon_id": 129964,
+            "good_id": 19660670,
+            "cost": 32000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 189202,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 226517,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 226518,
+                    "amount": -1
+                },
+                {
+                    "storage_id": 1351864,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 2375226,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2022-01-03T14:17:32+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "СПА день Перезагрузка-0001018",
+            "value": "СПА день Перезагрузка-0001018",
+            "label": "СПА день Перезагрузка-0001018",
+            "article": "",
+            "category": "Сертификаты Сеть Buddha",
+            "category_id": 224820,
+            "salon_id": 129964,
+            "good_id": 19660672,
+            "cost": 32000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 189203,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 226517,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 226518,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1351864,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 2375226,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2022-01-03T14:17:38+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "спа день перезагрузка",
+            "value": "спа день перезагрузка",
+            "label": "спа день перезагрузка",
+            "article": "",
+            "category": "Сертификаты Сеть Buddha",
+            "category_id": 224820,
+            "salon_id": 129964,
+            "good_id": 14531382,
+            "cost": 26000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 131532,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 226517,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 226518,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1351864,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 2375226,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2021-01-21T11:48:55+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "СПА день перезагрузка",
+            "value": "СПА день перезагрузка",
+            "label": "СПА день перезагрузка",
+            "article": "",
+            "category": "Сертификаты Сеть Buddha",
+            "category_id": 224820,
+            "salon_id": 129964,
+            "good_id": 19555385,
+            "cost": 32000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 185737,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 226517,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 226518,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1351864,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 2375226,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2021-12-23T19:14:38+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "спа день перезагрузка",
+            "value": "спа день перезагрузка",
+            "label": "спа день перезагрузка",
+            "article": "",
+            "category": "Сертификаты Сеть Buddha",
+            "category_id": 224820,
+            "salon_id": 129964,
+            "good_id": 17671529,
+            "cost": 527,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 164761,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 226517,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 226518,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1351864,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 2375226,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2021-08-20T14:04:59+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Сертификат-000991",
+            "value": "Сертификат-000991",
+            "label": "Сертификат-000991",
+            "article": "",
+            "category": "Сертификаты Сеть Buddha",
+            "category_id": 224820,
+            "salon_id": 129964,
+            "good_id": 19665583,
+            "cost": 30000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 189327,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 226517,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 226518,
+                    "amount": -1
+                },
+                {
+                    "storage_id": 1351864,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 2375226,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2022-01-04T09:59:53+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Сертификат-000811",
+            "value": "Сертификат-000811",
+            "label": "Сертификат-000811",
+            "article": "",
+            "category": "Сертификаты Сеть Buddha",
+            "category_id": 224820,
+            "salon_id": 129964,
+            "good_id": 19665755,
+            "cost": 10000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 189340,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 226517,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 226518,
+                    "amount": -1
+                },
+                {
+                    "storage_id": 1351864,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 2375226,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2022-01-04T11:21:16+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Сертификат-0001027",
+            "value": "Сертификат-0001027",
+            "label": "Сертификат-0001027",
+            "article": "",
+            "category": "Сертификаты Сеть Buddha",
+            "category_id": 224820,
+            "salon_id": 129964,
+            "good_id": 19665548,
+            "cost": 20000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 189316,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 226517,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 226518,
+                    "amount": -1
+                },
+                {
+                    "storage_id": 1351864,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 2375226,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2022-01-04T09:26:46+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Сертификат электронный -000815",
+            "value": "Сертификат электронный -000815",
+            "label": "Сертификат электронный -000815",
+            "article": "",
+            "category": "Сертификаты Сеть Buddha",
+            "category_id": 224820,
+            "salon_id": 129964,
+            "good_id": 19665761,
+            "cost": 10000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 189341,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 226517,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 226518,
+                    "amount": -1
+                },
+                {
+                    "storage_id": 1351864,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 2375226,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2022-01-04T11:26:51+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "сертификат на 35,000",
+            "value": "сертификат на 35,000",
+            "label": "сертификат на 35,000",
+            "article": "",
+            "category": "Сертификаты Сеть Buddha",
+            "category_id": 224820,
+            "salon_id": 129964,
+            "good_id": 4206703,
+            "cost": 35000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 22991,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 226517,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 226518,
+                    "amount": -1
+                },
+                {
+                    "storage_id": 1351864,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 2375226,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2019-09-12T18:11:44+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Сертификат Инь-янь 35000 (Мадина Галия)",
+            "value": "Сертификат Инь-янь 35000 (Мадина Галия)",
+            "label": "Сертификат Инь-янь 35000 (Мадина Галия)",
+            "article": "",
+            "category": "Сертификаты Сеть Buddha",
+            "category_id": 224820,
+            "salon_id": 129964,
+            "good_id": 4293901,
+            "cost": 35000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 24061,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 226517,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 226518,
+                    "amount": -1
+                },
+                {
+                    "storage_id": 1351864,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 2375226,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2019-09-12T18:11:55+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Сертификат Инь-Янь",
+            "value": "Сертификат Инь-Янь",
+            "label": "Сертификат Инь-Янь",
+            "article": "",
+            "category": "Сертификаты Сеть Buddha",
+            "category_id": 224820,
+            "salon_id": 129964,
+            "good_id": 4231837,
+            "cost": 35000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 23403,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 226517,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 226518,
+                    "amount": -1
+                },
+                {
+                    "storage_id": 1351864,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 2375226,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2019-09-12T18:11:46+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "сертификат 25,000",
+            "value": "сертификат 25,000",
+            "label": "сертификат 25,000",
+            "article": "",
+            "category": "Сертификаты Сеть Buddha",
+            "category_id": 224820,
+            "salon_id": 129964,
+            "good_id": 4097049,
+            "cost": 25000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 22211,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 226517,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 226518,
+                    "amount": -1
+                },
+                {
+                    "storage_id": 1351864,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 2375226,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2019-09-12T18:11:31+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Сертификат 20,000",
+            "value": "Сертификат 20,000",
+            "label": "Сертификат 20,000",
+            "article": "",
+            "category": "Сертификаты Сеть Buddha",
+            "category_id": 224820,
+            "salon_id": 129964,
+            "good_id": 4227828,
+            "cost": 20000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 23349,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 226517,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 226518,
+                    "amount": -1
+                },
+                {
+                    "storage_id": 1351864,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 2375226,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2019-09-12T18:11:45+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Сертификат 15000 (скидка 10000)",
+            "value": "Сертификат 15000 (скидка 10000)",
+            "label": "Сертификат 15000 (скидка 10000)",
+            "article": "",
+            "category": "Сертификаты Сеть Buddha",
+            "category_id": 224820,
+            "salon_id": 129964,
+            "good_id": 4237961,
+            "cost": 10000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 23538,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 226517,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 226518,
+                    "amount": -1
+                },
+                {
+                    "storage_id": 1351864,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 2375226,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2019-09-12T18:11:46+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "сертификат 15000",
+            "value": "сертификат 15000",
+            "label": "сертификат 15000",
+            "article": "",
+            "category": "Сертификаты Сеть Buddha",
+            "category_id": 224820,
+            "salon_id": 129964,
+            "good_id": 4134817,
+            "cost": 15000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 22458,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 226517,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 226518,
+                    "amount": -1
+                },
+                {
+                    "storage_id": 1351864,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 2375226,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2019-09-12T18:11:35+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Сертификат 12000",
+            "value": "Сертификат 12000",
+            "label": "Сертификат 12000",
+            "article": "",
+            "category": "Сертификаты Сеть Buddha",
+            "category_id": 224820,
+            "salon_id": 129964,
+            "good_id": 4303603,
+            "cost": 12000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 24091,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 226517,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 226518,
+                    "amount": -1
+                },
+                {
+                    "storage_id": 1351864,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 2375226,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2019-09-12T18:11:57+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        }
+    ],
+    "meta": []
+},
+{
+    "success": true,
+    "data": [
+        {
+            "title": "№567-20000т",
+            "value": "№567-20000т",
+            "label": "№567-20000т",
+            "article": "",
+            "category": "Сертификаты Сеть Buddha",
+            "category_id": 916963,
+            "salon_id": 717537,
+            "good_id": 22153721,
+            "cost": 20000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 222743,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 1435634,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1435635,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2023-03-21T09:49:12+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "тайский ойл 1 ч",
+            "value": "тайский ойл 1 ч",
+            "label": "тайский ойл 1 ч",
+            "article": "",
+            "category": "Сертификаты Сеть Buddha",
+            "category_id": 916963,
+            "salon_id": 717537,
+            "good_id": 21943927,
+            "cost": 15000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 225889,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 1435634,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1435635,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2022-11-28T09:38:56+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Тайский массаж-0001010",
+            "value": "Тайский массаж-0001010",
+            "label": "Тайский массаж-0001010",
+            "article": "",
+            "category": "Сертификаты Сеть Buddha",
+            "category_id": 916963,
+            "salon_id": 717537,
+            "good_id": 22153692,
+            "cost": 13000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 189207,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 1435634,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1435635,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2023-03-21T09:49:12+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Тайский массаж шейн.воротниковый-000998",
+            "value": "Тайский массаж шейн.воротниковый-000998",
+            "label": "Тайский массаж шейн.воротниковый-000998",
+            "article": "",
+            "category": "Сертификаты Сеть Buddha",
+            "category_id": 916963,
+            "salon_id": 717537,
+            "good_id": 22153691,
+            "cost": 22000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 189229,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 1435634,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1435635,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2023-03-21T09:49:12+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Спа день Перезагрузки-0001063",
+            "value": "Спа день Перезагрузки-0001063",
+            "label": "Спа день Перезагрузки-0001063",
+            "article": "",
+            "category": "Сертификаты Сеть Buddha",
+            "category_id": 916963,
+            "salon_id": 717537,
+            "good_id": 22153682,
+            "cost": 32000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 189213,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 1435634,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1435635,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2023-03-21T09:49:12+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Спа день перезагрузка-000997",
+            "value": "Спа день перезагрузка-000997",
+            "label": "Спа день перезагрузка-000997",
+            "article": "",
+            "category": "Сертификаты Сеть Buddha",
+            "category_id": 916963,
+            "salon_id": 717537,
+            "good_id": 22153681,
+            "cost": 32000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 189216,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 1435634,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1435635,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2023-03-21T09:49:12+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Спа день перезагрузка-000994",
+            "value": "Спа день перезагрузка-000994",
+            "label": "Спа день перезагрузка-000994",
+            "article": "",
+            "category": "Сертификаты Сеть Buddha",
+            "category_id": 916963,
+            "salon_id": 717537,
+            "good_id": 22153680,
+            "cost": 32000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 189324,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 1435634,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1435635,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2023-03-21T09:49:12+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Спа день перезагрузка-0001036",
+            "value": "Спа день перезагрузка-0001036",
+            "label": "Спа день перезагрузка-0001036",
+            "article": "",
+            "category": "Сертификаты Сеть Buddha",
+            "category_id": 916963,
+            "salon_id": 717537,
+            "good_id": 22153679,
+            "cost": 32000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 189333,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 1435634,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1435635,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2023-03-21T09:49:12+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "СПА день Перезагрузка-0001018",
+            "value": "СПА день Перезагрузка-0001018",
+            "label": "СПА день Перезагрузка-0001018",
+            "article": "",
+            "category": "Сертификаты Сеть Buddha",
+            "category_id": 916963,
+            "salon_id": 717537,
+            "good_id": 22153677,
+            "cost": 32000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 189202,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 1435634,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1435635,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2023-03-21T09:49:12+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "СПА день Перезагрузка-0001018",
+            "value": "СПА день Перезагрузка-0001018",
+            "label": "СПА день Перезагрузка-0001018",
+            "article": "",
+            "category": "Сертификаты Сеть Buddha",
+            "category_id": 916963,
+            "salon_id": 717537,
+            "good_id": 22153678,
+            "cost": 32000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 189203,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 1435634,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1435635,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2023-03-21T09:49:12+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "спа день перезагрузка",
+            "value": "спа день перезагрузка",
+            "label": "спа день перезагрузка",
+            "article": "",
+            "category": "Сертификаты Сеть Buddha",
+            "category_id": 916963,
+            "salon_id": 717537,
+            "good_id": 22153674,
+            "cost": 26000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 131532,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 1435634,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1435635,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2023-03-21T09:49:12+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "СПА день перезагрузка",
+            "value": "СПА день перезагрузка",
+            "label": "СПА день перезагрузка",
+            "article": "",
+            "category": "Сертификаты Сеть Buddha",
+            "category_id": 916963,
+            "salon_id": 717537,
+            "good_id": 22153675,
+            "cost": 32000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 185737,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 1435634,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1435635,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2023-03-21T09:49:12+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "спа день перезагрузка",
+            "value": "спа день перезагрузка",
+            "label": "спа день перезагрузка",
+            "article": "",
+            "category": "Сертификаты Сеть Buddha",
+            "category_id": 916963,
+            "salon_id": 717537,
+            "good_id": 22153676,
+            "cost": 527,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 164761,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 1435634,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1435635,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2023-03-21T09:49:12+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Сертификат-000991",
+            "value": "Сертификат-000991",
+            "label": "Сертификат-000991",
+            "article": "",
+            "category": "Сертификаты Сеть Buddha",
+            "category_id": 916963,
+            "salon_id": 717537,
+            "good_id": 22153666,
+            "cost": 30000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 189327,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 1435634,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1435635,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2023-03-21T09:49:12+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Сертификат-000811",
+            "value": "Сертификат-000811",
+            "label": "Сертификат-000811",
+            "article": "",
+            "category": "Сертификаты Сеть Buddha",
+            "category_id": 916963,
+            "salon_id": 717537,
+            "good_id": 22153665,
+            "cost": 10000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 189340,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 1435634,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1435635,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2023-03-21T09:49:12+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Сертификат-0001027",
+            "value": "Сертификат-0001027",
+            "label": "Сертификат-0001027",
+            "article": "",
+            "category": "Сертификаты Сеть Buddha",
+            "category_id": 916963,
+            "salon_id": 717537,
+            "good_id": 22153664,
+            "cost": 20000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 189316,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 1435634,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1435635,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2023-03-21T09:49:12+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Сертификат электронный -000815",
+            "value": "Сертификат электронный -000815",
+            "label": "Сертификат электронный -000815",
+            "article": "",
+            "category": "Сертификаты Сеть Buddha",
+            "category_id": 916963,
+            "salon_id": 717537,
+            "good_id": 22153663,
+            "cost": 10000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 189341,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 1435634,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1435635,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2023-03-21T09:49:12+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "сертификат на 35,000",
+            "value": "сертификат на 35,000",
+            "label": "сертификат на 35,000",
+            "article": "",
+            "category": "Сертификаты Сеть Buddha",
+            "category_id": 916963,
+            "salon_id": 717537,
+            "good_id": 22153662,
+            "cost": 35000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 22991,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 1435634,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1435635,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2023-03-21T09:49:12+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Сертификат Инь-янь 35000 (Мадина Галия)",
+            "value": "Сертификат Инь-янь 35000 (Мадина Галия)",
+            "label": "Сертификат Инь-янь 35000 (Мадина Галия)",
+            "article": "",
+            "category": "Сертификаты Сеть Buddha",
+            "category_id": 916963,
+            "salon_id": 717537,
+            "good_id": 22153661,
+            "cost": 35000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 24061,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 1435634,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1435635,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2023-03-21T09:49:12+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Сертификат Инь-Янь",
+            "value": "Сертификат Инь-Янь",
+            "label": "Сертификат Инь-Янь",
+            "article": "",
+            "category": "Сертификаты Сеть Buddha",
+            "category_id": 916963,
+            "salon_id": 717537,
+            "good_id": 22153660,
+            "cost": 35000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 23403,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 1435634,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1435635,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2023-03-21T09:49:12+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Сертификат 27,000",
+            "value": "Сертификат 27,000",
+            "label": "Сертификат 27,000",
+            "article": "",
+            "category": "Сертификаты Сеть Buddha",
+            "category_id": 916963,
+            "salon_id": 717537,
+            "good_id": 22153659,
+            "cost": 27000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 22193,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 1435634,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1435635,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2023-07-13T12:09:36+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "сертификат 25,000",
+            "value": "сертификат 25,000",
+            "label": "сертификат 25,000",
+            "article": "",
+            "category": "Сертификаты Сеть Buddha",
+            "category_id": 916963,
+            "salon_id": 717537,
+            "good_id": 22153658,
+            "cost": 25000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 22211,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 1435634,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1435635,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2023-03-21T09:49:12+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Сертификат 20,000",
+            "value": "Сертификат 20,000",
+            "label": "Сертификат 20,000",
+            "article": "",
+            "category": "Сертификаты Сеть Buddha",
+            "category_id": 916963,
+            "salon_id": 717537,
+            "good_id": 22153657,
+            "cost": 20000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 23349,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 1435634,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1435635,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2023-03-21T09:49:12+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Сертификат 15000 (скидка 10000)",
+            "value": "Сертификат 15000 (скидка 10000)",
+            "label": "Сертификат 15000 (скидка 10000)",
+            "article": "",
+            "category": "Сертификаты Сеть Buddha",
+            "category_id": 916963,
+            "salon_id": 717537,
+            "good_id": 22153656,
+            "cost": 10000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 23538,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 1435634,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1435635,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2023-03-21T09:49:12+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "сертификат 15000",
+            "value": "сертификат 15000",
+            "label": "сертификат 15000",
+            "article": "",
+            "category": "Сертификаты Сеть Buddha",
+            "category_id": 916963,
+            "salon_id": 717537,
+            "good_id": 22153655,
+            "cost": 15000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 22458,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 1435634,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1435635,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2023-03-21T09:49:12+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        }
+    ],
+    "meta": []
+},
+{
+    "success": true,
+    "data": [
+        {
+            "title": "№567-20000т",
+            "value": "№567-20000т",
+            "label": "№567-20000т",
+            "article": "",
+            "category": "Сертификаты Сеть Buddha",
+            "category_id": 932166,
+            "salon_id": 750957,
+            "good_id": 22158244,
+            "cost": 20000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 222743,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 1503813,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1503814,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1504825,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2023-03-21T09:50:30+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "тайский ойл 1 ч",
+            "value": "тайский ойл 1 ч",
+            "label": "тайский ойл 1 ч",
+            "article": "",
+            "category": "Сертификаты Сеть Buddha",
+            "category_id": 932166,
+            "salon_id": 750957,
+            "good_id": 22158215,
+            "cost": 15000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 225889,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 1503813,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1503814,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1504825,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2023-03-21T09:50:30+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Тайский массаж-0001010",
+            "value": "Тайский массаж-0001010",
+            "label": "Тайский массаж-0001010",
+            "article": "",
+            "category": "Сертификаты Сеть Buddha",
+            "category_id": 932166,
+            "salon_id": 750957,
+            "good_id": 22158214,
+            "cost": 13000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 189207,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 1503813,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1503814,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1504825,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2023-03-21T09:50:30+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Тайский массаж шейн.воротниковый-000998",
+            "value": "Тайский массаж шейн.воротниковый-000998",
+            "label": "Тайский массаж шейн.воротниковый-000998",
+            "article": "",
+            "category": "Сертификаты Сеть Buddha",
+            "category_id": 932166,
+            "salon_id": 750957,
+            "good_id": 22158213,
+            "cost": 22000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 189229,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 1503813,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1503814,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1504825,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2023-03-21T09:50:30+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Спа день Перезагрузки-0001063",
+            "value": "Спа день Перезагрузки-0001063",
+            "label": "Спа день Перезагрузки-0001063",
+            "article": "",
+            "category": "Сертификаты Сеть Buddha",
+            "category_id": 932166,
+            "salon_id": 750957,
+            "good_id": 22158204,
+            "cost": 32000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 189213,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 1503813,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1503814,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1504825,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2023-03-21T09:50:30+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Спа день перезагрузка-000997",
+            "value": "Спа день перезагрузка-000997",
+            "label": "Спа день перезагрузка-000997",
+            "article": "",
+            "category": "Сертификаты Сеть Buddha",
+            "category_id": 932166,
+            "salon_id": 750957,
+            "good_id": 22158203,
+            "cost": 32000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 189216,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 1503813,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1503814,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1504825,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2023-03-21T09:50:30+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Спа день перезагрузка-000994",
+            "value": "Спа день перезагрузка-000994",
+            "label": "Спа день перезагрузка-000994",
+            "article": "",
+            "category": "Сертификаты Сеть Buddha",
+            "category_id": 932166,
+            "salon_id": 750957,
+            "good_id": 22158202,
+            "cost": 32000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 189324,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 1503813,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1503814,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1504825,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2023-03-21T09:50:30+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Спа день перезагрузка-0001036",
+            "value": "Спа день перезагрузка-0001036",
+            "label": "Спа день перезагрузка-0001036",
+            "article": "",
+            "category": "Сертификаты Сеть Buddha",
+            "category_id": 932166,
+            "salon_id": 750957,
+            "good_id": 22158201,
+            "cost": 32000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 189333,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 1503813,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1503814,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1504825,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2023-03-21T09:50:30+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "СПА день Перезагрузка-0001018",
+            "value": "СПА день Перезагрузка-0001018",
+            "label": "СПА день Перезагрузка-0001018",
+            "article": "",
+            "category": "Сертификаты Сеть Buddha",
+            "category_id": 932166,
+            "salon_id": 750957,
+            "good_id": 22158199,
+            "cost": 32000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 189202,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 1503813,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1503814,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1504825,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2023-03-21T09:50:30+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "СПА день Перезагрузка-0001018",
+            "value": "СПА день Перезагрузка-0001018",
+            "label": "СПА день Перезагрузка-0001018",
+            "article": "",
+            "category": "Сертификаты Сеть Buddha",
+            "category_id": 932166,
+            "salon_id": 750957,
+            "good_id": 22158200,
+            "cost": 32000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 189203,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 1503813,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1503814,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1504825,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2023-03-21T09:50:30+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "спа день перезагрузка",
+            "value": "спа день перезагрузка",
+            "label": "спа день перезагрузка",
+            "article": "",
+            "category": "Сертификаты Сеть Buddha",
+            "category_id": 932166,
+            "salon_id": 750957,
+            "good_id": 22158196,
+            "cost": 26000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 131532,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 1503813,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1503814,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1504825,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2023-03-21T09:50:30+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "СПА день перезагрузка",
+            "value": "СПА день перезагрузка",
+            "label": "СПА день перезагрузка",
+            "article": "",
+            "category": "Сертификаты Сеть Buddha",
+            "category_id": 932166,
+            "salon_id": 750957,
+            "good_id": 22158197,
+            "cost": 32000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 185737,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 1503813,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1503814,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1504825,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2023-03-21T09:50:30+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "спа день перезагрузка",
+            "value": "спа день перезагрузка",
+            "label": "спа день перезагрузка",
+            "article": "",
+            "category": "Сертификаты Сеть Buddha",
+            "category_id": 932166,
+            "salon_id": 750957,
+            "good_id": 22158198,
+            "cost": 527,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 164761,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 1503813,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1503814,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1504825,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2023-03-21T09:50:30+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Сертификат-000991",
+            "value": "Сертификат-000991",
+            "label": "Сертификат-000991",
+            "article": "",
+            "category": "Сертификаты Сеть Buddha",
+            "category_id": 932166,
+            "salon_id": 750957,
+            "good_id": 22158188,
+            "cost": 30000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 189327,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 1503813,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1503814,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1504825,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2023-03-21T09:50:30+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Сертификат-000811",
+            "value": "Сертификат-000811",
+            "label": "Сертификат-000811",
+            "article": "",
+            "category": "Сертификаты Сеть Buddha",
+            "category_id": 932166,
+            "salon_id": 750957,
+            "good_id": 22158187,
+            "cost": 10000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 189340,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 1503813,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1503814,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1504825,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2023-03-21T09:50:30+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Сертификат-0001027",
+            "value": "Сертификат-0001027",
+            "label": "Сертификат-0001027",
+            "article": "",
+            "category": "Сертификаты Сеть Buddha",
+            "category_id": 932166,
+            "salon_id": 750957,
+            "good_id": 22158186,
+            "cost": 20000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 189316,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 1503813,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1503814,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1504825,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2023-03-21T09:50:30+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Сертификат электронный -000815",
+            "value": "Сертификат электронный -000815",
+            "label": "Сертификат электронный -000815",
+            "article": "",
+            "category": "Сертификаты Сеть Buddha",
+            "category_id": 932166,
+            "salon_id": 750957,
+            "good_id": 22158185,
+            "cost": 10000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 189341,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 1503813,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1503814,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1504825,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2023-03-21T09:50:30+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "сертификат на 35,000",
+            "value": "сертификат на 35,000",
+            "label": "сертификат на 35,000",
+            "article": "",
+            "category": "Сертификаты Сеть Buddha",
+            "category_id": 932166,
+            "salon_id": 750957,
+            "good_id": 22158184,
+            "cost": 35000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 22991,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 1503813,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1503814,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1504825,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2023-03-21T09:50:30+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Сертификат Инь-янь 35000 (Мадина Галия)",
+            "value": "Сертификат Инь-янь 35000 (Мадина Галия)",
+            "label": "Сертификат Инь-янь 35000 (Мадина Галия)",
+            "article": "",
+            "category": "Сертификаты Сеть Buddha",
+            "category_id": 932166,
+            "salon_id": 750957,
+            "good_id": 22158183,
+            "cost": 35000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 24061,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 1503813,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1503814,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1504825,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2023-03-21T09:50:30+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Сертификат Инь-Янь",
+            "value": "Сертификат Инь-Янь",
+            "label": "Сертификат Инь-Янь",
+            "article": "",
+            "category": "Сертификаты Сеть Buddha",
+            "category_id": 932166,
+            "salon_id": 750957,
+            "good_id": 22158182,
+            "cost": 35000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 23403,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 1503813,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1503814,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1504825,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2023-03-21T09:50:30+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Сертификат 27,000",
+            "value": "Сертификат 27,000",
+            "label": "Сертификат 27,000",
+            "article": "",
+            "category": "Сертификаты Сеть Buddha",
+            "category_id": 932166,
+            "salon_id": 750957,
+            "good_id": 22158181,
+            "cost": 27000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 22193,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 1503813,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1503814,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1504825,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2023-07-13T12:09:36+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "сертификат 25,000",
+            "value": "сертификат 25,000",
+            "label": "сертификат 25,000",
+            "article": "",
+            "category": "Сертификаты Сеть Buddha",
+            "category_id": 932166,
+            "salon_id": 750957,
+            "good_id": 22158180,
+            "cost": 25000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 22211,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 1503813,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1503814,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1504825,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2023-03-21T09:50:30+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Сертификат 20,000",
+            "value": "Сертификат 20,000",
+            "label": "Сертификат 20,000",
+            "article": "",
+            "category": "Сертификаты Сеть Buddha",
+            "category_id": 932166,
+            "salon_id": 750957,
+            "good_id": 22158179,
+            "cost": 20000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 23349,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 1503813,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1503814,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1504825,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2023-03-21T09:50:30+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Сертификат 15000 (скидка 10000)",
+            "value": "Сертификат 15000 (скидка 10000)",
+            "label": "Сертификат 15000 (скидка 10000)",
+            "article": "",
+            "category": "Сертификаты Сеть Buddha",
+            "category_id": 932166,
+            "salon_id": 750957,
+            "good_id": 22158178,
+            "cost": 10000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 23538,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 1503813,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1503814,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1504825,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2023-03-21T09:50:30+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "сертификат 15000",
+            "value": "сертификат 15000",
+            "label": "сертификат 15000",
+            "article": "",
+            "category": "Сертификаты Сеть Buddha",
+            "category_id": 932166,
+            "salon_id": 750957,
+            "good_id": 22158177,
+            "cost": 15000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 22458,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 1503813,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1503814,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1504825,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2023-03-21T09:50:30+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        }
+    ],
+    "meta": []
+},
+{
+    "success": true,
+    "data": [
+        {
+            "title": "Шоколадный рай (2 часа 30 мин)",
+            "value": "Шоколадный рай (2 часа 30 мин)",
+            "label": "Шоколадный рай (2 часа 30 мин)",
+            "article": "",
+            "category": "Сертификаты BuddhaSpa Turan (пр. Туран, 54)",
+            "category_id": 967901,
+            "salon_id": 782603,
+            "good_id": 22882087,
+            "cost": 42000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 247759,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 1569452,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1569453,
+                    "amount": -5
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2024-01-17T10:27:55+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Шоколадный пилинг",
+            "value": "Шоколадный пилинг",
+            "label": "Шоколадный пилинг",
+            "article": "",
+            "category": "Сертификаты BuddhaSpa Turan (пр. Туран, 54)",
+            "category_id": 967901,
+            "salon_id": 782603,
+            "good_id": 22882029,
+            "cost": 12000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 247737,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 1569452,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1569453,
+                    "amount": -1
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2024-01-17T10:22:31+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Уход за лицом (30 минут) (6М)",
+            "value": "Уход за лицом (30 минут) (6М)",
+            "label": "Уход за лицом (30 минут) (6М)",
+            "article": "",
+            "category": "Сертификаты BuddhaSpa Turan (пр. Туран, 54)",
+            "category_id": 967901,
+            "salon_id": 782603,
+            "good_id": 24091985,
+            "cost": 12500,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 274004,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 1569452,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1569453,
+                    "amount": -1
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2025-03-18T17:35:00+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Тайское наслаждение(2 часа 30 мин)",
+            "value": "Тайское наслаждение(2 часа 30 мин)",
+            "label": "Тайское наслаждение(2 часа 30 мин)",
+            "article": "",
+            "category": "Сертификаты BuddhaSpa Turan (пр. Туран, 54)",
+            "category_id": 967901,
+            "salon_id": 782603,
+            "good_id": 23652458,
+            "cost": 59500,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 261257,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 1569452,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1569453,
+                    "amount": -2
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2024-10-31T15:47:38+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Тайское наслаждение (2 часа 45 мин)",
+            "value": "Тайское наслаждение (2 часа 45 мин)",
+            "label": "Тайское наслаждение (2 часа 45 мин)",
+            "article": "",
+            "category": "Сертификаты BuddhaSpa Turan (пр. Туран, 54)",
+            "category_id": 967901,
+            "salon_id": 782603,
+            "good_id": 22882049,
+            "cost": 59500,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 247747,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 1569452,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1569453,
+                    "amount": -6
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2024-01-17T10:25:41+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Тайский эликсир молодости (1 час)",
+            "value": "Тайский эликсир молодости (1 час)",
+            "label": "Тайский эликсир молодости (1 час)",
+            "article": "",
+            "category": "Сертификаты BuddhaSpa Turan (пр. Туран, 54)",
+            "category_id": 967901,
+            "salon_id": 782603,
+            "good_id": 22882001,
+            "cost": 21000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 247723,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 1569452,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1569453,
+                    "amount": -8
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2024-01-17T10:14:03+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Тайский эликсир молодости (1 час 30 мин)",
+            "value": "Тайский эликсир молодости (1 час 30 мин)",
+            "label": "Тайский эликсир молодости (1 час 30 мин)",
+            "article": "",
+            "category": "Сертификаты BuddhaSpa Turan (пр. Туран, 54)",
+            "category_id": 967901,
+            "salon_id": 782603,
+            "good_id": 22881999,
+            "cost": 27000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 247722,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 1569452,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1569453,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2024-01-17T10:13:50+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Тайский рай на двоих (2 часа 30 минут)",
+            "value": "Тайский рай на двоих (2 часа 30 минут)",
+            "label": "Тайский рай на двоих (2 часа 30 минут)",
+            "article": "",
+            "category": "Сертификаты BuddhaSpa Turan (пр. Туран, 54)",
+            "category_id": 967901,
+            "salon_id": 782603,
+            "good_id": 23652860,
+            "cost": 57000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 261270,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 1569452,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1569453,
+                    "amount": -28
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2024-10-31T16:49:59+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Тайский рай",
+            "value": "Тайский рай",
+            "label": "Тайский рай",
+            "article": "",
+            "category": "Сертификаты BuddhaSpa Turan (пр. Туран, 54)",
+            "category_id": 967901,
+            "salon_id": 782603,
+            "good_id": 22882039,
+            "cost": 57000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 247742,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 1569452,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1569453,
+                    "amount": -83
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2024-01-17T10:23:08+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Тайский привет Целлюлиту",
+            "value": "Тайский привет Целлюлиту",
+            "label": "Тайский привет Целлюлиту",
+            "article": "",
+            "category": "Сертификаты BuddhaSpa Turan (пр. Туран, 54)",
+            "category_id": 967901,
+            "salon_id": 782603,
+            "good_id": 22882021,
+            "cost": 43000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 247733,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 1569452,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1569453,
+                    "amount": -4
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2024-01-17T10:19:44+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Тайное свидание (2 часа)",
+            "value": "Тайное свидание (2 часа)",
+            "label": "Тайное свидание (2 часа)",
+            "article": "",
+            "category": "Сертификаты BuddhaSpa Turan (пр. Туран, 54)",
+            "category_id": 967901,
+            "salon_id": 782603,
+            "good_id": 22935538,
+            "cost": 70000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 248806,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 1569452,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1569453,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2024-02-12T08:56:20+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Скрабирование (30 мин)",
+            "value": "Скрабирование (30 мин)",
+            "label": "Скрабирование (30 мин)",
+            "article": "",
+            "category": "Сертификаты BuddhaSpa Turan (пр. Туран, 54)",
+            "category_id": 967901,
+            "salon_id": 782603,
+            "good_id": 22882203,
+            "cost": 12000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 247811,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 1569452,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1569453,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2024-01-17T10:40:41+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Райское наслаждение (2 часа 30 мин)",
+            "value": "Райское наслаждение (2 часа 30 мин)",
+            "label": "Райское наслаждение (2 часа 30 мин)",
+            "article": "",
+            "category": "Сертификаты BuddhaSpa Turan (пр. Туран, 54)",
+            "category_id": 967901,
+            "salon_id": 782603,
+            "good_id": 22882056,
+            "cost": 59000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 247750,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 1569452,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1569453,
+                    "amount": -243
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2024-01-17T10:26:04+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Райское блаженство (2 часа)",
+            "value": "Райское блаженство (2 часа)",
+            "label": "Райское блаженство (2 часа)",
+            "article": "",
+            "category": "Сертификаты BuddhaSpa Turan (пр. Туран, 54)",
+            "category_id": 967901,
+            "salon_id": 782603,
+            "good_id": 22882045,
+            "cost": 46500,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 247745,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 1569452,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1569453,
+                    "amount": -1
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2024-01-17T10:25:08+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Прикосновение (2 часа)",
+            "value": "Прикосновение (2 часа)",
+            "label": "Прикосновение (2 часа)",
+            "article": "",
+            "category": "Сертификаты BuddhaSpa Turan (пр. Туран, 54)",
+            "category_id": 967901,
+            "salon_id": 782603,
+            "good_id": 22882051,
+            "cost": 34000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 247748,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 1569452,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1569453,
+                    "amount": -2
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2024-01-17T10:25:53+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Прикосновение (1 час 30 мин)",
+            "value": "Прикосновение (1 час 30 мин)",
+            "label": "Прикосновение (1 час 30 мин)",
+            "article": "",
+            "category": "Сертификаты BuddhaSpa Turan (пр. Туран, 54)",
+            "category_id": 967901,
+            "salon_id": 782603,
+            "good_id": 22882054,
+            "cost": 29000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 247749,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 1569452,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1569453,
+                    "amount": -3
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2024-01-17T10:25:59+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Пилинг 4 этапный (1 час)",
+            "value": "Пилинг 4 этапный (1 час)",
+            "label": "Пилинг 4 этапный (1 час)",
+            "article": "",
+            "category": "Сертификаты BuddhaSpa Turan (пр. Туран, 54)",
+            "category_id": 967901,
+            "salon_id": 782603,
+            "good_id": 22882205,
+            "cost": 18000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 247812,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 1569452,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1569453,
+                    "amount": -7
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2024-01-17T10:40:46+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Пенное омовение с пилингом и чаепитием (1 час)",
+            "value": "Пенное омовение с пилингом и чаепитием (1 час)",
+            "label": "Пенное омовение с пилингом и чаепитием (1 час)",
+            "article": "",
+            "category": "Сертификаты BuddhaSpa Turan (пр. Туран, 54)",
+            "category_id": 967901,
+            "salon_id": 782603,
+            "good_id": 22882211,
+            "cost": 15000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 247815,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 1569452,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1569453,
+                    "amount": -29
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2024-01-17T10:41:32+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Очищающий пилинг (30 мин)",
+            "value": "Очищающий пилинг (30 мин)",
+            "label": "Очищающий пилинг (30 мин)",
+            "article": "",
+            "category": "Сертификаты BuddhaSpa Turan (пр. Туран, 54)",
+            "category_id": 967901,
+            "salon_id": 782603,
+            "good_id": 22882199,
+            "cost": 12000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 247809,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 1569452,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1569453,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2024-01-17T10:40:31+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Оплата за порчу бланка (1 000)",
+            "value": "Оплата за порчу бланка (1 000)",
+            "label": "Оплата за порчу бланка (1 000)",
+            "article": "",
+            "category": "Сертификаты BuddhaSpa Turan (пр. Туран, 54)",
+            "category_id": 967901,
+            "salon_id": 782603,
+            "good_id": 24063524,
+            "cost": 1000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 272989,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 1569452,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1569453,
+                    "amount": -1
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2025-03-07T19:47:55+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Обертывание (Шоколадное) (1 час)",
+            "value": "Обертывание (Шоколадное) (1 час)",
+            "label": "Обертывание (Шоколадное) (1 час)",
+            "article": "",
+            "category": "Сертификаты BuddhaSpa Turan (пр. Туран, 54)",
+            "category_id": 967901,
+            "salon_id": 782603,
+            "good_id": 22882209,
+            "cost": 15000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 247814,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 1569452,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1569453,
+                    "amount": -2
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2024-01-17T10:40:59+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Обертывание (Морскими водорослями) (1 час)",
+            "value": "Обертывание (Морскими водорослями) (1 час)",
+            "label": "Обертывание (Морскими водорослями) (1 час)",
+            "article": "",
+            "category": "Сертификаты BuddhaSpa Turan (пр. Туран, 54)",
+            "category_id": 967901,
+            "salon_id": 782603,
+            "good_id": 22882017,
+            "cost": 16000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 247731,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 1569452,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1569453,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2024-01-17T10:18:32+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Новогодний сет (на одного человека) (2 часа 30 мин)",
+            "value": "Новогодний сет (на одного человека) (2 часа 30 мин)",
+            "label": "Новогодний сет (на одного человека) (2 часа 30 мин)",
+            "article": "",
+            "category": "Сертификаты BuddhaSpa Turan (пр. Туран, 54)",
+            "category_id": 967901,
+            "salon_id": 782603,
+            "good_id": 22954893,
+            "cost": 43000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 249378,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 1569452,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1569453,
+                    "amount": -1
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2024-02-18T21:27:13+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Наследие Императора (2 часа)",
+            "value": "Наследие Императора (2 часа)",
+            "label": "Наследие Императора (2 часа)",
+            "article": "",
+            "category": "Сертификаты BuddhaSpa Turan (пр. Туран, 54)",
+            "category_id": 967901,
+            "salon_id": 782603,
+            "good_id": 22882120,
+            "cost": 26000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 247771,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 1569452,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1569453,
+                    "amount": -1
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2024-01-17T10:32:21+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Наследие Императора (1 час 30 мин)",
+            "value": "Наследие Императора (1 час 30 мин)",
+            "label": "Наследие Императора (1 час 30 мин)",
+            "article": "",
+            "category": "Сертификаты BuddhaSpa Turan (пр. Туран, 54)",
+            "category_id": 967901,
+            "salon_id": 782603,
+            "good_id": 22882117,
+            "cost": 22000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 247770,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 1569452,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 1569453,
+                    "amount": -3
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2024-01-17T10:32:15+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        }
+    ],
+    "meta": []
+},
+{
+    "success": true,
+    "data": [
+        {
+            "title": "Ғашықтар күні (2 часа)",
+            "value": "Ғашықтар күні (2 часа)",
+            "label": "Ғашықтар күні (2 часа)",
+            "article": "",
+            "category": "Сертификаты BuddhaSpa Taraz (пр. Толе би, 93Б)",
+            "category_id": 1005340,
+            "salon_id": 1266617,
+            "good_id": 23674135,
+            "cost": 45000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 262104,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 2539282,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 2539283,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2025-04-01T10:29:23+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Энергия Будды (3 часа)",
+            "value": "Энергия Будды (3 часа)",
+            "label": "Энергия Будды (3 часа)",
+            "article": "",
+            "category": "Сертификаты BuddhaSpa Taraz (пр. Толе би, 93Б)",
+            "category_id": 1005340,
+            "salon_id": 1266617,
+            "good_id": 23675234,
+            "cost": 55000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 262220,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 2539282,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 2539283,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2025-04-01T10:38:37+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Эликсир Будды (3 часа)",
+            "value": "Эликсир Будды (3 часа)",
+            "label": "Эликсир Будды (3 часа)",
+            "article": "",
+            "category": "Сертификаты BuddhaSpa Taraz (пр. Толе би, 93Б)",
+            "category_id": 1005340,
+            "salon_id": 1266617,
+            "good_id": 23674140,
+            "cost": 39000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 262105,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 2539282,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 2539283,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2025-04-01T10:29:35+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Шоколадный рай  (2 часа 30 мин)",
+            "value": "Шоколадный рай  (2 часа 30 мин)",
+            "label": "Шоколадный рай  (2 часа 30 мин)",
+            "article": "",
+            "category": "Сертификаты BuddhaSpa Taraz (пр. Толе би, 93Б)",
+            "category_id": 1005340,
+            "salon_id": 1266617,
+            "good_id": 23675238,
+            "cost": 39000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 262221,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 2539282,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 2539283,
+                    "amount": -46
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2025-04-01T10:38:47+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Шведский массаж  (2 часа)",
+            "value": "Шведский массаж  (2 часа)",
+            "label": "Шведский массаж  (2 часа)",
+            "article": "",
+            "category": "Сертификаты BuddhaSpa Taraz (пр. Толе би, 93Б)",
+            "category_id": 1005340,
+            "salon_id": 1266617,
+            "good_id": 23674960,
+            "cost": 22000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 262164,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 2539282,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 2539283,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2025-04-01T10:32:25+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Шведский массаж  (1 час)",
+            "value": "Шведский массаж  (1 час)",
+            "label": "Шведский массаж  (1 час)",
+            "article": "",
+            "category": "Сертификаты BuddhaSpa Taraz (пр. Толе би, 93Б)",
+            "category_id": 1005340,
+            "salon_id": 1266617,
+            "good_id": 23674956,
+            "cost": 18000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 262162,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 2539282,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 2539283,
+                    "amount": -2
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2025-04-01T10:32:15+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Шведский массаж  (1 час 30 мин)",
+            "value": "Шведский массаж  (1 час 30 мин)",
+            "label": "Шведский массаж  (1 час 30 мин)",
+            "article": "",
+            "category": "Сертификаты BuddhaSpa Taraz (пр. Толе би, 93Б)",
+            "category_id": 1005340,
+            "salon_id": 1266617,
+            "good_id": 23674958,
+            "cost": 22000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 262163,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 2539282,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 2539283,
+                    "amount": -2
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2025-04-01T10:32:21+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Чудо для двоих ( на двоих)",
+            "value": "Чудо для двоих ( на двоих)",
+            "label": "Чудо для двоих ( на двоих)",
+            "article": "",
+            "category": "Сертификаты BuddhaSpa Taraz (пр. Толе би, 93Б)",
+            "category_id": 1005340,
+            "salon_id": 1266617,
+            "good_id": 23759063,
+            "cost": 71000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 264323,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 2539282,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 2539283,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2025-04-01T10:40:56+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Уход за лицом (1 час)",
+            "value": "Уход за лицом (1 час)",
+            "label": "Уход за лицом (1 час)",
+            "article": "",
+            "category": "Сертификаты BuddhaSpa Taraz (пр. Толе би, 93Б)",
+            "category_id": 1005340,
+            "salon_id": 1266617,
+            "good_id": 23673844,
+            "cost": 20000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 262076,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 2539282,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 2539283,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2025-04-01T10:26:58+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Традиционный тайский массаж (2 часа)",
+            "value": "Традиционный тайский массаж (2 часа)",
+            "label": "Традиционный тайский массаж (2 часа)",
+            "article": "",
+            "category": "Сертификаты BuddhaSpa Taraz (пр. Толе би, 93Б)",
+            "category_id": 1005340,
+            "salon_id": 1266617,
+            "good_id": 23674973,
+            "cost": 25000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 262167,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 2539282,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 2539283,
+                    "amount": -2
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2025-04-01T10:32:46+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Традиционный тайский массаж (1 час)",
+            "value": "Традиционный тайский массаж (1 час)",
+            "label": "Традиционный тайский массаж (1 час)",
+            "article": "",
+            "category": "Сертификаты BuddhaSpa Taraz (пр. Толе би, 93Б)",
+            "category_id": 1005340,
+            "salon_id": 1266617,
+            "good_id": 23739890,
+            "cost": 15000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 263536,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 2539282,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 2539283,
+                    "amount": -139
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2025-04-01T10:39:23+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Традиционный тайский массаж  (1 час 30 минут)",
+            "value": "Традиционный тайский массаж  (1 час 30 минут)",
+            "label": "Традиционный тайский массаж  (1 час 30 минут)",
+            "article": "",
+            "category": "Сертификаты BuddhaSpa Taraz (пр. Толе би, 93Б)",
+            "category_id": 1005340,
+            "salon_id": 1266617,
+            "good_id": 23674970,
+            "cost": 20000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 262166,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 2539282,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 2539283,
+                    "amount": -5
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2025-04-01T10:32:36+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Тибет (2 часа 30 мин)",
+            "value": "Тибет (2 часа 30 мин)",
+            "label": "Тибет (2 часа 30 мин)",
+            "article": "",
+            "category": "Сертификаты BuddhaSpa Taraz (пр. Толе би, 93Б)",
+            "category_id": 1005340,
+            "salon_id": 1266617,
+            "good_id": 23674144,
+            "cost": 36000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 262106,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 2539282,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 2539283,
+                    "amount": -1
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2025-04-01T10:29:39+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Тайский Эликсир Молодости (1 час)",
+            "value": "Тайский Эликсир Молодости (1 час)",
+            "label": "Тайский Эликсир Молодости (1 час)",
+            "article": "",
+            "category": "Сертификаты BuddhaSpa Taraz (пр. Толе би, 93Б)",
+            "category_id": 1005340,
+            "salon_id": 1266617,
+            "good_id": 23674151,
+            "cost": 21000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 262108,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 2539282,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 2539283,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2025-04-01T10:29:54+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Тайский Эликсир Молодости (1 час 30 мин)",
+            "value": "Тайский Эликсир Молодости (1 час 30 мин)",
+            "label": "Тайский Эликсир Молодости (1 час 30 мин)",
+            "article": "",
+            "category": "Сертификаты BuddhaSpa Taraz (пр. Толе би, 93Б)",
+            "category_id": 1005340,
+            "salon_id": 1266617,
+            "good_id": 23674157,
+            "cost": 27000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 262110,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 2539282,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 2539283,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2025-04-01T10:30:08+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Тайский уют осени",
+            "value": "Тайский уют осени",
+            "label": "Тайский уют осени",
+            "article": "",
+            "category": "Сертификаты BuddhaSpa Taraz (пр. Толе би, 93Б)",
+            "category_id": 1005340,
+            "salon_id": 1266617,
+            "good_id": 23675253,
+            "cost": 35000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 262223,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 2539282,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 2539283,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2025-04-01T10:38:56+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Тайский рай (2 часа 30 минут)",
+            "value": "Тайский рай (2 часа 30 минут)",
+            "label": "Тайский рай (2 часа 30 минут)",
+            "article": "",
+            "category": "Сертификаты BuddhaSpa Taraz (пр. Толе би, 93Б)",
+            "category_id": 1005340,
+            "salon_id": 1266617,
+            "good_id": 23674148,
+            "cost": 61000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 262107,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 2539282,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 2539283,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2025-04-01T10:29:43+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Тайное свидание (2 часа)",
+            "value": "Тайное свидание (2 часа)",
+            "label": "Тайное свидание (2 часа)",
+            "article": "",
+            "category": "Сертификаты BuddhaSpa Taraz (пр. Толе би, 93Б)",
+            "category_id": 1005340,
+            "salon_id": 1266617,
+            "good_id": 23673733,
+            "cost": 60000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 262056,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 2539282,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 2539283,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2025-04-01T10:25:03+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Супер сила (3 часа 20 мин)",
+            "value": "Супер сила (3 часа 20 мин)",
+            "label": "Супер сила (3 часа 20 мин)",
+            "article": "",
+            "category": "Сертификаты BuddhaSpa Taraz (пр. Толе би, 93Б)",
+            "category_id": 1005340,
+            "salon_id": 1266617,
+            "good_id": 23674159,
+            "cost": 49000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 262111,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 2539282,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 2539283,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2025-04-01T10:30:14+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Стоун массаж (1 час 30 мин)",
+            "value": "Стоун массаж (1 час 30 мин)",
+            "label": "Стоун массаж (1 час 30 мин)",
+            "article": "",
+            "category": "Сертификаты BuddhaSpa Taraz (пр. Толе би, 93Б)",
+            "category_id": 1005340,
+            "salon_id": 1266617,
+            "good_id": 23673752,
+            "cost": 29000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 262060,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 2539282,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 2539283,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2025-04-01T10:25:19+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Стоун массаж  (1 час)",
+            "value": "Стоун массаж  (1 час)",
+            "label": "Стоун массаж  (1 час)",
+            "article": "",
+            "category": "Сертификаты BuddhaSpa Taraz (пр. Толе би, 93Б)",
+            "category_id": 1005340,
+            "salon_id": 1266617,
+            "good_id": 23673761,
+            "cost": 22000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 262062,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 2539282,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 2539283,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2025-04-01T10:26:19+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Спортивный релакс (2 часа)",
+            "value": "Спортивный релакс (2 часа)",
+            "label": "Спортивный релакс (2 часа)",
+            "article": "",
+            "category": "Сертификаты BuddhaSpa Taraz (пр. Толе би, 93Б)",
+            "category_id": 1005340,
+            "salon_id": 1266617,
+            "good_id": 23674165,
+            "cost": 30000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 262113,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 2539282,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 2539283,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2025-04-01T10:30:25+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Спортивный релакс (1 час)",
+            "value": "Спортивный релакс (1 час)",
+            "label": "Спортивный релакс (1 час)",
+            "article": "",
+            "category": "Сертификаты BuddhaSpa Taraz (пр. Толе би, 93Б)",
+            "category_id": 1005340,
+            "salon_id": 1266617,
+            "good_id": 23674169,
+            "cost": 19000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 262114,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 2539282,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 2539283,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2025-04-01T10:30:30+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Спортивный релакс (1 час 30 мин)",
+            "value": "Спортивный релакс (1 час 30 мин)",
+            "label": "Спортивный релакс (1 час 30 мин)",
+            "article": "",
+            "category": "Сертификаты BuddhaSpa Taraz (пр. Толе би, 93Б)",
+            "category_id": 1005340,
+            "salon_id": 1266617,
+            "good_id": 23674173,
+            "cost": 23000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 262116,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 2539282,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 2539283,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2025-04-01T10:30:40+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        },
+        {
+            "title": "Спортивный массаж(1 час 30 мин)",
+            "value": "Спортивный массаж(1 час 30 мин)",
+            "label": "Спортивный массаж(1 час 30 мин)",
+            "article": "",
+            "category": "Сертификаты BuddhaSpa Taraz (пр. Толе би, 93Б)",
+            "category_id": 1005340,
+            "salon_id": 1266617,
+            "good_id": 23674290,
+            "cost": 20000,
+            "unit_id": 216760,
+            "unit_short_title": "pc",
+            "service_unit_id": 216760,
+            "service_unit_short_title": "pc",
+            "actual_cost": 0,
+            "unit_actual_cost": 0,
+            "unit_actual_cost_format": "0 ₸",
+            "unit_equals": 1,
+            "barcode": "",
+            "is_chain": true,
+            "comment": "",
+            "loyalty_abonement_type_id": 0,
+            "loyalty_certificate_type_id": 262128,
+            "loyalty_allow_empty_code": 0,
+            "loyalty_serial_number_limited": 0,
+            "actual_amounts": [
+                {
+                    "storage_id": 2539282,
+                    "amount": 0
+                },
+                {
+                    "storage_id": 2539283,
+                    "amount": 0
+                }
+            ],
+            "critical_amount": 0,
+            "desired_amount": 0,
+            "last_change_date": "2025-04-01T10:31:29+0400",
+            "is_goods_mark_enabled": false,
+            "loyalty_expiration_type_id": null
+        }
+    ],
+    "meta": []
+}

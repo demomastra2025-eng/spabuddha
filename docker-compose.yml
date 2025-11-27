@@ -37,18 +37,17 @@ services:
       - JWT_SECRET=${JWT_SECRET:-your-jwt-secret-here}
       - APP_BASE_URL=${APP_BASE_URL:-http://localhost:3000}
       - VITE_APP_BASE_URL=${VITE_APP_BASE_URL:-http://localhost:3000}
-      - VITE_SUPABASE_URL=${VITE_SUPABASE_URL:-http://127.0.0.1:54321}
-      - VITE_SUPABASE_ANON_KEY=${VITE_SUPABASE_ANON_KEY}
       - WAZZUP_API_URL=${WAZZUP_API_URL:-https://api.wazzup24.com/v3}
       - ONEVISION_API_URL=${ONEVISION_API_URL:-https://api.paysage.kz/}
       - ONEVISION_PAYMENT_LIFETIME=${ONEVISION_PAYMENT_LIFETIME:-3600}
       - RESEND_API_KEY=${RESEND_API_KEY}
       - RESEND_FROM=${RESEND_FROM:-noreply@buddhaspa.kz}
+      - MAIL_PROVIDER=${MAIL_PROVIDER:-smtp}
       - SMTP_HOST=${SMTP_HOST}
-      - SMTP_PORT=${SMTP_PORT:-587}
+      - SMTP_PORT=${SMTP_PORT:-25}
       - SMTP_SECURE=${SMTP_SECURE:-false}
       - SMTP_USER=${SMTP_USER}
-      - SMTP_PASSWORD=${SMTP_PASSWORD}
+      - SMTP_PASS=${SMTP_PASS}
       - SMTP_FROM=${SMTP_FROM:-noreply@buddhaspa.kz}
     ports:
       - "3000:3000"

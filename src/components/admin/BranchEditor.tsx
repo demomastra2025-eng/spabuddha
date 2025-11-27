@@ -27,7 +27,6 @@ const branchFormDefaults = {
     wazzupNumber: "",
     altegioCompanyId: "",
     altegioCategoryId: "",
-    altegioDocumentId: "",
 };
 
 interface BranchEditorProps {
@@ -86,7 +85,6 @@ export const BranchEditor = ({ companies, token, onRefresh }: BranchEditorProps)
                     wazzupNumber: data.wazzupNumber ?? "",
                     altegioCompanyId: data.altegioCompanyId ?? "",
                     altegioCategoryId: data.altegioCategoryId ?? "",
-                    altegioDocumentId: data.altegioDocumentId ?? "",
                 });
                 setBranchError(null);
             } catch (error) {
@@ -144,7 +142,6 @@ export const BranchEditor = ({ companies, token, onRefresh }: BranchEditorProps)
                 wazzupNumber: branchForm.wazzupNumber.trim() || undefined,
                 altegioCompanyId: branchForm.altegioCompanyId.trim() || undefined,
                 altegioCategoryId: branchForm.altegioCategoryId.trim() || undefined,
-                altegioDocumentId: branchForm.altegioDocumentId.trim() || undefined,
             };
 
             const response = await fetch(`/api/companies/${selectedBranchId}`, {
@@ -322,14 +319,6 @@ export const BranchEditor = ({ companies, token, onRefresh }: BranchEditorProps)
                                                 value={branchForm.altegioCategoryId}
                                                 onChange={(event) => handleBranchFieldChange("altegioCategoryId")(event.target.value)}
                                                 placeholder="например, 1005340"
-                                            />
-                                        </div>
-                                        <div className="space-y-2">
-                                            <Label>Altegio document_id</Label>
-                                            <Input
-                                                value={branchForm.altegioDocumentId}
-                                                onChange={(event) => handleBranchFieldChange("altegioDocumentId")(event.target.value)}
-                                                placeholder="например, 22254960"
                                             />
                                         </div>
                                     </div>

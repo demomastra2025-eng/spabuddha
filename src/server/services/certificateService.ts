@@ -139,12 +139,19 @@ function mapCertificate(row: CertificateRow): CertificateView {
   };
 }
 
-export async function listCertificates(filter?: { companyId?: string }): Promise<CertificateListItem[]> {
+export async function listCertificates(filter?: { companyId?: string; search?: string }): Promise<CertificateListItem[]> {
   const params: unknown[] = [];
   const conditions = ["o.payment_status = 'paid'"];
   if (filter?.companyId) {
     params.push(filter.companyId);
     conditions.push(`c.company_id = $${params.length}`);
+  }
+  if (filter?.search) {
+    const searchTerm = `%${filter.search.trim()}%`;
+    params.push(searchTerm);
+    conditions.push(
+      `(c.code ILIKE $${params.length} OR o.order_number ILIKE $${params.length} OR c.id::text ILIKE $${params.length})`,
+    );
   }
   const whereClause = conditions.length ? `WHERE ${conditions.join(" AND ")}` : "";
 

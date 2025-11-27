@@ -17,6 +17,8 @@ type CompanySeed = {
   companyNameOneVisionId?: string;
   altegioCompanyId?: string;
   altegioCategoryId?: string;
+  altegioProviderToken?: string;
+  altegioUserToken?: string;
   storageId?: string;
   wazzupApiToken?: string;
   wazzupChannelId?: string;
@@ -38,7 +40,7 @@ type UserSeed = {
   email: string;
   password: string;
   displayName: string;
-  role: "superadmin" | "admin" | "manager";
+  role: "superadmin" | "manager";
   companySlug?: string;
 };
 
@@ -59,6 +61,8 @@ const companies: CompanySeed[] = branchDefaults.map((branch) => {
 
   // Common Wazzup API Key
   const wazzupApiToken = "0f9aa378023049da83957004e5609a3b";
+  const altegioProviderToken = "Bearer j8smnhedgebees6f2nnb";
+  const altegioUserToken = "31c63baf1509bc49f46be91c68123178";
 
   if (branch.address.includes("Иляева")) {
     altegioCompanyId = "129964";
@@ -106,6 +110,8 @@ const companies: CompanySeed[] = branchDefaults.map((branch) => {
     companyNameOneVisionId: oneVisionConfig.serviceId,
     altegioCompanyId,
     altegioCategoryId,
+    altegioProviderToken,
+    altegioUserToken,
     storageId,
     wazzupApiToken,
     wazzupChannelId,
@@ -116,8 +122,8 @@ const companies: CompanySeed[] = branchDefaults.map((branch) => {
 const templateSeeds: TemplateSeed[] = [
   {
     key: "ornament-gold-1",
-    name: "Золотое кружево",
-    description: "Глубокий чёрный фон с золотыми акцентами",
+    name: "Сердца Гармонии",
+    description: "Спа-сертификат для нежного отдыха и гармонии",
     backgroundUrl: "/template/IMG_2137.PNG",
     previewUrl: "/template/IMG_2137.PNG",
     layoutConfig: {
@@ -128,8 +134,8 @@ const templateSeeds: TemplateSeed[] = [
   },
   {
     key: "marble-light",
-    name: "Светлый мрамор",
-    description: "Текстурный светлый фон с тонкими линиями золота",
+    name: "Мгновения Райского Отдыха",
+    description: "Лёгкое настроение курортного отдыха — подарок для полного перезагрузки и отдыха души",
     backgroundUrl: "/template/IMG_2138.PNG",
     previewUrl: "/template/IMG_2138.PNG",
     layoutConfig: {
@@ -140,8 +146,8 @@ const templateSeeds: TemplateSeed[] = [
   },
   {
     key: "marble-dark",
-    name: "Тёмный мрамор",
-    description: "Контрастный мрамор с россыпью золотых вкраплений",
+    name: "Послание Любви и Заботы",
+    description: "Яркий и тёплый знак внимания, дарящий приятные эмоции и атмосферу релакса",
     backgroundUrl: "/template/IMG_2139.PNG",
     previewUrl: "/template/IMG_2139.PNG",
     layoutConfig: {
@@ -152,8 +158,8 @@ const templateSeeds: TemplateSeed[] = [
   },
   {
     key: "amber-lines",
-    name: "Янтарные линии",
-    description: "Тёмный градиент с диагональными янтарными штрихами",
+    name: "Два сердца",
+    description: "Спа-сертификат для романтического подарка",
     backgroundUrl: "/template/IMG_2141.PNG",
     previewUrl: "/template/IMG_2141.PNG",
     layoutConfig: {
@@ -164,8 +170,8 @@ const templateSeeds: TemplateSeed[] = [
   },
   {
     key: "terracotta-silk",
-    name: "Терракотовый шёлк",
-    description: "Насыщенный терракотовый фон с плавными линиями",
+    name: "Розовые подарки",
+    description: "Яркий праздничный спа-сертификат с подарками",
     backgroundUrl: "/template/IMG_2142.PNG",
     previewUrl: "/template/IMG_2142.PNG",
     layoutConfig: {
@@ -176,8 +182,8 @@ const templateSeeds: TemplateSeed[] = [
   },
   {
     key: "buddha-glow",
-    name: "Сияние Будды",
-    description: "Глубокий чёрный с крупным золотым орнаментом",
+    name: "Белые коробки с красными бантами",
+    description: "Универсальный спа-сертификат для любого повода",
     backgroundUrl: "/template/IMG_2143.PNG",
     previewUrl: "/template/IMG_2143.PNG",
     layoutConfig: {
@@ -188,8 +194,8 @@ const templateSeeds: TemplateSeed[] = [
   },
   {
     key: "stone-mineral",
-    name: "Минеральный камень",
-    description: "Пастельные минералы и золотой логотип",
+    name: "Письмо с любовью",
+    description: "Нежный спа-сертификат для тёплых признаний",
     backgroundUrl: "/template/IMG_2144.PNG",
     previewUrl: "/template/IMG_2144.PNG",
     layoutConfig: {
@@ -200,8 +206,8 @@ const templateSeeds: TemplateSeed[] = [
   },
   {
     key: "calligraphy-gold",
-    name: "Подпись мастера",
-    description: "Тёмный фон со вставками золотой каллиграфии",
+    name: "Золотые подарки",
+    description: "Премиальный спа-сертификат с акцентом на люкс",
     backgroundUrl: "/template/IMG_2149.JPG",
     previewUrl: "/template/IMG_2149.JPG",
     layoutConfig: {
@@ -212,8 +218,8 @@ const templateSeeds: TemplateSeed[] = [
   },
   {
     key: "pearl-wave",
-    name: "Перламутровая волна",
-    description: "Молочно-золотой градиент с мягкой текстурой",
+    name: "Цветочная композиция",
+    description: "Женственный спа-сертификат с цветочным настроением",
     backgroundUrl: "/template/IMG_2150.JPG",
     previewUrl: "/template/IMG_2150.JPG",
     layoutConfig: {
@@ -224,8 +230,8 @@ const templateSeeds: TemplateSeed[] = [
   },
   {
     key: "graphite-gold",
-    name: "Графитовый блеск",
-    description: "Графит и золото для строгого сертификата",
+    name: "Солнечные смайлы с сердцами",
+    description: "Жизнерадостный спа-сертификат для позитивного сюрприза",
     backgroundUrl: "/template/IMG_2151.JPG",
     previewUrl: "/template/IMG_2151.JPG",
     layoutConfig: {
@@ -242,12 +248,6 @@ const userSeeds: UserSeed[] = [
     password: "SuperBuddha#2025",
     displayName: "Супер администратор",
     role: "superadmin",
-  },
-  {
-    email: "admin@buddhaspa.kz",
-    password: "BuddhaSpa#2025",
-    displayName: "Главный администратор",
-    role: "admin",
   },
   {
     email: "astana.manager@buddhaspa.kz",
@@ -324,12 +324,14 @@ async function seedCompanies(pool: Pool) {
              email = $12,
              altegio_company_id = $13,
              altegio_category_id = $14,
-             storage_id = $15,
-             wazzup_api_token = $16,
-             wazzup_channel_id = $17,
-             wazzup_number = $18,
+             altegio_provider_token = $15,
+             altegio_user_token = $16,
+             storage_id = $17,
+             wazzup_api_token = $18,
+             wazzup_channel_id = $19,
+             wazzup_number = $20,
              updated_at = NOW()
-         WHERE id = $19`,
+         WHERE id = $21`,
         [
           company.label,
           company.address,
@@ -345,6 +347,8 @@ async function seedCompanies(pool: Pool) {
           company.email ?? null,
           company.altegioCompanyId ?? null,
           company.altegioCategoryId ?? null,
+          company.altegioProviderToken ?? null,
+          company.altegioUserToken ?? null,
           company.storageId ?? null,
           company.wazzupApiToken ?? null,
           company.wazzupChannelId ?? null,
@@ -359,9 +363,9 @@ async function seedCompanies(pool: Pool) {
     const result = await pool.query<{ id: string }>(
       `INSERT INTO company
         (slug, label, address, phone, status, manager_name, timezone, name_company, key_one_vision,
-         pass_one_vision, company_one_vision_id, company_name_one_vision_id, email, altegio_company_id, altegio_category_id, storage_id,
-         wazzup_api_token, wazzup_channel_id, wazzup_number)
-       VALUES ($1,$2,$3,$4,'active',$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18)
+         pass_one_vision, company_one_vision_id, company_name_one_vision_id, email, altegio_company_id, altegio_category_id,
+         altegio_provider_token, altegio_user_token, storage_id, wazzup_api_token, wazzup_channel_id, wazzup_number)
+       VALUES ($1,$2,$3,$4,'active',$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20)
        RETURNING id`,
       [
         company.slug,
@@ -378,6 +382,8 @@ async function seedCompanies(pool: Pool) {
         company.email ?? null,
         company.altegioCompanyId ?? null,
         company.altegioCategoryId ?? null,
+        company.altegioProviderToken ?? null,
+        company.altegioUserToken ?? null,
         company.storageId ?? null,
         company.wazzupApiToken ?? null,
         company.wazzupChannelId ?? null,
@@ -452,10 +458,7 @@ async function seedTemplates(pool: Pool) {
 }
 
 async function seedSystemSettings(pool: Pool) {
-  const settings = [
-    { key: "altegio_auth_token", value: "Bearer j8smnhedgebees6f2nnb", description: "Altegio API Authorization Token" },
-    { key: "altegio_user_id", value: "31c63baf1509bc49f46be91c68123178", description: "Altegio User ID" },
-  ];
+  const settings: { key: string; value: string; description?: string }[] = [];
 
   for (const setting of settings) {
     await pool.query(
@@ -470,6 +473,15 @@ async function seedSystemSettings(pool: Pool) {
   }
 }
 
+async function ensureSchemaCompat(pool: Pool) {
+  // Добавляем новые колонки, если база уже существовала без них
+  await pool.query(`
+    ALTER TABLE company
+    ADD COLUMN IF NOT EXISTS altegio_provider_token TEXT,
+    ADD COLUMN IF NOT EXISTS altegio_user_token TEXT;
+  `);
+}
+
 export interface SeedResult {
   companies: number;
   users: number;
@@ -479,6 +491,7 @@ export interface SeedResult {
 export async function runSeed(): Promise<SeedResult> {
   const pool = getPool();
   try {
+    await ensureSchemaCompat(pool);
     await seedSystemSettings(pool);
     const companyMap = await seedCompanies(pool);
     const userMap = await seedUsers(pool, companyMap);

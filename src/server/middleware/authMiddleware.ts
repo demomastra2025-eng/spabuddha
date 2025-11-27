@@ -2,8 +2,8 @@ import { RequestHandler } from "express";
 import { AppError } from "../errors/AppError";
 import { verifyAccessToken } from "../utils/jwt";
 
-const adminRoles = new Set(["admin", "superadmin"]);
-const managerAndAboveRoles = new Set(["manager", "admin", "superadmin"]);
+const adminRoles = new Set(["superadmin"]);
+const managerAndAboveRoles = new Set(["manager", "superadmin"]);
 
 export const requireAuth: RequestHandler = (req, _res, next) => {
   const header = req.headers.authorization;

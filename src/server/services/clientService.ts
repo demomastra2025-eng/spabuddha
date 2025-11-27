@@ -1,7 +1,6 @@
 import { z } from "zod";
 import { pool, query, type PoolClientLike } from "../db/pool";
 import { AppError } from "../errors/AppError";
-import { env } from "../config/env";
 
 const clientRow = z.object({
   id: z.string(),
@@ -96,21 +95,17 @@ async function syncAltegioClientId(
     return null;
   }
 
-  if (!env.ALTEGIO_USER_TOKEN) {
-    return null;
-  }
-
   const altegioCompanyId = await getAltegioCompanyId(params.companyId, executor);
   const displayName = params.name?.trim() || params.phone;
 
   const { searchClientByPhone, createClientInAltegio } = await import("./altegioService");
-  const existing = await searchClientByPhone(params.phone, altegioCompanyId);
+  const existing = await searchClientByPhone(params.phone, params.companyId, altegioCompanyId);
   const foundId = Array.isArray(existing) && existing[0]?.id ? String(existing[0].id) : null;
 
   let altegioClientId = foundId;
 
   if (!altegioClientId) {
-    const created = await createClientInAltegio(altegioCompanyId, {
+    const created = await createClientInAltegio(params.companyId, altegioCompanyId, {
       name: displayName,
       phone: params.phone,
       email: params.email ?? undefined,
