@@ -46,90 +46,100 @@ All colors MUST be HSL.
   }
 
   :root {
-    /* Buddha Spa Color System */
-    --background: 52 94% 94%; /* Warm cream #FEFAE0 */
-    --foreground: 88 39% 15%; /* Deep forest #283618 */
+    /* Buddha Spa Color System — основано на:
+       #6A6A6A (тускло-серый), #BA9050 (оливково-желтый), white, black */
 
-    --card: 52 94% 94%;
-    --card-foreground: 88 39% 15%;
+    /* Базовые */
+    --background: 40 32% 96%; /* теплый айвори */
+    --foreground: 0 0% 12%; /* глубокий графит */
 
-    --popover: 87 63% 92%; /* Misty sage #EBF7DC */
-    --popover-foreground: 88 39% 15%;
+    --card: 40 32% 98%;
+    --card-foreground: 0 0% 12%;
 
-    --primary: 28 67% 44%; /* Amber clay #BC6C25 */
-    --primary-foreground: 52 94% 94%;
+    --popover: 40 32% 97%;
+    --popover-foreground: 0 0% 12%;
 
-    --secondary: 74 32% 32%; /* Moss green #606C38 */
-    --secondary-foreground: 52 94% 94%;
+    /* Основной акцент — тускло-серый #6A6A6A */
+    --primary: 0 0% 42%;
+    --primary-foreground: 0 0% 100%;
 
-    --muted: 87 52% 88%;
-    --muted-foreground: 74 32% 24%;
+    /* Вторичный — золото #BA9050 */
+    --secondary: 36 43% 52%;
+    --secondary-foreground: 0 0% 100%;
 
-    --accent: 88 39% 15%;
-    --accent-foreground: 52 94% 94%;
+    /* Подложки и текст в серой гамме */
+    --muted: 0 0% 40%;
+    --muted-foreground: 0 0% 18%;
 
-    --destructive: 0 84% 60%;
+    /* Акцент — теплый беж */
+    --accent: 38 30% 70%;
+    --accent-foreground: 0 0% 12%;
+
+    --destructive: 4 70% 48%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 87 37% 82%;
-    --input: 87 37% 82%;
-    --ring: 28 67% 44%;
+    --border: 0 0% 86%;
+    --input: 0 0% 86%;
+    --ring: 36 43% 52%;
 
     --radius: 1rem;
 
-    /* Custom Design Tokens */
-    --spa-cream: 52 94% 94%;
-    --spa-beige: 87 63% 92%;
-    --spa-sage: 74 32% 32%;
-    --spa-gold: 28 67% 44%;
-    --spa-graphite: 88 39% 15%;
+    /* Дополнительные токены */
+    --spa-ivory: 40 32% 96%;
+    --spa-beige: 38 30% 88%;
+    --spa-gold: 36 43% 52%;
+    --spa-gold-soft: 36 43% 62%;
+    --spa-graphite: 0 0% 12%;
+    --spa-gray: 0 0% 42%; /* #6A6A6A */
+    --spa-ink: 0 0% 7%;
 
     /* Shadows */
-    --shadow-soft: 0 18px 40px -12px hsl(var(--spa-graphite) / 0.12);
-    --shadow-glow: 0 0 45px hsl(var(--spa-gold) / 0.18);
+    --shadow-soft: 0 20px 50px -18px hsl(var(--spa-graphite) / 0.16);
+    --shadow-glow: 0 0 48px hsl(var(--spa-gold) / 0.22);
 
     /* Transitions */
     --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-spring: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
 
-    --sidebar-background: 52 94% 94%;
-    --sidebar-foreground: 88 39% 15%;
-    --sidebar-primary: 28 67% 44%;
-    --sidebar-primary-foreground: 52 94% 94%;
-    --sidebar-accent: 87 63% 92%;
-    --sidebar-accent-foreground: 88 39% 15%;
-    --sidebar-border: 87 37% 82%;
-    --sidebar-ring: 28 67% 44%;
+    /* Sidebar */
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 0 0% 15%;
+    --sidebar-primary: 36 43% 52%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 38 30% 88%;
+    --sidebar-accent-foreground: 0 0% 15%;
+    --sidebar-border: 0 0% 86%;
+    --sidebar-ring: 36 43% 52%;
   }
 
   .dark {
-    --background: 88 39% 10%;
-    --foreground: 52 94% 94%;
+    --background: 0 0% 6%;
+    --foreground: 0 0% 96%;
 
-    --card: 88 39% 12%;
-    --card-foreground: 52 94% 94%;
+    --card: 0 0% 10%;
+    --card-foreground: 0 0% 96%;
 
-    --popover: 88 39% 14%;
-    --popover-foreground: 52 94% 94%;
+    --popover: 0 0% 12%;
+    --popover-foreground: 0 0% 96%;
 
-    --primary: 28 67% 48%;
-    --primary-foreground: 52 94% 94%;
+    --primary: 0 0% 68%;
+    --primary-foreground: 0 0% 6%;
 
-    --secondary: 74 32% 28%;
-    --secondary-foreground: 52 94% 94%;
+    --secondary: 36 43% 60%;
+    --secondary-foreground: 0 0% 96%;
 
-    --muted: 88 22% 22%;
-    --muted-foreground: 52 55% 82%;
+    --muted: 0 0% 30%;
+    --muted-foreground: 0 0% 82%;
 
-    --accent: 28 67% 48%;
-    --accent-foreground: 52 94% 94%;
+    --accent: 38 30% 65%;
+    --accent-foreground: 0 0% 6%;
 
-    --destructive: 0 62% 50%;
+    --destructive: 4 70% 50%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 88 24% 24%;
-    --input: 88 24% 24%;
-    --ring: 28 67% 48%;
+    --border: 0 0% 18%;
+    --input: 0 0% 18%;
+    --ring: 36 43% 58%;
   }
 }
 
@@ -149,15 +159,15 @@ All colors MUST be HSL.
 
 @layer utilities {
   .spa-gradient {
-    background: linear-gradient(135deg, hsl(var(--spa-cream)), hsl(var(--spa-beige)));
+    background: linear-gradient(135deg, hsl(var(--spa-ivory)), hsl(var(--spa-beige)));
   }
   
   .gold-gradient {
-    background: linear-gradient(135deg, hsl(var(--spa-gold)), hsl(32 70% 54%));
+    background: linear-gradient(135deg, hsl(var(--spa-gold)), hsl(var(--spa-gold-soft)));
   }
   
   .sage-gradient {
-    background: linear-gradient(135deg, hsl(var(--spa-sage)), hsl(74 32% 26%));
+    background: linear-gradient(135deg, hsl(var(--secondary)), hsl(var(--muted)));
   }
   
   .shadow-spa {
