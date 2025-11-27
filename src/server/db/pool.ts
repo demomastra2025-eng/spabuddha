@@ -3,10 +3,11 @@ import type { QueryResultRow } from "pg";
 import { env } from "../config/env";
 
 const connectionString = env.DATABASE_URL;
+const ssl = env.DATABASE_SSL ? { rejectUnauthorized: false } : false;
 
 export const pool = new Pool({
   connectionString,
-  ssl: env.isProduction ? { rejectUnauthorized: false } : false,
+  ssl,
 });
 
 export function query<T extends QueryResultRow = QueryResultRow>(text: string, params?: unknown[]) {

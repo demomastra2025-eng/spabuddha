@@ -58,6 +58,15 @@ const envSchema = z.object({
       (value) => (value === undefined || (Number.isFinite(value) && value > 0)),
       "ONEVISION_PAYMENT_LIFETIME must be a positive number",
     ),
+  DATABASE_SSL: z
+    .string()
+    .optional()
+    .transform((value) => {
+      if (value === undefined) return false;
+      return value === "true" || value === "1";
+    })
+    .default("false")
+    .transform((value) => value === true || value === "true" || value === "1"),
   ALTEGIO_API_URL: z.string().url().default("https://api.alteg.io/api/v1"),
   ALTEGIO_USER_TOKEN: z.string().optional(),
   ALTEGIO_TIMEOUT_MS: z
@@ -85,6 +94,7 @@ export const env = {
   ONEVISION_PAYMENT_LIFETIME: parsed.data.ONEVISION_PAYMENT_LIFETIME ?? 900,
   ALTEGIO_API_URL: parsed.data.ALTEGIO_API_URL.replace(/\/+$/, ""),
   ALTEGIO_TIMEOUT_MS: parsed.data.ALTEGIO_TIMEOUT_MS ?? 10000,
+  DATABASE_SSL: parsed.data.DATABASE_SSL ?? undefined,
   MAIL_PROVIDER: parsed.data.MAIL_PROVIDER,
   SMTP_HOST: parsed.data.SMTP_HOST,
   SMTP_PORT: parsed.data.SMTP_PORT,
