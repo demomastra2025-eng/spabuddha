@@ -31,7 +31,7 @@ export const Hero = () => {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
             <Button
               size="lg"
-              className="group relative overflow-hidden bg-primary hover:bg-primary/90 text-primary-foreground px-10 py-7 text-xl rounded-2xl shadow-spa hover:shadow-glow transition-all duration-300 hover:scale-105"
+              className="group relative overflow-hidden bg-secondary hover:bg-secondary/90 text-secondary-foreground px-10 py-7 text-xl rounded-2xl shadow-spa hover:shadow-glow transition-all duration-300 hover:scale-105"
               onClick={() => navigate("/create")}
             >
               <Gift className="w-10 h-10 mr-3 group-hover:rotate-12 transition-transform" />

@@ -36,7 +36,7 @@ export const StepIndicator = ({ currentStep, totalSteps, steps }: StepIndicatorP
                       ? "bg-primary text-primary-foreground"
                       : isActive
                       ? "bg-secondary text-secondary-foreground shadow-glow"
-                      : "bg-muted text-muted-foreground"
+                      : "bg-muted/30 text-muted-foreground"
                   }`}
                 >
                   {isCompleted ? <Check className="w-6 h-6" /> : <span>{stepNumber}</span>}
@@ -52,7 +52,7 @@ export const StepIndicator = ({ currentStep, totalSteps, steps }: StepIndicatorP
               {stepNumber < resolvedTotal && (
                 <div
                   className={`flex-1 h-1 mx-2 rounded transition-all duration-300 ${
-                    stepNumber < currentStep ? "bg-primary" : "bg-muted"
+                    stepNumber < currentStep ? "bg-primary" : "bg-muted/40"
                   }`}
                 />
               )}

@@ -401,11 +401,11 @@ export const StepPayment = ({ data, onPrev, mode = "client", onCreated }: StepPa
                   size="lg"
                   onClick={handlePayment}
                   disabled={!agreed || processing}
-                  className="w-full h-14 text-lg rounded-xl bg-accent hover:bg-accent/90 text-accent-foreground shadow-glow"
+                  className="w-full h-14 text-lg rounded-xl bg-secondary hover:bg-secondary/90 text-secondary-foreground shadow-glow"
                 >
                   {processing ? (
                     <>
-                      <div className="w-5 h-5 border-2 border-accent-foreground/30 border-t-accent-foreground rounded-full animate-spin mr-2" />
+                      <div className="w-5 h-5 border-2 border-secondary-foreground/30 border-t-secondary-foreground rounded-full animate-spin mr-2" />
                       Обработка платежа...
                     </>
                   ) : (

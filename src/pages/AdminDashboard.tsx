@@ -214,7 +214,7 @@ export const AdminDashboard = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="bg-primary text-primary-foreground shadow-md sticky top-0 z-50">
+      <header className="bg-secondary text-secondary-foreground shadow-md sticky top-0 z-50">
         <div className="container px-4 py-4 space-y-4">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-4">
@@ -224,7 +224,7 @@ export const AdminDashboard = () => {
               {isGlobalManager && (
                 <div className="hidden md:block">
                   <Select value={selectedBranchId} onValueChange={setSelectedBranchId}>
-                    <SelectTrigger className="min-w-[320px] max-w-[520px] bg-primary-foreground/10 border-primary-foreground/20 text-primary-foreground">
+                    <SelectTrigger className="min-w-[320px] max-w-[520px] bg-secondary-foreground/10 border-secondary-foreground/20 text-secondary-foreground">
                       <SelectValue placeholder="Выберите филиал" />
                     </SelectTrigger>
                     <SelectContent>
@@ -250,7 +250,7 @@ export const AdminDashboard = () => {
                 Создать сертификат
               </Link>
             </nav>
-            <Button variant="secondary" onClick={handleSignOut} className="inline-flex items-center gap-2">
+            <Button variant="secondary" onClick={handleSignOut} className="inline-flex items-center gap-2 bg-secondary-foreground/10 text-secondary-foreground hover:bg-secondary-foreground/20">
               <LogOut className="w-4 h-4" />
               Выйти
             </Button>
@@ -258,7 +258,7 @@ export const AdminDashboard = () => {
           {isGlobalManager && (
             <div className="md:hidden">
               <Select value={selectedBranchId} onValueChange={setSelectedBranchId}>
-                <SelectTrigger className="w-full bg-primary-foreground/10 border-primary-foreground/20 text-primary-foreground">
+                <SelectTrigger className="w-full bg-secondary-foreground/10 border-secondary-foreground/20 text-secondary-foreground">
                   <SelectValue placeholder="Выберите филиал" />
                 </SelectTrigger>
                 <SelectContent>
@@ -280,7 +280,7 @@ export const AdminDashboard = () => {
 
       <main className="container px-4 py-10 space-y-10">
         <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as AdminTab)} className="space-y-8">
-          <TabsList className="w-full flex-wrap justify-start gap-2">
+          <TabsList className="w-full flex-wrap justify-start gap-2 bg-card border border-border/60 rounded-2xl p-2 shadow-sm">
             <TabsTrigger value="dashboard">Дашборд</TabsTrigger>
             <TabsTrigger value="certificate">Сертификаты</TabsTrigger>
             <TabsTrigger value="templates">Шаблоны</TabsTrigger>

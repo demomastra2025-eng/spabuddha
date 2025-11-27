@@ -60,9 +60,13 @@ export const StepDelivery = ({ data, updateData, onNext, onPrev }: StepDeliveryP
               <RadioGroupItem value="email" id="email-delivery" className="peer sr-only" />
               <Label
                 htmlFor="email-delivery"
-                className="flex items-start gap-4 p-6 rounded-xl border-2 border-muted bg-card hover:bg-accent/5 peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary/5 transition-all cursor-pointer"
+                className="flex items-start gap-4 p-6 rounded-2xl border bg-card hover:border-secondary/40 hover:shadow-spa peer-data-[state=checked]:border-secondary peer-data-[state=checked]:bg-secondary/10 peer-data-[state=checked]:shadow-glow transition-all cursor-pointer"
               >
-                <Mail className="w-8 h-8 text-primary mt-1 flex-shrink-0" />
+                <div
+                  className="p-3 rounded-xl bg-muted/20 text-muted-foreground peer-data-[state=checked]:bg-secondary peer-data-[state=checked]:text-secondary-foreground transition-colors flex-shrink-0"
+                >
+                  <Mail className="w-6 h-6" />
+                </div>
                 <div className="flex-1">
                   <div className="font-semibold text-lg mb-1">Email</div>
                   <p className="text-sm text-muted-foreground mb-3">
@@ -87,9 +91,13 @@ export const StepDelivery = ({ data, updateData, onNext, onPrev }: StepDeliveryP
               <RadioGroupItem value="whatsapp" id="whatsapp-delivery" className="peer sr-only" />
               <Label
                 htmlFor="whatsapp-delivery"
-                className="flex items-start gap-4 p-6 rounded-xl border-2 border-muted bg-card hover:bg-accent/5 peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary/5 transition-all cursor-pointer"
+                className="flex items-start gap-4 p-6 rounded-2xl border bg-card hover:border-secondary/40 hover:shadow-spa peer-data-[state=checked]:border-secondary peer-data-[state=checked]:bg-secondary/10 peer-data-[state=checked]:shadow-glow transition-all cursor-pointer"
               >
-                <Smartphone className="w-8 h-8 text-primary mt-1 flex-shrink-0" />
+                <div
+                  className="p-3 rounded-xl bg-muted/20 text-muted-foreground peer-data-[state=checked]:bg-secondary peer-data-[state=checked]:text-secondary-foreground transition-colors flex-shrink-0"
+                >
+                  <Smartphone className="w-6 h-6" />
+                </div>
                 <div className="flex-1">
                   <div className="font-semibold text-lg mb-1">WhatsApp</div>
                   <p className="text-sm text-muted-foreground mb-3">
@@ -114,9 +122,13 @@ export const StepDelivery = ({ data, updateData, onNext, onPrev }: StepDeliveryP
               <RadioGroupItem value="download" id="download-delivery" className="peer sr-only" />
               <Label
                 htmlFor="download-delivery"
-                className="flex items-start gap-4 p-6 rounded-xl border-2 border-muted bg-card hover:bg-accent/5 peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary/5 transition-all cursor-pointer"
+                className="flex items-start gap-4 p-6 rounded-2xl border bg-card hover:border-secondary/40 hover:shadow-spa peer-data-[state=checked]:border-secondary peer-data-[state=checked]:bg-secondary/10 peer-data-[state=checked]:shadow-glow transition-all cursor-pointer"
               >
-                <Download className="w-8 h-8 text-primary mt-1 flex-shrink-0" />
+                <div
+                  className="p-3 rounded-xl bg-muted/20 text-muted-foreground peer-data-[state=checked]:bg-secondary peer-data-[state=checked]:text-secondary-foreground transition-colors flex-shrink-0"
+                >
+                  <Download className="w-6 h-6" />
+                </div>
                 <div className="flex-1">
                   <div className="font-semibold text-lg mb-1">Скачать</div>
                   <p className="text-sm text-muted-foreground">
@@ -129,7 +141,7 @@ export const StepDelivery = ({ data, updateData, onNext, onPrev }: StepDeliveryP
         </div>
 
         {/* Info Box */}
-        <div className="p-6 rounded-xl bg-primary/5 border border-primary/20">
+        <div className="p-6 rounded-xl bg-secondary/10 border border-secondary/30">
           <p className="text-sm text-foreground/80 leading-relaxed">
             <strong>Совет:</strong>{" "}
             {data.deliveryMethod === "download"
@@ -151,7 +163,7 @@ export const StepDelivery = ({ data, updateData, onNext, onPrev }: StepDeliveryP
           <Button
             size="lg"
             onClick={handleNext}
-            className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 h-14 text-base rounded-xl"
+            className="bg-secondary hover:bg-secondary/90 text-secondary-foreground px-8 h-14 text-base rounded-xl"
           >
             Далее
           </Button>

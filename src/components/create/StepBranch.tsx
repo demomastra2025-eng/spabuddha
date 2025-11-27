@@ -4,7 +4,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { CertificateData } from "@/types/certificates";
 import { formatCurrency } from "@/lib/currency";
-import { MapPin } from "lucide-react";
+import { MapPin, Gift } from "lucide-react";
 import { useCompanies, type CompanyOption } from "@/hooks/useCompanies";
 import { useAltegioGoods } from "@/hooks/useAltegioGoods";
 import { toast } from "sonner";
@@ -164,16 +164,27 @@ export const StepBranch = ({ data, updateData, onNext, companiesOverride }: Step
                       tabIndex={0}
                       onClick={() => handleSelectGood(good.goodId)}
                       onKeyDown={handleCardKeyDown}
-                      className={`rounded-2xl border-2 px-4 py-4 text-left transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
-                        isSelected ? "border-primary bg-primary/5 shadow-inner" : "border-muted hover:border-primary/40"
+                      className={`rounded-2xl px-4 py-4 text-left transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary ${
+                        isSelected
+                          ? "border-2 border-secondary bg-secondary/10 shadow-glow"
+                          : "border border-border bg-card hover:border-secondary/50 hover:shadow-spa"
                       }`}
                       title={good.title}
                     >
-                      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
-                        <p className="font-semibold text-foreground line-clamp-2">{good.title}</p>
-                        <span className="sm:ml-auto text-lg font-bold text-primary whitespace-nowrap">
-                          {formatCurrency(good.cost)}
-                        </span>
+                      <div className="flex items-start gap-3 sm:items-center">
+                        <div
+                          className={`p-3 rounded-xl ${
+                            isSelected ? "bg-secondary text-secondary-foreground" : "bg-muted/20 text-muted-foreground"
+                          }`}
+                        >
+                          <Gift className="w-5 h-5" />
+                        </div>
+                        <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-3 flex-1">
+                          <p className="font-semibold text-foreground line-clamp-2">{good.title}</p>
+                          <span className="sm:ml-auto text-lg font-bold text-secondary whitespace-nowrap">
+                            {formatCurrency(good.cost)}
+                          </span>
+                        </div>
                       </div>
                     </div>
                   );
@@ -219,7 +230,7 @@ export const StepBranch = ({ data, updateData, onNext, companiesOverride }: Step
           <Button
             size="lg"
             onClick={handleNext}
-            className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 h-14 text-base rounded-xl"
+            className="bg-secondary hover:bg-secondary/90 text-secondary-foreground px-8 h-14 text-base rounded-xl"
           >
             Далее
           </Button>

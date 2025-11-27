@@ -132,7 +132,7 @@ export const StepDesign = ({ data, updateData, onNext, onPrev }: StepDesignProps
         <Button
           size="lg"
           onClick={handleNext}
-          className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 h-14 text-base rounded-xl"
+          className="bg-secondary hover:bg-secondary/90 text-secondary-foreground px-8 h-14 text-base rounded-xl"
         >
           Далее
         </Button>
