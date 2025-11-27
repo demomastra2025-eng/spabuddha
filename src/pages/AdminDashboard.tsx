@@ -213,8 +213,11 @@ export const AdminDashboard = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-muted/10">
-      <header className="bg-card/95 backdrop-blur border-b border-border/60 sticky top-0 z-50">
+    <div className="min-h-screen bg-muted/5">
+      <header
+        className="sticky top-0 z-50 border-b border-border/60 backdrop-blur"
+        style={{ backgroundColor: "hsl(var(--spa-gray))", color: "white" }}
+      >
         <div className="container px-4 py-4 space-y-4">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-4">
@@ -224,7 +227,7 @@ export const AdminDashboard = () => {
               {isGlobalManager && (
                 <div className="hidden md:block">
                   <Select value={selectedBranchId} onValueChange={setSelectedBranchId}>
-                    <SelectTrigger className="min-w-[320px] max-w-[520px] bg-muted/10 border-border text-foreground">
+                    <SelectTrigger className="min-w-[320px] max-w-[520px] bg-white/10 border-white/20 text-white">
                       <SelectValue placeholder="Выберите филиал" />
                     </SelectTrigger>
                     <SelectContent>
@@ -258,7 +261,7 @@ export const AdminDashboard = () => {
           {isGlobalManager && (
             <div className="md:hidden">
               <Select value={selectedBranchId} onValueChange={setSelectedBranchId}>
-                <SelectTrigger className="w-full bg-muted/10 border-border text-foreground">
+                <SelectTrigger className="w-full bg-white/10 border-white/20 text-white">
                   <SelectValue placeholder="Выберите филиал" />
                 </SelectTrigger>
                 <SelectContent>
