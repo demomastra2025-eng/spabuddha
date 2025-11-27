@@ -64,13 +64,13 @@ export const branchDefaults: BranchDefault[] = [
     },
   },
   {
-    slug: "shymkent-kunaeva-13",
+    slug: "shymkent-ilyaeva-37",
     label: "Buddha Spa",
-    address: "Шымкент, ул. Кунаева, 13",
+    address: "Шымкент, ул. Иляева, 37",
     phone: "+7 (702) 222 31 00",
     managerName: "Самат",
     timezone: "Asia/Almaty",
-    nameCompany: "ИП STEAKFIELD Buddha Spa Шымкент, Кунаева 13",
+    nameCompany: "ИП STEAKFIELD Buddha Spa Шымкент, Иляева 37",
     oneVision: {
       apiKey: "4b009070-5349-013e-927e-0645dcfd0614",
       secret: "343c18cc9d38b4921ea261f9e93ddcf7684905e622971876",

@@ -19,8 +19,8 @@ const companyRow = z.object({
   company_name_one_vision_id: z.string().nullable(),
   email: z.string().nullable(),
   altegio_company_id: z.string().nullable(),
-  altegio_document_id: z.string().nullable(),
   altegio_category_id: z.string().nullable(),
+  storage_id: z.string().nullable(),
   status: z.string(),
   manager_name: z.string().nullable(),
   timezone: z.string().nullable(),
@@ -49,8 +49,8 @@ export interface CompanyView {
   companyNameOneVisionId: string | null;
   email: string | null;
   altegioCompanyId: string | null;
-  altegioDocumentId: string | null;
   altegioCategoryId: string | null;
+  storageId: string | null;
   status: string;
   managerName: string | null;
   timezone: string | null;
@@ -74,8 +74,8 @@ export const upsertCompanySchema = z.object({
   companyNameOneVisionId: z.string().optional(),
   email: z.string().email().optional(),
   altegioCompanyId: z.string().optional(),
-  altegioDocumentId: z.string().optional(),
   altegioCategoryId: z.string().optional(),
+  storageId: z.string().optional(),
   status: z.enum(["active", "inactive"]).default("active"),
   managerName: z.string().optional(),
   timezone: z.string().optional(),
@@ -99,16 +99,16 @@ function mapCompany(row: Company): CompanyView {
     companyOneVisionId: row.company_one_vision_id,
     passOneVision: row.pass_one_vision,
     keyOneVision: row.key_one_vision,
-    companyNameOneVisionId: row.company_name_one_vision_id,
-    email: row.email,
-    altegioCompanyId: row.altegio_company_id,
-    altegioDocumentId: row.altegio_document_id,
-    altegioCategoryId: row.altegio_category_id,
-    status: row.status,
-    managerName: row.manager_name,
-    timezone: row.timezone,
-    slug: row.slug,
-    wazzupApiToken: row.wazzup_api_token,
+  companyNameOneVisionId: row.company_name_one_vision_id,
+  email: row.email,
+  altegioCompanyId: row.altegio_company_id,
+  altegioCategoryId: row.altegio_category_id,
+  storageId: row.storage_id,
+  status: row.status,
+  managerName: row.manager_name,
+  timezone: row.timezone,
+  slug: row.slug,
+  wazzupApiToken: row.wazzup_api_token,
     wazzupChannelId: row.wazzup_channel_id,
     wazzupNumber: row.wazzup_number,
   };
@@ -130,9 +130,9 @@ export async function createCompany(input: z.infer<typeof upsertCompanySchema>) 
     `INSERT INTO company
       (label, address, phone, name_company, bin_company, bik_company, official_address,
        company_one_vision_id, pass_one_vision, key_one_vision, company_name_one_vision_id,
-       email, altegio_company_id, altegio_document_id, status, manager_name, timezone,
+       email, altegio_company_id, altegio_category_id, storage_id, status, manager_name, timezone,
        wazzup_api_token, wazzup_channel_id, wazzup_number)
-     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20)
+     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21)
      RETURNING *`,
     [
       input.label,
@@ -148,8 +148,8 @@ export async function createCompany(input: z.infer<typeof upsertCompanySchema>) 
       input.companyNameOneVisionId ?? null,
       input.email ?? null,
       input.altegioCompanyId?.trim() ? input.altegioCompanyId.trim() : null,
-      input.altegioDocumentId?.trim() ? input.altegioDocumentId.trim() : null,
       input.altegioCategoryId?.trim() ? input.altegioCategoryId.trim() : null,
+      input.storageId?.trim() ? input.storageId.trim() : null,
       input.status,
       input.managerName ?? null,
       input.timezone ?? null,
@@ -177,15 +177,16 @@ export async function updateCompany(id: string, input: z.infer<typeof upsertComp
        company_name_one_vision_id = $11,
        email = $12,
        altegio_company_id = $13,
-       altegio_document_id = $14,
-       status = $15,
-       manager_name = $16,
-       timezone = $17,
-       wazzup_api_token = $18,
-       wazzup_channel_id = $19,
-       wazzup_number = $20,
+       altegio_category_id = $14,
+       storage_id = $15,
+       status = $16,
+       manager_name = $17,
+       timezone = $18,
+       wazzup_api_token = $19,
+       wazzup_channel_id = $20,
+       wazzup_number = $21,
        updated_at = NOW()
-     WHERE id = $21
+     WHERE id = $22
      RETURNING *`,
     [
       input.label,
@@ -201,8 +202,8 @@ export async function updateCompany(id: string, input: z.infer<typeof upsertComp
       input.companyNameOneVisionId ?? null,
       input.email ?? null,
       input.altegioCompanyId?.trim() ? input.altegioCompanyId.trim() : null,
-      input.altegioDocumentId?.trim() ? input.altegioDocumentId.trim() : null,
       input.altegioCategoryId?.trim() ? input.altegioCategoryId.trim() : null,
+      input.storageId?.trim() ? input.storageId.trim() : null,
       input.status,
       input.managerName ?? null,
       input.timezone ?? null,

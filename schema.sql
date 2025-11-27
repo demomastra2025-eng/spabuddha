@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS company (
     company_name_one_vision_id TEXT,
     email TEXT,
     altegio_company_id TEXT,
-    altegio_document_id TEXT,
+    storage_id TEXT,
     status TEXT NOT NULL DEFAULT 'active',
     manager_name TEXT,
     timezone TEXT,
@@ -187,7 +187,9 @@ ALTER TABLE client
 ADD COLUMN IF NOT EXISTS altegio_client_id TEXT;
 ALTER TABLE company
 ADD COLUMN IF NOT EXISTS altegio_company_id TEXT,
-    ADD COLUMN IF NOT EXISTS altegio_document_id TEXT;
+    ADD COLUMN IF NOT EXISTS storage_id TEXT;
+ALTER TABLE company
+DROP COLUMN IF EXISTS altegio_document_id;
 ALTER TABLE certificates
 ADD COLUMN IF NOT EXISTS altegio_operation_id TEXT,
     ADD COLUMN IF NOT EXISTS altegio_transaction_id TEXT;

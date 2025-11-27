@@ -52,7 +52,6 @@ const envSchema = z.object({
       (value) => (value === undefined || (Number.isFinite(value) && value > 0)),
       "ALTEGIO_TIMEOUT_MS must be a positive number",
     ),
-  ALTEGIO_DEFAULT_DOCUMENT_ID: z.string().optional(),
 });
 
 const parsed = envSchema.safeParse(process.env);
@@ -70,7 +69,6 @@ export const env = {
   ONEVISION_PAYMENT_LIFETIME: parsed.data.ONEVISION_PAYMENT_LIFETIME ?? 900,
   ALTEGIO_API_URL: parsed.data.ALTEGIO_API_URL.replace(/\/+$/, ""),
   ALTEGIO_TIMEOUT_MS: parsed.data.ALTEGIO_TIMEOUT_MS ?? 10000,
-  ALTEGIO_DEFAULT_DOCUMENT_ID: parsed.data.ALTEGIO_DEFAULT_DOCUMENT_ID,
   MAIL_PROVIDER: parsed.data.MAIL_PROVIDER,
   SMTP_HOST: parsed.data.SMTP_HOST,
   SMTP_PORT: parsed.data.SMTP_PORT,

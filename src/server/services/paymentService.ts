@@ -84,7 +84,7 @@ const fulfillmentRowSchema = z.object({
   company_label: z.string().nullable(),
   company_address: z.string().nullable(),
   company_altegio_company_id: z.string().nullable(),
-  company_altegio_document_id: z.string().nullable(),
+  company_storage_id: z.string().nullable(),
   client_first_name: z.string().nullable(),
   client_last_name: z.string().nullable(),
   client_email: z.string().nullable(),
@@ -230,20 +230,22 @@ async function syncAltegioSale(fulfillment: z.infer<typeof fulfillmentRowSchema>
     };
   }
 
-  const documentId =
-    fulfillment.certificate_altegio_operation_id ??
-    fulfillment.company_altegio_document_id ??
-    env.ALTEGIO_DEFAULT_DOCUMENT_ID ??
-    null;
-
-  if (!documentId) {
-    throw new AppError(400, "Не настроен document_id для Altegio");
+  const storageId = fulfillment.company_storage_id;
+  if (!storageId) {
+    throw new AppError(400, "Не настроен storage_id для Altegio");
   }
 
   const goodId = await resolveAltegioGoodId(fulfillment);
   const altegioClientId = await ensureAltegioClientIdForCompany(fulfillment, fulfillment.company_altegio_company_id);
 
-  const { createGoodsTransaction } = await import("./altegioService");
+  const { createAltegioDocument, createGoodsTransaction } = await import("./altegioService");
+  const documentResponse = await createAltegioDocument(fulfillment.company_altegio_company_id, storageId);
+  const documentId = documentResponse?.id ? String(documentResponse.id) : null;
+
+  if (!documentId) {
+    throw new AppError(400, "Не удалось создать документ в Altegio");
+  }
+
   const payload = {
     document_id: Number.isFinite(Number(documentId)) ? Number(documentId) : documentId,
     good_id: Number.isFinite(Number(goodId)) ? Number(goodId) : goodId,
@@ -323,7 +325,7 @@ export async function markPaymentAsPaid(
          comp.label AS company_label,
          comp.address AS company_address,
          comp.altegio_company_id AS company_altegio_company_id,
-         comp.altegio_document_id AS company_altegio_document_id,
+         comp.storage_id AS company_storage_id,
          comp.wazzup_api_token AS company_wazzup_api_token,
          comp.wazzup_channel_id AS company_wazzup_channel_id,
          comp.wazzup_number AS company_wazzup_number,

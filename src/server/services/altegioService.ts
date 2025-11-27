@@ -183,3 +183,23 @@ export async function createGoodsTransaction(companyId: string, payload: GoodsTr
     body: payload as unknown as Record<string, unknown>,
   });
 }
+
+function formatAltegioDate(date: Date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day} 00:00:00`;
+}
+
+export async function createAltegioDocument(companyId: string, storageId: string | number) {
+  const createDate = formatAltegioDate(new Date());
+  return request<{ id?: number }>(`storage_operations/documents/${companyId}`, {
+    method: "POST",
+    body: {
+      type_id: 1,
+      comment: "Document comment",
+      storage_id: Number(storageId),
+      create_date: createDate,
+    },
+  });
+}

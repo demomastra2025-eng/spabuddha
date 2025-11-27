@@ -17,7 +17,7 @@ type CompanySeed = {
   companyNameOneVisionId?: string;
   altegioCompanyId?: string;
   altegioCategoryId?: string;
-  altegioDocumentId?: string;
+  storageId?: string;
   wazzupApiToken?: string;
   wazzupChannelId?: string;
   wazzupNumber?: string;
@@ -45,6 +45,7 @@ type UserSeed = {
 const companies: CompanySeed[] = branchDefaults.map((branch) => {
   let altegioCompanyId: string | undefined;
   let altegioCategoryId: string | undefined;
+  let storageId: string | undefined;
   let wazzupChannelId: string | undefined;
   let wazzupNumber: string | undefined;
 
@@ -59,29 +60,34 @@ const companies: CompanySeed[] = branchDefaults.map((branch) => {
   // Common Wazzup API Key
   const wazzupApiToken = "0f9aa378023049da83957004e5609a3b";
 
-  if (branch.address.includes("Кунаева")) {
+  if (branch.address.includes("Иляева")) {
     altegioCompanyId = "129964";
     altegioCategoryId = "224820";
+    storageId = "226518";
     wazzupChannelId = "22b49d4c-f53b-4c37-bc52-c4fc638bd665";
     wazzupNumber = "77022223100";
   } else if (branch.address.includes("Тауке хана")) {
     altegioCompanyId = "717537";
     altegioCategoryId = "916963";
+    storageId = "1435635";
     wazzupChannelId = "a23419d4-f530-46b7-8c08-d5fa0277e060";
     wazzupNumber = "77787794309";
   } else if (branch.address.includes("Нурсат")) {
     altegioCompanyId = "750957";
     altegioCategoryId = "932166";
+    storageId = "1503814";
     wazzupChannelId = "0bfc9109-309a-4f60-a0ea-c2a3eceaf226";
     wazzupNumber = "77026518099";
   } else if (branch.address.includes("Туран")) {
     altegioCompanyId = "782603";
     altegioCategoryId = "967901";
+    storageId = "1569453";
     wazzupChannelId = "1b536d64-8e95-4373-85a8-a56b689e3edc";
     wazzupNumber = "77005298001";
   } else if (branch.address.includes("Толе Би")) {
     altegioCompanyId = "1266617";
     altegioCategoryId = "1005340";
+    storageId = "2539283";
     wazzupChannelId = "8a02b760-dd52-4a96-a411-d4238cbadef4";
     wazzupNumber = "77058887650";
   }
@@ -100,7 +106,7 @@ const companies: CompanySeed[] = branchDefaults.map((branch) => {
     companyNameOneVisionId: oneVisionConfig.serviceId,
     altegioCompanyId,
     altegioCategoryId,
-    altegioDocumentId: "22254960",
+    storageId,
     wazzupApiToken,
     wazzupChannelId,
     wazzupNumber,
@@ -265,11 +271,11 @@ const userSeeds: UserSeed[] = [
     companySlug: "shymkent-nursat-173b",
   },
   {
-    email: "kunaeva.manager@buddhaspa.kz",
-    password: "Manager#Kunaeva2025",
-    displayName: "Менеджер Шымкент Кунаева",
+    email: "ilyaeva.manager@buddhaspa.kz",
+    password: "Manager#Ilyaeva2025",
+    displayName: "Менеджер Шымкент Иляева",
     role: "manager",
-    companySlug: "shymkent-kunaeva-13",
+    companySlug: "shymkent-ilyaeva-37",
   },
   {
     email: "taraz.manager@buddhaspa.kz",
@@ -318,7 +324,7 @@ async function seedCompanies(pool: Pool) {
              email = $12,
              altegio_company_id = $13,
              altegio_category_id = $14,
-             altegio_document_id = $15,
+             storage_id = $15,
              wazzup_api_token = $16,
              wazzup_channel_id = $17,
              wazzup_number = $18,
@@ -339,7 +345,7 @@ async function seedCompanies(pool: Pool) {
           company.email ?? null,
           company.altegioCompanyId ?? null,
           company.altegioCategoryId ?? null,
-          company.altegioDocumentId ?? null,
+          company.storageId ?? null,
           company.wazzupApiToken ?? null,
           company.wazzupChannelId ?? null,
           company.wazzupNumber ?? null,
@@ -353,7 +359,7 @@ async function seedCompanies(pool: Pool) {
     const result = await pool.query<{ id: string }>(
       `INSERT INTO company
         (slug, label, address, phone, status, manager_name, timezone, name_company, key_one_vision,
-         pass_one_vision, company_one_vision_id, company_name_one_vision_id, email, altegio_company_id, altegio_category_id, altegio_document_id,
+         pass_one_vision, company_one_vision_id, company_name_one_vision_id, email, altegio_company_id, altegio_category_id, storage_id,
          wazzup_api_token, wazzup_channel_id, wazzup_number)
        VALUES ($1,$2,$3,$4,'active',$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18)
        RETURNING id`,
@@ -372,7 +378,7 @@ async function seedCompanies(pool: Pool) {
         company.email ?? null,
         company.altegioCompanyId ?? null,
         company.altegioCategoryId ?? null,
-        company.altegioDocumentId ?? null,
+        company.storageId ?? null,
         company.wazzupApiToken ?? null,
         company.wazzupChannelId ?? null,
         company.wazzupNumber ?? null,
