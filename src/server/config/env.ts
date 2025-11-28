@@ -32,6 +32,10 @@ const envSchema = z.object({
     .string()
     .optional()
     .transform((value) => (value ? value === "true" : undefined)),
+  SMTP_REJECT_UNAUTHORIZED: z
+    .string()
+    .optional()
+    .transform((value) => (value ? value === "true" : undefined)),
   SMTP_FROM: z
     .string()
     .optional()
@@ -101,5 +105,6 @@ export const env = {
   SMTP_USER: parsed.data.SMTP_USER,
   SMTP_PASS: parsed.data.SMTP_PASS,
   SMTP_SECURE: parsed.data.SMTP_SECURE ?? false,
+  SMTP_REJECT_UNAUTHORIZED: parsed.data.SMTP_REJECT_UNAUTHORIZED ?? true,
   SMTP_FROM: parsed.data.SMTP_FROM,
 };

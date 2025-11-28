@@ -41,8 +41,6 @@ services:
       - WAZZUP_API_URL=${WAZZUP_API_URL:-https://api.wazzup24.com/v3}
       - ONEVISION_API_URL=${ONEVISION_API_URL:-https://api.paysage.kz/}
       - ONEVISION_PAYMENT_LIFETIME=${ONEVISION_PAYMENT_LIFETIME:-3600}
-      - RESEND_API_KEY=${RESEND_API_KEY}
-      - RESEND_FROM=${RESEND_FROM:-noreply@buddhaspa.kz}
       - MAIL_PROVIDER=${MAIL_PROVIDER:-smtp}
       - SMTP_HOST=${SMTP_HOST}
       - SMTP_PORT=${SMTP_PORT:-25}

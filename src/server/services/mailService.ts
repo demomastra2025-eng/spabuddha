@@ -41,6 +41,7 @@ function ensureSmtpTransport() {
     host: env.SMTP_HOST,
     port: env.SMTP_PORT,
     secure: env.SMTP_SECURE,
+    tls: env.SMTP_REJECT_UNAUTHORIZED ? undefined : { rejectUnauthorized: false },
     auth:
       env.SMTP_USER && env.SMTP_PASS
         ? {
