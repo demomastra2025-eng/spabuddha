@@ -578,6 +578,52 @@ async function archiveFailedOrders(limit: number) {
 }
 
 async function pollPaymentStatus(paymentRow: PaymentRow & { company_id: string }) {
+  const recordFailedStatusPollAttempt = async (
+    payload: { payment_id?: string; order_id?: string },
+    error: unknown,
+  ) => {
+    try {
+      const metadata = normalizePaymentRowMetadata(paymentRow);
+      const existingOneVision = (metadata.onevision as Record<string, unknown> | undefined) ?? {};
+      const nowIso = new Date().toISOString();
+      const attempts = Number(existingOneVision.statusPollAttempts ?? 0);
+
+      const formattedError =
+        error instanceof AppError
+          ? { message: error.message, statusCode: error.statusCode, details: error.details }
+          : error instanceof Error
+            ? { message: error.message }
+            : { message: String(error) };
+
+      const nextMetadata = {
+        ...metadata,
+        onevision: {
+          ...existingOneVision,
+          lastStatusPoll: {
+            payload,
+            polledAt: nowIso,
+            error: formattedError,
+          },
+          statusPollAttempts: Number.isNaN(attempts) ? 1 : attempts + 1,
+        },
+      };
+
+      await query(
+        `UPDATE payments
+           SET metadata = $2,
+               updated_at = NOW()
+         WHERE id = $1`,
+        [paymentRow.id, JSON.stringify(nextMetadata)],
+      );
+    } catch (writeError) {
+      console.error(
+        `[onevision-status] Не удалось сохранить метаданные неуспешного опроса ${paymentRow.id}:`,
+        writeError,
+      );
+    }
+  };
+
+  let payload: { payment_id?: string; order_id?: string } = { order_id: paymentRow.order_id };
   try {
     const company = await getCompany(paymentRow.company_id);
     if (!company?.keyOneVision || !company?.passOneVision) {
@@ -593,7 +639,7 @@ async function pollPaymentStatus(paymentRow: PaymentRow & { company_id: string }
       ? String(existingOneVision.providerPaymentId)
       : null;
 
-    const payload =
+    payload =
       providerPaymentId && providerPaymentId.length > 0
         ? { payment_id: providerPaymentId }
         : { order_id: paymentRow.order_id };
@@ -620,6 +666,7 @@ async function pollPaymentStatus(paymentRow: PaymentRow & { company_id: string }
 
     await persistOneVisionStatus({ paymentRow, parsed, source: "status_poll" });
   } catch (error) {
+    await recordFailedStatusPollAttempt(payload, error);
     console.error(`[onevision-status] Не удалось обновить статус платежа ${paymentRow.id}:`, error);
   }
 }
