@@ -292,9 +292,13 @@ function getPool() {
     throw new Error("DATABASE_URL is not defined");
   }
 
+  const ssl = (process.env.DATABASE_SSL === "true" || process.env.DATABASE_SSL === "1")
+    ? { rejectUnauthorized: false }
+    : undefined;
+
   return new Pool({
     connectionString,
-    ssl: process.env.NODE_ENV === "production" ? { rejectUnauthorized: false } : undefined,
+    ssl,
   });
 }
 
