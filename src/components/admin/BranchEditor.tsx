@@ -27,6 +27,7 @@ const branchFormDefaults = {
     wazzupNumber: "",
     altegioCompanyId: "",
     altegioCategoryId: "",
+    storageId: "",
 };
 
 interface BranchEditorProps {
@@ -85,6 +86,7 @@ export const BranchEditor = ({ companies, token, onRefresh }: BranchEditorProps)
                     wazzupNumber: data.wazzupNumber ?? "",
                     altegioCompanyId: data.altegioCompanyId ?? "",
                     altegioCategoryId: data.altegioCategoryId ?? "",
+                    storageId: data.storageId ?? "",
                 });
                 setBranchError(null);
             } catch (error) {
@@ -142,6 +144,7 @@ export const BranchEditor = ({ companies, token, onRefresh }: BranchEditorProps)
                 wazzupNumber: branchForm.wazzupNumber.trim() || undefined,
                 altegioCompanyId: branchForm.altegioCompanyId.trim() || undefined,
                 altegioCategoryId: branchForm.altegioCategoryId.trim() || undefined,
+                storageId: branchForm.storageId.trim() || undefined,
             };
 
             const response = await fetch(`/api/companies/${selectedBranchId}`, {
@@ -321,6 +324,14 @@ export const BranchEditor = ({ companies, token, onRefresh }: BranchEditorProps)
                                                 placeholder="например, 1005340"
                                             />
                                         </div>
+                                        <div className="space-y-2">
+                                            <Label>Altegio storage_id</Label>
+                                            <Input
+                                                value={branchForm.storageId}
+                                                onChange={(event) => handleBranchFieldChange("storageId")(event.target.value)}
+                                                placeholder="например, 1569453"
+                                            />
+                                        </div>
                                     </div>
                                 </div>
 
@@ -376,6 +387,27 @@ export const BranchEditor = ({ companies, token, onRefresh }: BranchEditorProps)
                                         />
                                         <p className="text-xs text-muted-foreground">
                                             Ключ магазина для формирования токена авторизации (Bearer).
+                                        </p>
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label>OneVision Secret (Pass)</Label>
+                                        <Input
+                                            value={branchForm.passOneVision}
+                                            onChange={(event) => handleBranchFieldChange("passOneVision")(event.target.value)}
+                                            type="password"
+                                        />
+                                        <p className="text-xs text-muted-foreground">
+                                            Секретный ключ для подписи запросов.
+                                        </p>
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label>OneVision Service ID</Label>
+                                        <Input
+                                            value={branchForm.companyNameOneVisionId}
+                                            onChange={(event) => handleBranchFieldChange("companyNameOneVisionId")(event.target.value)}
+                                        />
+                                        <p className="text-xs text-muted-foreground">
+                                            Идентификатор сервиса (service_id).
                                         </p>
                                     </div>
                                 </div>

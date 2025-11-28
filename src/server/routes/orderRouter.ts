@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { asyncHandler } from "../middleware/asyncHandler";
 import { requireAdmin, requireManagerOrAdmin } from "../middleware/authMiddleware";
-import { createOrder, createOrderSchema, listOrders } from "../services/orderService";
+import { createOrder, createOrderSchema, getRevenueStats, listOrders } from "../services/orderService";
 import { AppError } from "../errors/AppError";
 import { markPaymentAsPaid } from "../services/paymentService";
 import { initiateOneVisionPayment } from "../services/oneVisionService";
@@ -23,6 +23,23 @@ orderRouter.get(
 
     const orders = await listOrders(filter);
     res.json(orders);
+  }),
+);
+
+orderRouter.get(
+  "/stats",
+  requireManagerOrAdmin,
+  asyncHandler(async (req, res) => {
+    let filter: { companyId?: string } | undefined;
+
+    if (req.user?.role === "manager" && req.user.companyId) {
+      filter = { companyId: req.user.companyId };
+    } else if (req.query.companyId) {
+      filter = { companyId: String(req.query.companyId) };
+    }
+
+    const stats = await getRevenueStats(filter);
+    res.json(stats);
   }),
 );
 

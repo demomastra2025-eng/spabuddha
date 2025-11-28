@@ -174,12 +174,21 @@ async function ensureAltegioClientIdForCompany(
   fulfillment: z.infer<typeof fulfillmentRowSchema>,
   altegioCompanyId: string,
 ) {
-  if (fulfillment.client_altegio_client_id) {
-    return fulfillment.client_altegio_client_id;
-  }
+  console.log("[payment:debug] ensureAltegioClientIdForCompany", {
+    client_altegio_client_id: fulfillment.client_altegio_client_id,
+    phone: fulfillment.client_phone,
+    delivery_contact: fulfillment.delivery_contact,
+    company_id: fulfillment.company_id,
+    altegioCompanyId
+  });
+
+  // if (fulfillment.client_altegio_client_id) {
+  //   return fulfillment.client_altegio_client_id;
+  // }
 
   const phone = fulfillment.client_phone ?? fulfillment.delivery_contact ?? null;
   if (!phone) {
+    console.log("[payment:debug] No phone found, returning null");
     return null;
   }
 
@@ -189,27 +198,34 @@ async function ensureAltegioClientIdForCompany(
     .trim() || phone;
 
   const { searchClientByPhone, createClientInAltegio } = await import("./altegioService");
+  console.log("[payment:debug] Calling searchClientByPhone", { phone, companyId: fulfillment.company_id, altegioCompanyId });
   const existing = await searchClientByPhone(phone, fulfillment.company_id, altegioCompanyId);
+  console.log("[payment:debug] searchClientByPhone result", existing);
+
   const foundId = Array.isArray(existing) && existing[0]?.id ? String(existing[0].id) : null;
 
   let altegioClientId = foundId;
 
   if (!altegioClientId) {
+    console.log("[payment:debug] Client not found, creating new");
     const created = await createClientInAltegio(fulfillment.company_id, altegioCompanyId, {
       name: displayName,
       phone,
       email: fulfillment.client_email ?? undefined,
     });
     altegioClientId = created?.id ? String(created.id) : null;
+    console.log("[payment:debug] Created client result", created);
   }
 
   if (altegioClientId && fulfillment.client_id) {
+    console.log("[payment:debug] Updating client in DB", { altegioClientId, clientId: fulfillment.client_id });
     await query(
       `UPDATE client SET altegio_client_id = COALESCE(altegio_client_id, $1), updated_at = NOW() WHERE id = $2`,
       [altegioClientId, fulfillment.client_id],
     );
   }
 
+  console.log("[payment:debug] Returning altegioClientId", altegioClientId);
   return altegioClientId;
 }
 

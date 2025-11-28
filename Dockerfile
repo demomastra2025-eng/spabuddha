@@ -38,6 +38,7 @@ RUN pnpm install --frozen-lockfile
 COPY --from=builder /app/dist ./dist
 
 # Copy necessary runtime files
+# COPY server.ts run_bootstrap.ts ./ для первого запуска
 COPY server.ts ./
 COPY tsconfig.json tsconfig.node.json tsconfig.app.json ./
 COPY vite.config.ts ./

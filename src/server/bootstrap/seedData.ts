@@ -51,18 +51,19 @@ const companies: CompanySeed[] = branchDefaults.map((branch) => {
   let wazzupChannelId: string | undefined;
   let wazzupNumber: string | undefined;
 
-  // Common OneVision config for all branches
-  const oneVisionConfig = {
-    apiKey: "7110b98f-b3f4-4b4f-b7ef-af71278a657d",
-    secret: "1ebd8dfbb1b1001a6f07f8a6aa2ea8aded02d0a2209a30a2ade7df5f6e44e2d2",
-    merchantId: "c9ce6199-f2cc-451a-9b4f-55ac2f783f74",
-    serviceId: "a3384e50-a9f0-481d-9187-4d65feaf6ef4",
-  };
+
 
   // Common Wazzup API Key
   const wazzupApiToken = "0f9aa378023049da83957004e5609a3b";
   const altegioProviderToken = "Bearer j8smnhedgebees6f2nnb";
   const altegioUserToken = "31c63baf1509bc49f46be91c68123178";
+
+  let oneVisionConfig = {
+    apiKey: undefined as string | undefined,
+    secret: undefined as string | undefined,
+    merchantId: undefined as string | undefined,
+    serviceId: undefined as string | undefined,
+  };
 
   if (branch.address.includes("Иляева")) {
     altegioCompanyId = "129964";
@@ -88,6 +89,14 @@ const companies: CompanySeed[] = branchDefaults.map((branch) => {
     storageId = "1569453";
     wazzupChannelId = "1b536d64-8e95-4373-85a8-a56b689e3edc";
     wazzupNumber = "77005298001";
+
+    // OneVision config only for Astana (Turan)
+    oneVisionConfig = {
+      apiKey: "7110b98f-b3f4-4b4f-b7ef-af71278a657d",
+      secret: "1ebd8dfbb1b1001a6f07f8a6aa2ea8aded02d0a2209a30a2ade7df5f6e44e2d2",
+      merchantId: "c9ce6199-f2cc-451a-9b4f-55ac2f783f74",
+      serviceId: "a3384e50-a9f0-481d-9187-4d65feaf6ef4",
+    };
   } else if (branch.address.includes("Толе Би")) {
     altegioCompanyId = "1266617";
     altegioCategoryId = "1005340";

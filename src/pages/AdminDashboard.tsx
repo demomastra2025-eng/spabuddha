@@ -34,6 +34,9 @@ export const AdminDashboard = () => {
   const [certificateView, setCertificateView] = useState<"list" | "create">("list");
   const [certificateSearch, setCertificateSearch] = useState("");
 
+  const [revenueStats, setRevenueStats] = useState({ dayRevenue: 0, monthRevenue: 0 });
+  const [revenueLoading, setRevenueLoading] = useState(false);
+
   const [usingCertificateId, setUsingCertificateId] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<AdminTab>("dashboard");
   const [selectedBranchId, setSelectedBranchId] = useState<string>("");
@@ -143,7 +146,13 @@ export const AdminDashboard = () => {
         paymentStatus?: string | null;
         buyerPhone?: string | null;
         buyerEmail?: string | null;
-        utmTag?: string | null;
+        utmTag?: {
+          id: string;
+          name: string | null;
+          utmSource: string | null;
+          utmCampaign: string | null;
+          utmMedium: string | null;
+        } | null;
       }[];
       const mapped: DashboardCertificate[] = payload.map((cert) => ({
         id: cert.id,
@@ -170,12 +179,40 @@ export const AdminDashboard = () => {
     }
   }, [session?.token, selectedBranchId, certificateSearch]);
 
+  const loadRevenueStats = useCallback(async () => {
+    if (!session?.token) return;
+    setRevenueLoading(true);
+    try {
+      const queryParams = new URLSearchParams();
+      if (selectedBranchId && selectedBranchId !== "all") {
+        queryParams.append("companyId", selectedBranchId);
+      }
+
+      const response = await fetch(`/api/orders/stats?${queryParams.toString()}`, {
+        headers: { Authorization: `Bearer ${session.token}` },
+      });
+
+      if (!response.ok) {
+        throw new Error("Не удалось загрузить статистику выручки");
+      }
+
+      const data = await response.json();
+      setRevenueStats(data);
+    } catch (error) {
+      console.error(error);
+      toast.error("Ошибка загрузки статистики выручки");
+    } finally {
+      setRevenueLoading(false);
+    }
+  }, [session?.token, selectedBranchId]);
+
   useEffect(() => {
     if (session?.token && selectedBranchId) {
       void loadOrders();
       void loadCertificates();
+      void loadRevenueStats();
     }
-  }, [session?.token, selectedBranchId, certificateSearch, loadOrders, loadCertificates]);
+  }, [session?.token, selectedBranchId, certificateSearch, loadOrders, loadCertificates, loadRevenueStats]);
 
   const handleUseCertificate = useCallback(
     async (certificateId: string) => {
@@ -208,7 +245,13 @@ export const AdminDashboard = () => {
   const dashboardStats = [
     { label: "Создано сертификатов", value: orders.length, icon: Gift },
     { label: "Оплачено", value: paidOrders, icon: Users },
-    { label: "Выручка", value: formatCurrency(totalRevenue), icon: TrendingUp },
+    {
+      label: "Выручка (День / Месяц)",
+      value: revenueLoading
+        ? "Загрузка..."
+        : `${formatCurrency(revenueStats.dayRevenue)} / ${formatCurrency(revenueStats.monthRevenue)}`,
+      icon: TrendingUp
+    },
     { label: "Активных шаблонов", value: templates.length, icon: Mail },
   ];
 

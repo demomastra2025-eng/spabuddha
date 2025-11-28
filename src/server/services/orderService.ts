@@ -150,25 +150,25 @@ export type OrderView = ReturnType<typeof mapOrder>;
 
 export async function createOrder(input: CreateOrderInput, options?: { provider?: string }) {
   return withTransaction(async (client) => {
-  const normalizedCompanyId = await resolveCompanyId(input.companyId);
-  const contactName = input.client.name ?? input.recipientName;
-  const hasServices = Boolean(input.services?.length);
-  const hasSelectedGood = Boolean(input.selectedGood);
-  const normalizedAmount = hasSelectedGood
-    ? applyDiscount(input.selectedGood!.cost, input.selectedGood!.discountPercent)
-    : hasServices
-      ? input.services!.reduce(
+    const normalizedCompanyId = await resolveCompanyId(input.companyId);
+    const contactName = input.client.name ?? input.recipientName;
+    const hasServices = Boolean(input.services?.length);
+    const hasSelectedGood = Boolean(input.selectedGood);
+    const normalizedAmount = hasSelectedGood
+      ? applyDiscount(input.selectedGood!.cost, input.selectedGood!.discountPercent)
+      : hasServices
+        ? input.services!.reduce(
           (sum, service) => sum + applyDiscount(service.price, service.discountPercent),
           0,
         )
-      : input.amount ?? null;
+        : input.amount ?? null;
 
-  if (!normalizedAmount || normalizedAmount <= 0) {
-    throw new AppError(400, "Некорректный номинал сертификата");
-  }
+    if (!normalizedAmount || normalizedAmount <= 0) {
+      throw new AppError(400, "Некорректный номинал сертификата");
+    }
 
-  const selectedGoodDetails = input.selectedGood
-    ? JSON.stringify([
+    const selectedGoodDetails = input.selectedGood
+      ? JSON.stringify([
         {
           ...input.selectedGood,
           good_id: input.selectedGood.goodId,
@@ -176,11 +176,11 @@ export async function createOrder(input: CreateOrderInput, options?: { provider?
           salon_id: input.selectedGood.salonId ?? null,
         },
       ])
-    : undefined;
-  const serviceDetails = hasServices ? JSON.stringify(input.services) : selectedGoodDetails;
+      : undefined;
+    const serviceDetails = hasServices ? JSON.stringify(input.services) : selectedGoodDetails;
 
-  let utmTagId: string | null = null;
-  if (input.utmVisitorId) {
+    let utmTagId: string | null = null;
+    if (input.utmVisitorId) {
       const utmLookup = await client.query<{ utm_tag_id: string | null }>(
         `SELECT utm_tag_id
            FROM utm_visits
@@ -310,5 +310,45 @@ export async function listOrders(filter?: { companyId?: string }) {
       params,
     );
     return orders.rows.map(mapOrder);
+  });
+}
+
+export async function getRevenueStats(filter?: { companyId?: string }) {
+  return withTransaction(async (client) => {
+    const params: unknown[] = [];
+    const conditions = ["payment_status = 'paid'", "status <> 'archived'"];
+
+    if (filter?.companyId) {
+      params.push(filter.companyId);
+      conditions.push(`company_id = $${params.length}`);
+    }
+
+    const whereClause = conditions.length ? `WHERE ${conditions.join(" AND ")}` : "";
+
+    // Daily Revenue (Today)
+    const dayQuery = `
+      SELECT COALESCE(SUM(total_amount), 0) as total
+      FROM orders
+      ${whereClause}
+      AND created_at >= DATE_TRUNC('day', NOW())
+    `;
+
+    // Monthly Revenue (Current Month)
+    const monthQuery = `
+      SELECT COALESCE(SUM(total_amount), 0) as total
+      FROM orders
+      ${whereClause}
+      AND created_at >= DATE_TRUNC('month', NOW())
+    `;
+
+    const [dayResult, monthResult] = await Promise.all([
+      client.query<{ total: string }>(dayQuery, params),
+      client.query<{ total: string }>(monthQuery, params),
+    ]);
+
+    return {
+      dayRevenue: Number(dayResult.rows[0]?.total ?? 0),
+      monthRevenue: Number(monthResult.rows[0]?.total ?? 0),
+    };
   });
 }
