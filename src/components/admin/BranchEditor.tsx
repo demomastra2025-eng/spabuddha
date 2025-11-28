@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 
 const branchFormDefaults = {
@@ -28,6 +29,7 @@ const branchFormDefaults = {
     altegioCompanyId: "",
     altegioCategoryId: "",
     storageId: "",
+    goodIds: "",
 };
 
 interface BranchEditorProps {
@@ -87,6 +89,7 @@ export const BranchEditor = ({ companies, token, onRefresh }: BranchEditorProps)
                     altegioCompanyId: data.altegioCompanyId ?? "",
                     altegioCategoryId: data.altegioCategoryId ?? "",
                     storageId: data.storageId ?? "",
+                    goodIds: data.goodIds?.join(", ") ?? "",
                 });
                 setBranchError(null);
             } catch (error) {
@@ -145,6 +148,12 @@ export const BranchEditor = ({ companies, token, onRefresh }: BranchEditorProps)
                 altegioCompanyId: branchForm.altegioCompanyId.trim() || undefined,
                 altegioCategoryId: branchForm.altegioCategoryId.trim() || undefined,
                 storageId: branchForm.storageId.trim() || undefined,
+                goodIds: branchForm.goodIds
+                    ? branchForm.goodIds
+                        .split(",")
+                        .map((id) => id.trim())
+                        .filter(Boolean)
+                    : undefined,
             };
 
             const response = await fetch(`/api/companies/${selectedBranchId}`, {
@@ -332,6 +341,19 @@ export const BranchEditor = ({ companies, token, onRefresh }: BranchEditorProps)
                                                 placeholder="например, 1569453"
                                             />
                                         </div>
+                                    </div>
+                                    <div className="mt-4 space-y-2">
+                                        <Label>Список ID товаров (good_ids)</Label>
+                                        <p className="text-xs text-muted-foreground">
+                                            Укажите ID товаров через запятую, чтобы фильтровать список сертификатов.
+                                            Если пусто — показываются все.
+                                        </p>
+                                        <Textarea
+                                            value={branchForm.goodIds}
+                                            onChange={(event) => handleBranchFieldChange("goodIds")(event.target.value)}
+                                            placeholder="12345, 67890"
+                                            className="min-h-[80px]"
+                                        />
                                     </div>
                                 </div>
 

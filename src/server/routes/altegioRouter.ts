@@ -2,8 +2,9 @@ import { Router, type Request } from "express";
 import { asyncHandler } from "../middleware/asyncHandler";
 import { requireManagerOrAdmin } from "../middleware/authMiddleware";
 import { getCompany, resolveCompanyId } from "../services/companyService";
-import { listCertificateTypes, listGoods } from "../services/altegioService";
+import { listCertificateTypes } from "../services/altegioService";
 import { AppError } from "../errors/AppError";
+import { getCachedGoods } from "../services/altegioGoodsCacheService";
 
 export const altegioRouter = Router();
 
@@ -30,14 +31,21 @@ altegioRouter.get(
       throw new AppError(400, "Для филиала не указан Altegio company_id");
     }
 
-    if (!company.altegioCategoryId) {
-      throw new AppError(400, "Для филиала не указан Altegio category_id");
-    }
+    const cachedGoods = await getCachedGoods(company.id);
 
-    const page = req.query.page && Number.isFinite(Number(req.query.page)) ? Number(req.query.page) : undefined;
-    const count = req.query.count && Number.isFinite(Number(req.query.count)) ? Number(req.query.count) : undefined;
-    const goods = await listGoods(company.id, company.altegioCompanyId, company.altegioCategoryId, { page, count });
-    res.json(goods);
+    res.json(
+      cachedGoods.map((good) => ({
+        ...good.rawData,
+        good_id: good.goodId,
+        title: good.title,
+        cost: good.cost,
+        category: good.category,
+        category_id: good.categoryId,
+        salon_id: good.salonId,
+        loyalty_certificate_type_id: good.loyaltyCertificateTypeId,
+        last_synced_at: good.lastSyncedAt,
+      })),
+    );
   }),
 );
 
@@ -55,19 +63,14 @@ altegioRouter.get(
       throw new AppError(400, "Для филиала не указан Altegio company_id");
     }
 
-    if (!company.altegioCategoryId) {
-      throw new AppError(400, "Для филиала не указан Altegio category_id");
-    }
+    const cachedGoods = await getCachedGoods(company.id);
 
-    const page = req.query.page && Number.isFinite(Number(req.query.page)) ? Number(req.query.page) : undefined;
-    const count = req.query.count && Number.isFinite(Number(req.query.count)) ? Number(req.query.count) : undefined;
-    const goods = await listGoods(company.id, company.altegioCompanyId, company.altegioCategoryId, { page, count });
-    const simplified = goods.map((good) => ({
+    const simplified = cachedGoods.map((good) => ({
       title: good.title,
       cost: good.cost,
-      goodId: good.good_id,
-      categoryId: good.category_id,
-      companyId: good.salon_id,
+      goodId: good.goodId,
+      categoryId: good.categoryId,
+      companyId: good.salonId,
     }));
 
     res.json(simplified);

@@ -4,6 +4,7 @@ import { createApp } from "./src/server/app";
 import { env } from "./src/server/config/env";
 import { runDevBootstrap } from "./src/server/bootstrap/devBootstrap";
 import { startOneVisionStatusPolling } from "./src/server/services/oneVisionService";
+import { startAltegioGoodsSyncCron, syncAllCompaniesGoods } from "./src/server/services/altegioGoodsCacheService";
 
 const app = createApp();
 
@@ -17,6 +18,10 @@ async function start() {
   }
 
   startOneVisionStatusPolling();
+  startAltegioGoodsSyncCron();
+  void syncAllCompaniesGoods().catch((error) => {
+    console.error("[altegio-goods] Не удалось выполнить стартовую синхронизацию товаров:", error);
+  });
 
   ViteExpress.listen(app, env.PORT, () => {
     console.log(`Server is listening on port ${env.PORT}...`);

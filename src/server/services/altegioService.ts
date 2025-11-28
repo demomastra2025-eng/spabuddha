@@ -210,6 +210,37 @@ export async function listGoods(
   return request<AltegioGood[]>(companyId, `goods/${altegioCompanyId}?${queryString}`);
 }
 
+export async function getGoodById(companyId: string, altegioCompanyId: string, goodId: string | number) {
+  if (goodId === undefined || goodId === null || String(goodId).trim() === "") {
+    throw new AppError(400, "Не указан good_id для Altegio");
+  }
+  return request<AltegioGood>(companyId, `goods/${altegioCompanyId}/${goodId}`);
+}
+
+export async function listAllGoods(
+  companyId: string,
+  altegioCompanyId: string,
+  categoryId?: string | number,
+) {
+  let allGoods: AltegioGood[] = [];
+  let page = 1;
+  const count = 250;
+  let hasMore = true;
+
+  while (hasMore) {
+    const goods = await listGoods(companyId, altegioCompanyId, categoryId, { page, count });
+    allGoods = allGoods.concat(goods);
+    if (goods.length < count) {
+      hasMore = false;
+    } else {
+      page++;
+    }
+    // Safety break to prevent infinite loops
+    if (page > 50) hasMore = false;
+  }
+  return allGoods;
+}
+
 export async function listCertificateTypes(companyId: string, altegioCompanyId: string) {
   return request<unknown[]>(companyId, `company/${altegioCompanyId}/loyalty/certificate_types/search`);
 }

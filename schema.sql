@@ -34,6 +34,7 @@ CREATE TABLE IF NOT EXISTS company (
     wazzup_api_token TEXT,
     wazzup_channel_id TEXT,
     wazzup_number TEXT,
+    good_ids TEXT [],
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
@@ -192,8 +193,7 @@ ADD COLUMN IF NOT EXISTS altegio_company_id TEXT,
     ADD COLUMN IF NOT EXISTS altegio_provider_token TEXT,
     ADD COLUMN IF NOT EXISTS altegio_user_token TEXT,
     ADD COLUMN IF NOT EXISTS storage_id TEXT;
-ALTER TABLE company
-DROP COLUMN IF EXISTS altegio_document_id;
+ALTER TABLE company DROP COLUMN IF EXISTS altegio_document_id;
 ALTER TABLE certificates
 ADD COLUMN IF NOT EXISTS altegio_operation_id TEXT,
     ADD COLUMN IF NOT EXISTS altegio_transaction_id TEXT;
@@ -259,3 +259,22 @@ CREATE TABLE IF NOT EXISTS system_settings (
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+CREATE TABLE IF NOT EXISTS altegio_goods_cache (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    company_id UUID NOT NULL REFERENCES company(id) ON DELETE CASCADE,
+    good_id TEXT NOT NULL,
+    title TEXT NOT NULL,
+    cost NUMERIC(12, 2) NOT NULL,
+    category TEXT,
+    category_id TEXT,
+    salon_id TEXT,
+    loyalty_certificate_type_id TEXT,
+    raw_data JSONB NOT NULL,
+    last_synced_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    UNIQUE(company_id, good_id)
+);
+CREATE INDEX IF NOT EXISTS idx_altegio_goods_cache_company_id ON altegio_goods_cache(company_id);
+CREATE INDEX IF NOT EXISTS idx_altegio_goods_cache_good_id ON altegio_goods_cache(good_id);
+CREATE INDEX IF NOT EXISTS idx_altegio_goods_cache_last_synced ON altegio_goods_cache(last_synced_at);

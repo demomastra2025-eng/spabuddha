@@ -4,7 +4,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { CertificateData } from "@/types/certificates";
 import { formatCurrency } from "@/lib/currency";
-import { MapPin, Gift } from "lucide-react";
+import { MapPin, Gift, ChevronLeft, ChevronRight } from "lucide-react";
 import { useCompanies, type CompanyOption } from "@/hooks/useCompanies";
 import { useAltegioGoods } from "@/hooks/useAltegioGoods";
 import { toast } from "sonner";
@@ -31,6 +31,7 @@ export const StepBranch = ({ data, updateData, onNext, companiesOverride }: Step
     pageSize: goodsPageSize,
     nextPage: nextGoodsPage,
     prevPage: prevGoodsPage,
+    totalPages,
   } = useAltegioGoods({
     companyId: branchFilter,
     enabled: Boolean(data.branch),
@@ -164,18 +165,16 @@ export const StepBranch = ({ data, updateData, onNext, companiesOverride }: Step
                       tabIndex={0}
                       onClick={() => handleSelectGood(good.goodId)}
                       onKeyDown={handleCardKeyDown}
-                      className={`rounded-2xl px-4 py-4 text-left transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary ${
-                        isSelected
+                      className={`rounded-2xl px-4 py-4 text-left transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary ${isSelected
                           ? "border-2 border-secondary bg-secondary/10 shadow-glow"
                           : "border border-border bg-card hover:border-secondary/50 hover:shadow-spa"
-                      }`}
+                        }`}
                       title={good.title}
                     >
                       <div className="flex items-start gap-3 sm:items-center">
                         <div
-                          className={`p-3 rounded-xl ${
-                            isSelected ? "bg-secondary text-secondary-foreground" : "bg-muted/20 text-muted-foreground"
-                          }`}
+                          className={`p-3 rounded-xl ${isSelected ? "bg-secondary text-secondary-foreground" : "bg-muted/20 text-muted-foreground"
+                            }`}
                         >
                           <Gift className="w-5 h-5" />
                         </div>
@@ -204,19 +203,19 @@ export const StepBranch = ({ data, updateData, onNext, companiesOverride }: Step
                   <div className="flex items-center gap-2">
                     <Button
                       variant="outline"
-                      size="sm"
+                      size="icon"
                       onClick={prevGoodsPage}
                       disabled={goodsLoading || goodsPage <= 1}
                     >
-                      Назад
+                      <ChevronLeft className="h-4 w-4" />
                     </Button>
                     <Button
                       variant="outline"
-                      size="sm"
+                      size="icon"
                       onClick={nextGoodsPage}
-                      disabled={goodsLoading || (!goodsLoading && goods.length < goodsPageSize)}
+                      disabled={goodsLoading || goodsPage >= (totalPages || 1)}
                     >
-                      Далее
+                      <ChevronRight className="h-4 w-4" />
                     </Button>
                   </div>
                 </div>

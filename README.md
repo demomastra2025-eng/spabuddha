@@ -58,6 +58,7 @@ docker-compose up -d --build
 | `WAZZUP_API_URL` | базовый URL Wazzup API (токен/канал задаются у филиала в админке) |
 | `RESEND_*` или SMTP‑параметры | отправка e-mail |
 | `ONEVISION_*` | настройки платёжного провайдера |
+| `ALTEGIO_GOODS_SYNC_CRON` | cron-выражение для фонового обновления кэша товаров Altegio (по умолчанию раз в час) |
 
 Полный список см. в `src/server/config/env.ts`.
 
@@ -91,6 +92,12 @@ docker-compose up -d --build
 ### Фоновый опрос OneVision
 
 При старте API запускается job (`startOneVisionStatusPolling`), который каждые 2 минуты выбирает незавершённые платежи OneVision и вызывает `payment/status`. Ответ обрабатывается теми же правилами, что и вебхук, поэтому даже при потере callback’а заказ автоматически переведётся в `paid`/`failed`.
+
+### Кэш Altegio товаров
+
+- Ежечасно (или по cron в `ALTEGIO_GOODS_SYNC_CRON`) подтягиваем товары Altegio по `good_ids` каждого филиала через endpoint `goods/{company_id}/{good_id}` и сохраняем в `altegio_goods_cache`.
+- После изменения `good_ids` у филиала кэш пересчитывается сразу в фоне.
+- Публичные и админские эндпоинты `/api/altegio/*/goods` теперь читают только из кэша и не ходят в Altegio на каждый запрос.
 
 ### Лицензия
 

@@ -36,6 +36,7 @@
 7) **Эндпоинт подгрузки товаров**  
    - `GET /api/altegio/goods/{companyId}` (менеджер/админ).  
    - Ожидание: список товаров с `good_id`, `title`, `loyalty_certificate_type_id`.
+   - Данные берутся из кэша `altegio_goods_cache` (обновляется по cron/после изменения `good_ids` у филиала).
 
 8) **Эндпоинт типов сертификатов**  
    - `GET /api/altegio/certificate-types/{companyId}`.  

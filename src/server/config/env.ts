@@ -81,6 +81,7 @@ const envSchema = z.object({
       (value) => (value === undefined || (Number.isFinite(value) && value > 0)),
       "ALTEGIO_TIMEOUT_MS must be a positive number",
     ),
+  ALTEGIO_GOODS_SYNC_CRON: z.string().default("0 * * * *"),
 });
 
 const parsed = envSchema.safeParse(process.env);
@@ -99,6 +100,7 @@ export const env = {
   ALTEGIO_API_URL: parsed.data.ALTEGIO_API_URL.replace(/\/+$/, ""),
   ALTEGIO_TIMEOUT_MS: parsed.data.ALTEGIO_TIMEOUT_MS ?? 10000,
   DATABASE_SSL: parsed.data.DATABASE_SSL ?? undefined,
+  ALTEGIO_GOODS_SYNC_CRON: parsed.data.ALTEGIO_GOODS_SYNC_CRON,
   MAIL_PROVIDER: parsed.data.MAIL_PROVIDER,
   SMTP_HOST: parsed.data.SMTP_HOST,
   SMTP_PORT: parsed.data.SMTP_PORT,
